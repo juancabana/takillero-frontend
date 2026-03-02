@@ -1,65 +1,197 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { ArrowRight, Truck, Clock, Star, MapPin } from 'lucide-react';
+import { motion } from 'motion/react';
+import { storeService } from '@/services/store.service';
+import { categoryService } from '@/services/category.service';
+import { BusinessClosed } from '@/components/BusinessClosed';
+import type { StoreSettings } from '@/types/store.types';
+import type { Category } from '@/types/category.types';
+
+const FEATURES = [
+  { icon: Truck, title: 'Domicilio Rápido', desc: 'Entrega en 30-45 minutos a tu puerta' },
+  { icon: Clock, title: 'Abierto hasta tarde', desc: 'Viernes y sábados hasta la 1:00 AM' },
+  { icon: Star, title: 'Calidad Premium', desc: 'Ingredientes frescos todos los días' },
+];
+
+export default function HomePage() {
+  const [storeSettings, setStoreSettings] = useState<StoreSettings | null>(null);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    Promise.all([storeService.getSettings(), categoryService.getActiveCategories()])
+      .then(([settings, cats]: [StoreSettings, Category[]]) => {
+        setStoreSettings(settings);
+        setCategories(cats);
+      })
+      .finally(() => setIsLoading(false));
+  }, []);
+
+  if (isLoading) {
+    return <div className="min-h-screen" />;
+  }
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <div className="min-h-screen">
+      {storeSettings && !storeSettings.isOpen && (
+        <BusinessClosed settings={storeSettings} />
+      )}
+
+      {/* ── Hero ─────────────────────────────────────────────────────────── */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-orange-50 via-white to-red-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+              <div
+                className="inline-flex items-center gap-2 bg-orange-100 text-orange-700 px-4 py-2 rounded-full mb-6"
+                style={{ fontSize: '14px', fontWeight: 500 }}
+              >
+                <Truck size={16} />
+                Domicilios disponibles
+              </div>
+              <h1
+                className="text-gray-900 mb-6"
+                style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)', fontWeight: 800, lineHeight: 1.1 }}
+              >
+                El sabor que te{' '}
+                <span className="bg-gradient-to-r from-orange-500 to-red-600 bg-clip-text text-transparent">
+                  enamora
+                </span>{' '}
+                en cada bocado
+              </h1>
+              <p
+                className="text-gray-600 mb-8 max-w-lg"
+                style={{ fontSize: '18px', lineHeight: 1.7 }}
+              >
+                Perros, hamburguesas, salchipapas y mucho más. Pide tu favorito y te lo llevamos
+                hasta la puerta de tu casa.
+              </p>
+              <div className="flex flex-wrap gap-4">
+                <Link
+                  href="/menu"
+                  className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-2xl transition-all shadow-lg shadow-orange-200 hover:shadow-xl hover:shadow-orange-300"
+                  style={{ fontWeight: 600, fontSize: '18px' }}
+                >
+                  Ver Menú <ArrowRight size={20} />
+                </Link>
+                <Link
+                  href="/ubicacion"
+                  className="inline-flex items-center gap-2 bg-white border-2 border-gray-200 text-gray-700 hover:border-orange-300 px-8 py-4 rounded-2xl transition-all"
+                  style={{ fontWeight: 600, fontSize: '18px' }}
+                >
+                  <MapPin size={20} /> Ubicación
+                </Link>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="relative hidden md:block"
             >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+              <div className="relative w-full aspect-square max-w-md mx-auto">
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-400 to-red-500 rounded-full opacity-20 blur-3xl" />
+                <img
+                  src="https://images.unsplash.com/photo-1709736792234-af63e72f1037?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXN0JTIwZm9vZCUyMHJlc3RhdXJhbnQlMjBuZW9uJTIwbmlnaHR8ZW58MXx8fHwxNzcyMjM3MTgzfDA&ixlib=rb-4.1.0&q=80&w=1080"
+                  alt="Takillero comida"
+                  className="relative w-full h-full object-cover rounded-3xl shadow-2xl"
+                />
+              </div>
+            </motion.div>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        {/* Decorative blobs */}
+        <div className="absolute top-20 left-10 w-72 h-72 bg-orange-200 rounded-full blur-3xl opacity-20 pointer-events-none" />
+        <div className="absolute bottom-10 right-10 w-96 h-96 bg-red-200 rounded-full blur-3xl opacity-20 pointer-events-none" />
+      </section>
+
+      {/* ── Features ─────────────────────────────────────────────────────── */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            {FEATURES.map((feat) => (
+              <motion.div
+                key={feat.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="flex items-start gap-4 p-6 bg-gray-50 rounded-2xl"
+              >
+                <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center shrink-0">
+                  <feat.icon size={24} className="text-orange-600" />
+                </div>
+                <div>
+                  <h3 className="text-gray-900 mb-1">{feat.title}</h3>
+                  <p className="text-gray-500" style={{ fontSize: '14px' }}>
+                    {feat.desc}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
-      </main>
+      </section>
+
+      {/* ── Categories ───────────────────────────────────────────────────── */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-gray-900 mb-3" style={{ fontSize: '32px', fontWeight: 700 }}>
+              Nuestro Menú
+            </h2>
+            <p className="text-gray-500 max-w-md mx-auto">
+              Explora nuestras categorías y encuentra tu antojo perfecto
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            {categories.map((cat, i) => (
+              <motion.div
+                key={cat.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+              >
+                <Link
+                  href={`/menu?categoria=${cat.id}`}
+                  className="group block relative overflow-hidden rounded-2xl aspect-square"
+                >
+                  <img
+                    src={cat.imageUrl}
+                    alt={cat.name}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-4 text-white text-center">
+                    <span style={{ fontSize: '28px' }}>{cat.icon}</span>
+                    <p style={{ fontWeight: 600, fontSize: '14px' }}>{cat.name}</p>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="text-center mt-10">
+            <Link
+              href="/menu"
+              className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-xl transition-all shadow-md shadow-orange-200"
+              style={{ fontWeight: 600 }}
+            >
+              Ver Menú Completo <ArrowRight size={18} />
+            </Link>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
