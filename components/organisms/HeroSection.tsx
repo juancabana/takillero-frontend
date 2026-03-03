@@ -3,7 +3,7 @@
 import { motion } from 'motion/react';
 import { Button } from '@/components/atoms/Button';
 import { appRoutes } from '@/config/appRoutes';
-import { HOME_CONTENT } from '@/constants/ui';
+import { HOME_PAGE } from '@/constants/pages/home';
 
 interface HeroSectionProps {
   businessName: string;
@@ -34,7 +34,7 @@ export function HeroSection({ businessName }: HeroSectionProps) {
           transition={{ duration: 0.7, ease: 'easeOut' }}
         >
           <p className="text-orange-200 font-medium text-lg mb-2 uppercase tracking-widest">
-            Bienvenido a
+            {HOME_PAGE.HERO_WELCOME_PREFIX}
           </p>
           <h1 className="text-5xl md:text-7xl font-extrabold text-white mb-6 leading-tight">
             {businessName}
@@ -47,7 +47,7 @@ export function HeroSection({ businessName }: HeroSectionProps) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.2, ease: 'easeOut' }}
         >
-          {HOME_CONTENT.HERO.SUBTITLE}
+          {HOME_PAGE.HERO_SUBTITLE}
         </motion.p>
 
         <motion.div
@@ -62,7 +62,7 @@ export function HeroSection({ businessName }: HeroSectionProps) {
             variant="primary"
             size="lg"
           >
-            {HOME_CONTENT.HERO.CTA_MENU}
+            {HOME_PAGE.CTA_MENU}
           </Button>
           <Button
             as="link"
@@ -70,7 +70,7 @@ export function HeroSection({ businessName }: HeroSectionProps) {
             variant="outline"
             size="lg"
           >
-            {HOME_CONTENT.HERO.CTA_LOCATION}
+            {HOME_PAGE.CTA_LOCATION_ALT}
           </Button>
         </motion.div>
       </div>

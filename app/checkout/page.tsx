@@ -20,6 +20,8 @@ import { useCart } from '@/context/CartContext';
 import { useStore } from '@/context/StoreContext';
 import { orderService } from '@/services/order.service';
 import { toast } from 'sonner';
+import { CHECKOUT_PAGE } from '@/constants/pages/checkout';
+import { COMMON_LABELS, CUSTOMER_LABELS, PAYMENT_DATA, PAYMENT_METHODS, DEFAULT_WHATSAPP_NUMBER, DEFAULT_PRODUCT_IMAGE, STORE_DEFAULTS } from '@/constants/shared';
 import type { CreateOrderPayload } from '@/types/order.types';
 
 const formatPrice = (price: number) =>
@@ -59,7 +61,7 @@ export default function CheckoutPage() {
   const deliveryFee =
     activeZones.find((z) => z.name.toLowerCase() === form.barrio.toLowerCase())?.fee ?? 5000;
   const total = totalPrice + deliveryFee;
-  const whatsapp = settings?.whatsappNumber ?? '573001234567';
+  const whatsapp = settings?.whatsappNumber ?? DEFAULT_WHATSAPP_NUMBER;
 
   const updateForm = (field: keyof FormData, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -70,27 +72,27 @@ export default function CheckoutPage() {
   const isStep2Valid = form.direccion.trim() !== '' && form.barrio.trim() !== '';
 
   const generateWhatsAppMessage = (orderNumber: number) => {
-    let msg = `🔥 *NUEVO PEDIDO #${orderNumber} - ${settings?.businessName ?? 'Takillero'}*\n\n`;
-    msg += `👤 *Datos del cliente:*\n`;
-    msg += `Nombre: ${form.nombre}\n`;
-    msg += `Cedula: ${form.cedula}\n`;
-    msg += `Telefono: ${form.telefono}\n\n`;
-    msg += `📍 *Direccion de entrega:*\n`;
+    let msg = `${CHECKOUT_PAGE.WA_MSG_HEADER} #${orderNumber} - ${settings?.businessName ?? STORE_DEFAULTS.BUSINESS_NAME}*\n\n`;
+    msg += `${CHECKOUT_PAGE.WA_MSG_CUSTOMER_TITLE}\n`;
+    msg += `${CHECKOUT_PAGE.WA_MSG_CUSTOMER_NAME} ${form.nombre}\n`;
+    msg += `${CHECKOUT_PAGE.WA_MSG_CUSTOMER_CEDULA} ${form.cedula}\n`;
+    msg += `${CHECKOUT_PAGE.WA_MSG_CUSTOMER_PHONE} ${form.telefono}\n\n`;
+    msg += `${CHECKOUT_PAGE.WA_MSG_ADDRESS_TITLE}\n`;
     msg += `${form.direccion}\n`;
-    msg += `Barrio: ${form.barrio}\n\n`;
-    msg += `🛒 *Pedido:*\n`;
+    msg += `${CHECKOUT_PAGE.WA_MSG_NEIGHBORHOOD} ${form.barrio}\n\n`;
+    msg += `${CHECKOUT_PAGE.WA_MSG_ORDER_TITLE}\n`;
     items.forEach((item) => {
       msg += `• ${item.quantity}x ${item.product.name} - ${formatPrice(item.product.price * item.quantity)}\n`;
     });
-    msg += `\n💰 Subtotal: ${formatPrice(totalPrice)}\n`;
-    msg += `🛵 Domicilio: ${formatPrice(deliveryFee)}\n`;
-    msg += `💵 *TOTAL: ${formatPrice(total)}*\n\n`;
-    msg += `💳 Forma de pago: ${form.formaPago === 'efectivo' ? 'Efectivo' : 'Transferencia'}\n`;
+    msg += `\n${CHECKOUT_PAGE.WA_MSG_SUBTOTAL} ${formatPrice(totalPrice)}\n`;
+    msg += `${CHECKOUT_PAGE.WA_MSG_DELIVERY} ${formatPrice(deliveryFee)}\n`;
+    msg += `${CHECKOUT_PAGE.WA_MSG_TOTAL} ${formatPrice(total)}*\n\n`;
+    msg += `${CHECKOUT_PAGE.WA_MSG_PAYMENT} ${form.formaPago === 'efectivo' ? PAYMENT_METHODS.CASH_LABEL : PAYMENT_METHODS.TRANSFER_LABEL}\n`;
     if (form.notas) {
-      msg += `\n📝 Notas: ${form.notas}\n`;
+      msg += `\n${CHECKOUT_PAGE.WA_MSG_NOTES} ${form.notas}\n`;
     }
-    msg += `\n⏳ *Estado: PENDIENTE DE CONFIRMACION*`;
-    msg += `\nEl cliente espera confirmacion de su pedido.`;
+    msg += `\n${CHECKOUT_PAGE.WA_MSG_STATUS}`;
+    msg += `\n${CHECKOUT_PAGE.WA_MSG_AWAITING}`;
     return encodeURIComponent(msg);
   };
 
@@ -119,7 +121,7 @@ export default function CheckoutPage() {
       window.open(`https://wa.me/${whatsapp}?text=${message}`, '_blank');
       setOrderSent(true);
     } catch {
-      toast.error('Error al crear el pedido. Intenta nuevamente.');
+      toast.error(CHECKOUT_PAGE.ERROR_CREATE_ORDER);
     } finally {
       setIsSubmitting(false);
     }
@@ -136,14 +138,14 @@ export default function CheckoutPage() {
         <div className="text-center p-8">
           <p className="text-gray-400" style={{ fontSize: '48px' }}>🛒</p>
           <h2 className="text-gray-900 mt-4 mb-2" style={{ fontSize: '24px', fontWeight: 700 }}>
-            No tienes productos en el carrito
+            {CHECKOUT_PAGE.EMPTY_CART_TITLE}
           </h2>
           <Link
             href="/menu"
             className="inline-flex items-center gap-2 mt-4 bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-xl transition-all"
             style={{ fontWeight: 600 }}
           >
-            Ir al Menu
+            {CHECKOUT_PAGE.EMPTY_CART_CTA}
           </Link>
         </div>
       </div>
@@ -162,14 +164,14 @@ export default function CheckoutPage() {
             <Clock size={40} className="text-orange-600" />
           </div>
           <h2 className="text-gray-900 mb-2" style={{ fontSize: '28px', fontWeight: 700 }}>
-            Pedido Enviado
+            {CHECKOUT_PAGE.ORDER_SENT_TITLE}
           </h2>
           <p className="text-gray-500 mb-4">
-            Tu pedido ha sido registrado y esta pendiente de confirmacion.
+            {CHECKOUT_PAGE.ORDER_SENT_DESCRIPTION}
           </p>
 
           <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm mb-6">
-            <p className="text-gray-500 mb-1" style={{ fontSize: '14px' }}>Tu numero de pedido es:</p>
+            <p className="text-gray-500 mb-1" style={{ fontSize: '14px' }}>{CHECKOUT_PAGE.ORDER_NUMBER_LABEL}</p>
             <div className="flex items-center justify-center gap-2">
               <span className="text-orange-600" style={{ fontSize: '42px', fontWeight: 800 }}>
                 #{createdOrder.orderNumber}
@@ -177,7 +179,7 @@ export default function CheckoutPage() {
               <button
                 onClick={() => {
                   void navigator.clipboard.writeText(createdOrder.orderNumber.toString());
-                  toast.success('Numero copiado al portapapeles');
+                  toast.success(CHECKOUT_PAGE.ORDER_NUMBER_COPIED);
                 }}
                 className="p-2 text-gray-400 hover:text-gray-600"
               >
@@ -185,19 +187,19 @@ export default function CheckoutPage() {
               </button>
             </div>
             <p className="text-gray-400 mt-2" style={{ fontSize: '13px' }}>
-              Guarda este numero para dar seguimiento a tu pedido
+              {CHECKOUT_PAGE.ORDER_NUMBER_SAVE_HINT}
             </p>
           </div>
 
           {form.formaPago === 'transferencia' && (
             <div className="bg-blue-50 rounded-2xl p-5 border border-blue-200 mb-6 text-left">
               <p className="text-blue-800 mb-2" style={{ fontWeight: 600, fontSize: '14px' }}>
-                Datos para transferencia:
+                {CHECKOUT_PAGE.TRANSFER_DATA_TITLE}
               </p>
               <div className="space-y-1 text-blue-700" style={{ fontSize: '14px' }}>
-                <p>Nequi: 300 123 4567 - Juan Lopez</p>
-                <p>Daviplata: 300 123 4567</p>
-                <p>Bancolombia Ahorros: 123-456789-00</p>
+                <p>{PAYMENT_DATA.NEQUI}</p>
+                <p>{PAYMENT_DATA.DAVIPLATA}</p>
+                <p>{PAYMENT_DATA.BANCOLOMBIA}</p>
               </div>
               <a
                 href={`https://wa.me/${whatsapp}?text=${encodeURIComponent(`Hola! Soy ${form.nombre}. Quiero enviar el comprobante de pago de mi pedido #${createdOrder.orderNumber} por ${formatPrice(total)}.`)}`}
@@ -206,7 +208,7 @@ export default function CheckoutPage() {
                 className="mt-3 flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white py-2.5 rounded-xl transition-all"
                 style={{ fontWeight: 600, fontSize: '14px' }}
               >
-                <MessageCircle size={18} /> Enviar Comprobante por WhatsApp
+                <MessageCircle size={18} /> {CHECKOUT_PAGE.SEND_RECEIPT_WHATSAPP}
               </a>
             </div>
           )}
@@ -218,7 +220,7 @@ export default function CheckoutPage() {
               style={{ fontWeight: 600 }}
               onClick={() => clearCart()}
             >
-              Ver Estado de mi Pedido
+              {CHECKOUT_PAGE.VIEW_ORDER_STATUS}
             </Link>
             <a
               href={`https://wa.me/${whatsapp}?text=${generateWhatsAppMessage(createdOrder.orderNumber)}`}
@@ -227,13 +229,13 @@ export default function CheckoutPage() {
               className="flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white py-3 rounded-xl transition-all"
               style={{ fontWeight: 600 }}
             >
-              <MessageCircle size={20} /> Abrir WhatsApp
+              <MessageCircle size={20} /> {CHECKOUT_PAGE.OPEN_WHATSAPP}
             </a>
             <button
               onClick={handleNewOrder}
               className="flex items-center justify-center gap-2 text-gray-500 hover:text-gray-900 py-3 rounded-xl transition-colors"
             >
-              Hacer Nuevo Pedido
+              {CHECKOUT_PAGE.NEW_ORDER}
             </button>
           </div>
         </motion.div>
@@ -254,9 +256,9 @@ export default function CheckoutPage() {
           </Link>
           <div>
             <h1 className="text-gray-900" style={{ fontSize: '32px', fontWeight: 700 }}>
-              Finalizar Pedido
+              {CHECKOUT_PAGE.PAGE_TITLE}
             </h1>
-            <p className="text-gray-500">Completa tus datos para enviar el pedido</p>
+            <p className="text-gray-500">{CHECKOUT_PAGE.PAGE_SUBTITLE}</p>
           </div>
         </div>
 
@@ -300,45 +302,45 @@ export default function CheckoutPage() {
                       <User size={20} className="text-orange-600" />
                     </div>
                     <div>
-                      <h3 className="text-gray-900" style={{ fontWeight: 600 }}>Datos Personales</h3>
-                      <p className="text-gray-500" style={{ fontSize: '14px' }}>Informacion del cliente</p>
+                      <h3 className="text-gray-900" style={{ fontWeight: 600 }}>{CHECKOUT_PAGE.STEP_1_TITLE}</h3>
+                      <p className="text-gray-500" style={{ fontSize: '14px' }}>{CHECKOUT_PAGE.STEP_1_SUBTITLE}</p>
                     </div>
                   </div>
 
                   <div className="space-y-4">
                     <div>
                       <label className="block text-gray-700 mb-1.5" style={{ fontSize: '14px' }}>
-                        Nombre completo *
+                        {CHECKOUT_PAGE.LABEL_FULL_NAME}
                       </label>
                       <input
                         type="text"
                         value={form.nombre}
                         onChange={(e) => updateForm('nombre', e.target.value)}
-                        placeholder="Ej: Juan Perez"
+                        placeholder={CHECKOUT_PAGE.PLACEHOLDER_NAME}
                         className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-400 transition-all"
                       />
                     </div>
                     <div>
                       <label className="block text-gray-700 mb-1.5" style={{ fontSize: '14px' }}>
-                        Cedula *
+                        {CHECKOUT_PAGE.LABEL_CEDULA}
                       </label>
                       <input
                         type="text"
                         value={form.cedula}
                         onChange={(e) => updateForm('cedula', e.target.value)}
-                        placeholder="Ej: 1234567890"
+                        placeholder={CHECKOUT_PAGE.PLACEHOLDER_CEDULA}
                         className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-400 transition-all"
                       />
                     </div>
                     <div>
                       <label className="block text-gray-700 mb-1.5" style={{ fontSize: '14px' }}>
-                        Telefono / WhatsApp *
+                        {CHECKOUT_PAGE.LABEL_PHONE}
                       </label>
                       <input
                         type="tel"
                         value={form.telefono}
                         onChange={(e) => updateForm('telefono', e.target.value)}
-                        placeholder="Ej: 300 123 4567"
+                        placeholder={CHECKOUT_PAGE.PLACEHOLDER_PHONE}
                         className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-400 transition-all"
                       />
                     </div>
@@ -351,7 +353,7 @@ export default function CheckoutPage() {
                       className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-6 py-3 rounded-xl transition-all"
                       style={{ fontWeight: 600 }}
                     >
-                      Siguiente <ArrowLeft size={18} className="rotate-180" />
+                      {COMMON_LABELS.NEXT} <ArrowLeft size={18} className="rotate-180" />
                     </button>
                   </div>
                 </motion.div>
@@ -370,34 +372,34 @@ export default function CheckoutPage() {
                       <MapPin size={20} className="text-orange-600" />
                     </div>
                     <div>
-                      <h3 className="text-gray-900" style={{ fontWeight: 600 }}>Direccion de Entrega</h3>
-                      <p className="text-gray-500" style={{ fontSize: '14px' }}>A donde llevamos tu pedido?</p>
+                      <h3 className="text-gray-900" style={{ fontWeight: 600 }}>{CHECKOUT_PAGE.STEP_2_TITLE}</h3>
+                      <p className="text-gray-500" style={{ fontSize: '14px' }}>{CHECKOUT_PAGE.STEP_2_SUBTITLE}</p>
                     </div>
                   </div>
 
                   <div className="space-y-4">
                     <div>
                       <label className="block text-gray-700 mb-1.5" style={{ fontSize: '14px' }}>
-                        Direccion completa *
+                        {CHECKOUT_PAGE.LABEL_ADDRESS}
                       </label>
                       <input
                         type="text"
                         value={form.direccion}
                         onChange={(e) => updateForm('direccion', e.target.value)}
-                        placeholder="Ej: Calle 45 #23-10, Apto 302"
+                        placeholder={CHECKOUT_PAGE.PLACEHOLDER_ADDRESS}
                         className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-400 transition-all"
                       />
                     </div>
                     <div>
                       <label className="block text-gray-700 mb-1.5" style={{ fontSize: '14px' }}>
-                        Barrio *
+                        {CHECKOUT_PAGE.LABEL_NEIGHBORHOOD}
                       </label>
                       <select
                         value={form.barrio}
                         onChange={(e) => updateForm('barrio', e.target.value)}
                         className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-400 transition-all"
                       >
-                        <option value="">Selecciona tu barrio</option>
+                        <option value="">{CHECKOUT_PAGE.SELECT_NEIGHBORHOOD}</option>
                         {activeZones.map((z) => (
                           <option key={z.id} value={z.name}>
                             {z.name} - Domicilio: {formatPrice(z.fee)}
@@ -407,12 +409,12 @@ export default function CheckoutPage() {
                     </div>
                     <div>
                       <label className="block text-gray-700 mb-1.5" style={{ fontSize: '14px' }}>
-                        Notas adicionales
+                        {CHECKOUT_PAGE.LABEL_NOTES}
                       </label>
                       <textarea
                         value={form.notas}
                         onChange={(e) => updateForm('notas', e.target.value)}
-                        placeholder="Ej: Timbre no funciona, llamar al llegar..."
+                        placeholder={CHECKOUT_PAGE.PLACEHOLDER_NOTES}
                         rows={3}
                         className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-400 transition-all resize-none"
                       />
@@ -424,7 +426,7 @@ export default function CheckoutPage() {
                       onClick={() => setStep(1)}
                       className="flex items-center gap-2 text-gray-600 hover:text-gray-900 px-4 py-3 rounded-xl transition-colors"
                     >
-                      <ArrowLeft size={18} /> Atras
+                      <ArrowLeft size={18} /> {COMMON_LABELS.BACK}
                     </button>
                     <button
                       onClick={() => setStep(3)}
@@ -432,7 +434,7 @@ export default function CheckoutPage() {
                       className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-6 py-3 rounded-xl transition-all"
                       style={{ fontWeight: 600 }}
                     >
-                      Siguiente <ArrowLeft size={18} className="rotate-180" />
+                      {COMMON_LABELS.NEXT} <ArrowLeft size={18} className="rotate-180" />
                     </button>
                   </div>
                 </motion.div>
@@ -451,8 +453,8 @@ export default function CheckoutPage() {
                       <CreditCard size={20} className="text-orange-600" />
                     </div>
                     <div>
-                      <h3 className="text-gray-900" style={{ fontWeight: 600 }}>Forma de Pago</h3>
-                      <p className="text-gray-500" style={{ fontSize: '14px' }}>Elige como deseas pagar</p>
+                      <h3 className="text-gray-900" style={{ fontWeight: 600 }}>{CHECKOUT_PAGE.STEP_3_TITLE}</h3>
+                      <p className="text-gray-500" style={{ fontSize: '14px' }}>{CHECKOUT_PAGE.STEP_3_SUBTITLE}</p>
                     </div>
                   </div>
 
@@ -473,8 +475,8 @@ export default function CheckoutPage() {
                         <Banknote size={24} />
                       </div>
                       <div className="text-left">
-                        <p className="text-gray-900" style={{ fontWeight: 600 }}>Efectivo</p>
-                        <p className="text-gray-500" style={{ fontSize: '13px' }}>Pago contra entrega</p>
+                        <p className="text-gray-900" style={{ fontWeight: 600 }}>{PAYMENT_METHODS.CASH_LABEL}</p>
+                        <p className="text-gray-500" style={{ fontSize: '13px' }}>{PAYMENT_METHODS.CASH_DESCRIPTION}</p>
                       </div>
                     </button>
                     <button
@@ -493,8 +495,8 @@ export default function CheckoutPage() {
                         <Smartphone size={24} />
                       </div>
                       <div className="text-left">
-                        <p className="text-gray-900" style={{ fontWeight: 600 }}>Transferencia</p>
-                        <p className="text-gray-500" style={{ fontSize: '13px' }}>Nequi / Daviplata / Bancolombia</p>
+                        <p className="text-gray-900" style={{ fontWeight: 600 }}>{PAYMENT_METHODS.TRANSFER_LABEL}</p>
+                        <p className="text-gray-500" style={{ fontSize: '13px' }}>{PAYMENT_METHODS.TRANSFER_DESCRIPTION}</p>
                       </div>
                     </button>
                   </div>
@@ -506,22 +508,22 @@ export default function CheckoutPage() {
                       className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6"
                     >
                       <p className="text-blue-800" style={{ fontWeight: 600, fontSize: '14px' }}>
-                        Datos para transferencia:
+                        {CHECKOUT_PAGE.TRANSFER_DATA_TITLE}
                       </p>
                       <div className="mt-2 space-y-1 text-blue-700" style={{ fontSize: '14px' }}>
-                        <p>Nequi: 300 123 4567 - Juan Lopez</p>
-                        <p>Daviplata: 300 123 4567</p>
-                        <p>Bancolombia Ahorros: 123-456789-00</p>
+                        <p>{PAYMENT_DATA.NEQUI}</p>
+                        <p>{PAYMENT_DATA.DAVIPLATA}</p>
+                        <p>{PAYMENT_DATA.BANCOLOMBIA}</p>
                       </div>
                       <p className="mt-2 text-blue-600" style={{ fontSize: '13px' }}>
-                        Al confirmar, podras enviar el comprobante por WhatsApp con tu numero de pedido.
+                        {CHECKOUT_PAGE.TRANSFER_RECEIPT_HINT}
                       </p>
                     </motion.div>
                   )}
 
                   {/* Order summary */}
                   <div className="bg-gray-50 rounded-xl p-4 mb-6">
-                    <h4 className="text-gray-900 mb-3" style={{ fontWeight: 600 }}>Resumen del Pedido</h4>
+                    <h4 className="text-gray-900 mb-3" style={{ fontWeight: 600 }}>{CHECKOUT_PAGE.ORDER_SUMMARY_TITLE}</h4>
                     <div className="space-y-2">
                       {items.map((item) => (
                         <div key={item.product.id} className="flex justify-between text-gray-600" style={{ fontSize: '14px' }}>
@@ -530,11 +532,11 @@ export default function CheckoutPage() {
                         </div>
                       ))}
                       <div className="border-t border-gray-200 pt-2 mt-2 flex justify-between text-gray-600" style={{ fontSize: '14px' }}>
-                        <span>Domicilio ({form.barrio || 'Selecciona barrio'})</span>
+                        <span>{COMMON_LABELS.DELIVERY} ({form.barrio || CHECKOUT_PAGE.SELECT_NEIGHBORHOOD_PLACEHOLDER})</span>
                         <span>{formatPrice(deliveryFee)}</span>
                       </div>
                       <div className="flex justify-between text-gray-900" style={{ fontWeight: 700, fontSize: '18px' }}>
-                        <span>Total</span>
+                        <span>{COMMON_LABELS.TOTAL}</span>
                         <span className="text-orange-600">{formatPrice(total)}</span>
                       </div>
                     </div>
@@ -542,17 +544,17 @@ export default function CheckoutPage() {
 
                   {/* Customer info summary */}
                   <div className="bg-gray-50 rounded-xl p-4 mb-6">
-                    <h4 className="text-gray-900 mb-3" style={{ fontWeight: 600 }}>Datos de Entrega</h4>
+                    <h4 className="text-gray-900 mb-3" style={{ fontWeight: 600 }}>{CHECKOUT_PAGE.DELIVERY_DATA_TITLE}</h4>
                     <div className="grid grid-cols-2 gap-2" style={{ fontSize: '14px' }}>
-                      <span className="text-gray-500">Nombre:</span>
+                      <span className="text-gray-500">{CUSTOMER_LABELS.NAME}</span>
                       <span className="text-gray-900">{form.nombre}</span>
-                      <span className="text-gray-500">Cedula:</span>
+                      <span className="text-gray-500">{CUSTOMER_LABELS.CEDULA}</span>
                       <span className="text-gray-900">{form.cedula}</span>
-                      <span className="text-gray-500">Telefono:</span>
+                      <span className="text-gray-500">{CUSTOMER_LABELS.PHONE}</span>
                       <span className="text-gray-900">{form.telefono}</span>
-                      <span className="text-gray-500">Direccion:</span>
+                      <span className="text-gray-500">{CUSTOMER_LABELS.ADDRESS}</span>
                       <span className="text-gray-900">{form.direccion}</span>
-                      <span className="text-gray-500">Barrio:</span>
+                      <span className="text-gray-500">{CUSTOMER_LABELS.NEIGHBORHOOD}</span>
                       <span className="text-gray-900">{form.barrio}</span>
                     </div>
                   </div>
@@ -563,10 +565,10 @@ export default function CheckoutPage() {
                       <Clock size={20} className="text-amber-600 shrink-0 mt-0.5" />
                       <div>
                         <p className="text-amber-800" style={{ fontWeight: 600, fontSize: '14px' }}>
-                          Verificacion manual de pedidos
+                          {CHECKOUT_PAGE.MANUAL_VERIFICATION_TITLE}
                         </p>
                         <p className="text-amber-700" style={{ fontSize: '13px' }}>
-                          Al enviar tu pedido, recibiras un numero de pedido. Nuestro equipo lo revisara y te confirmara por WhatsApp.
+                          {CHECKOUT_PAGE.MANUAL_VERIFICATION_DESCRIPTION}
                         </p>
                       </div>
                     </div>
@@ -577,7 +579,7 @@ export default function CheckoutPage() {
                       onClick={() => setStep(2)}
                       className="flex items-center gap-2 text-gray-600 hover:text-gray-900 px-4 py-3 rounded-xl transition-colors"
                     >
-                      <ArrowLeft size={18} /> Atras
+                      <ArrowLeft size={18} /> {COMMON_LABELS.BACK}
                     </button>
                     <button
                       onClick={() => void handleSendOrder()}
@@ -586,7 +588,7 @@ export default function CheckoutPage() {
                       style={{ fontWeight: 600 }}
                     >
                       <MessageCircle size={20} />
-                      {isSubmitting ? 'Enviando...' : 'Enviar Pedido'}
+                      {isSubmitting ? CHECKOUT_PAGE.SUBMITTING : CHECKOUT_PAGE.SUBMIT_ORDER}
                     </button>
                   </div>
                 </motion.div>
@@ -598,14 +600,14 @@ export default function CheckoutPage() {
           <div className="lg:col-span-1 hidden lg:block">
             <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm sticky top-24">
               <h3 className="text-gray-900 mb-4" style={{ fontSize: '16px', fontWeight: 600 }}>
-                Tu Pedido ({items.length})
+                {CHECKOUT_PAGE.SIDEBAR_TITLE} ({items.length})
               </h3>
               <div className="space-y-3 max-h-64 overflow-y-auto">
                 {items.map((item) => (
                   <div key={item.product.id} className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-lg bg-gray-100 overflow-hidden shrink-0">
                       <img
-                        src={item.product.imageUrl ?? 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400'}
+                        src={item.product.imageUrl ?? DEFAULT_PRODUCT_IMAGE}
                         alt={item.product.name}
                         className="w-full h-full object-cover"
                       />
@@ -619,15 +621,15 @@ export default function CheckoutPage() {
               </div>
               <div className="border-t border-gray-100 mt-4 pt-4">
                 <div className="flex justify-between text-gray-500 mb-1" style={{ fontSize: '14px' }}>
-                  <span>Subtotal</span>
+                  <span>{COMMON_LABELS.SUBTOTAL}</span>
                   <span>{formatPrice(totalPrice)}</span>
                 </div>
                 <div className="flex justify-between text-gray-500 mb-2" style={{ fontSize: '14px' }}>
-                  <span>Domicilio</span>
+                  <span>{COMMON_LABELS.DELIVERY}</span>
                   <span>{formatPrice(deliveryFee)}</span>
                 </div>
                 <div className="flex justify-between text-gray-900" style={{ fontWeight: 700, fontSize: '18px' }}>
-                  <span>Total</span>
+                  <span>{COMMON_LABELS.TOTAL}</span>
                   <span className="text-orange-600">{formatPrice(total)}</span>
                 </div>
               </div>
@@ -635,13 +637,13 @@ export default function CheckoutPage() {
               <div className="mt-4 p-3 bg-green-50 rounded-xl border border-green-100">
                 <div className="flex items-center gap-2 text-green-700 mb-1" style={{ fontWeight: 600, fontSize: '14px' }}>
                   <MessageCircle size={16} />
-                  WhatsApp del negocio
+                  {CHECKOUT_PAGE.SIDEBAR_WHATSAPP_TITLE}
                 </div>
                 <p className="text-green-600" style={{ fontSize: '13px' }}>
                   +{whatsapp.startsWith('57') ? `57 ${whatsapp.slice(2)}` : whatsapp}
                 </p>
                 <p className="text-green-500 mt-1" style={{ fontSize: '12px' }}>
-                  Tu pedido sera confirmado manualmente
+                  {CHECKOUT_PAGE.SIDEBAR_MANUAL_CONFIRM}
                 </p>
               </div>
             </div>

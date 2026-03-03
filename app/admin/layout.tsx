@@ -16,25 +16,26 @@ import {
 import { useAuth } from "@/context/AuthContext";
 import { useStore } from "@/context/StoreContext";
 import { orderService } from "@/services/order.service";
+import { ADMIN_LAYOUT } from '@/constants/admin/layout';
 
 const navItems = [
-  { href: "/admin", icon: LayoutDashboard, label: "Dashboard", exact: true },
+  { href: "/admin", icon: LayoutDashboard, label: ADMIN_LAYOUT.NAV_ITEMS.DASHBOARD, exact: true },
   {
     href: "/admin/pedidos",
     icon: ClipboardList,
-    label: "Pedidos",
+    label: ADMIN_LAYOUT.NAV_ITEMS.ORDERS,
     exact: false,
   },
   {
     href: "/admin/productos",
     icon: ShoppingBag,
-    label: "Productos",
+    label: ADMIN_LAYOUT.NAV_ITEMS.PRODUCTS,
     exact: false,
   },
   {
     href: "/admin/configuracion",
     icon: Settings,
-    label: "Configuracion",
+    label: ADMIN_LAYOUT.NAV_ITEMS.SETTINGS,
     exact: false,
   },
 ];
@@ -104,7 +105,7 @@ export default function AdminLayout({
               />
               <div>
                 <p className="text-gray-400" style={{ fontSize: "12px" }}>
-                  Admin Panel
+                  {ADMIN_LAYOUT.ADMIN_PANEL_LABEL}
                 </p>
               </div>
             </div>
@@ -148,7 +149,7 @@ export default function AdminLayout({
               <span
                 className={`w-2.5 h-2.5 rounded-full ${settings.isOpen ? "bg-green-400" : "bg-red-400"}`}
               />
-              {settings.isOpen ? "Negocio Abierto" : "Negocio Cerrado"}
+              {settings.isOpen ? ADMIN_LAYOUT.BUSINESS_OPEN : ADMIN_LAYOUT.BUSINESS_CLOSED}
             </button>
 
             <Link
@@ -156,7 +157,7 @@ export default function AdminLayout({
               className="flex items-center gap-2 px-4 py-2 text-gray-400 hover:text-white transition-colors"
               style={{ fontSize: "13px" }}
             >
-              <ChevronLeft size={16} /> Ver tienda
+              <ChevronLeft size={16} /> {ADMIN_LAYOUT.VIEW_STORE}
             </Link>
 
             <button
@@ -164,7 +165,7 @@ export default function AdminLayout({
               className="w-full flex items-center gap-2 px-4 py-2 text-gray-400 hover:text-red-400 transition-colors"
               style={{ fontSize: "13px" }}
             >
-              <LogOut size={16} /> Cerrar sesion
+              <LogOut size={16} /> {ADMIN_LAYOUT.LOGOUT}
             </button>
           </div>
         </aside>
@@ -176,13 +177,13 @@ export default function AdminLayout({
           <button onClick={() => setSidebarOpen(true)} className="p-1">
             <Menu size={24} />
           </button>
-          <span style={{ fontWeight: 700 }}>Admin</span>
+          <span style={{ fontWeight: 700 }}>{ADMIN_LAYOUT.ADMIN_TITLE}</span>
           {pendingCount > 0 && (
             <span
               className="bg-red-500 text-white px-2 py-0.5 rounded-full"
               style={{ fontSize: "11px", fontWeight: 600 }}
             >
-              {pendingCount} pendiente{pendingCount !== 1 ? "s" : ""}
+              {pendingCount} {ADMIN_LAYOUT.PENDING_SUFFIX}{pendingCount !== 1 ? 's' : ''}
             </span>
           )}
         </div>
@@ -195,7 +196,7 @@ export default function AdminLayout({
           }`}
           style={{ fontSize: "12px", fontWeight: 600 }}
         >
-          {settings.isOpen ? "Abierto" : "Cerrado"}
+          {settings.isOpen ? ADMIN_LAYOUT.OPEN : ADMIN_LAYOUT.CLOSED}
         </button>
       </div>
 
@@ -208,7 +209,7 @@ export default function AdminLayout({
           />
           <div className="absolute left-0 top-0 bottom-0 w-64 bg-gray-900 text-white flex flex-col">
             <div className="p-4 flex items-center justify-between border-b border-gray-800">
-              <span style={{ fontWeight: 700 }}>Menu Admin</span>
+              <span style={{ fontWeight: 700 }}>{ADMIN_LAYOUT.MOBILE_MENU_TITLE}</span>
               <button onClick={() => setSidebarOpen(false)}>
                 <X size={20} />
               </button>
@@ -227,7 +228,7 @@ export default function AdminLayout({
                 >
                   <item.icon size={20} />
                   <span style={{ fontSize: "14px" }}>{item.label}</span>
-                  {item.label === "Pedidos" && pendingCount > 0 && (
+                  {item.label === ADMIN_LAYOUT.NAV_ITEMS.ORDERS && pendingCount > 0 && (
                     <span
                       className="ml-auto bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center"
                       style={{ fontSize: "11px", fontWeight: 600 }}
@@ -245,14 +246,14 @@ export default function AdminLayout({
                 className="block text-gray-400 px-4 py-2"
                 style={{ fontSize: "13px" }}
               >
-                Ver tienda
+                {ADMIN_LAYOUT.VIEW_STORE}
               </Link>
               <button
                 onClick={handleLogout}
                 className="text-gray-400 px-4 py-2"
                 style={{ fontSize: "13px" }}
               >
-                Cerrar sesion
+                {ADMIN_LAYOUT.LOGOUT}
               </button>
             </div>
           </div>

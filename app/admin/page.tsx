@@ -25,6 +25,9 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import type { Order } from '@/types/order.types';
+import { ADMIN_DASHBOARD } from '@/constants/admin/dashboard';
+import { ADMIN_LAYOUT } from '@/constants/admin/layout';
+import { PRODUCT_COUNT } from '@/constants/shared';
 
 const formatPrice = (price: number) =>
   new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(price);
@@ -95,30 +98,30 @@ export default function AdminDashboardPage() {
 
   const stats = [
     {
-      label: 'Ventas Hoy',
+      label: ADMIN_DASHBOARD.SALES_TODAY,
       value: formatPrice(todayTotal),
-      sub: `${todayOrders.length} pedido(s)`,
+      sub: PRODUCT_COUNT(todayOrders.length),
       icon: DollarSign,
       color: 'bg-green-100 text-green-600',
     },
     {
-      label: 'Ventas del Mes',
+      label: ADMIN_DASHBOARD.SALES_MONTH,
       value: formatPrice(monthTotal),
-      sub: `${monthOrders.length} pedido(s)`,
+      sub: PRODUCT_COUNT(monthOrders.length),
       icon: TrendingUp,
       color: 'bg-blue-100 text-blue-600',
     },
     {
-      label: 'Pendientes',
+      label: ADMIN_DASHBOARD.PENDING,
       value: pendingOrders.length.toString(),
-      sub: 'Esperando confirmacion',
+      sub: ADMIN_DASHBOARD.PENDING_DESCRIPTION,
       icon: Clock,
       color: 'bg-yellow-100 text-yellow-600',
     },
     {
-      label: 'Total Pedidos',
+      label: ADMIN_DASHBOARD.TOTAL_ORDERS,
       value: orders.length.toString(),
-      sub: 'Historico',
+      sub: ADMIN_DASHBOARD.HISTORICAL,
       icon: ShoppingBag,
       color: 'bg-purple-100 text-purple-600',
     },
@@ -130,10 +133,10 @@ export default function AdminDashboardPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-gray-900" style={{ fontSize: '28px', fontWeight: 700 }}>
-            Dashboard
+            {ADMIN_DASHBOARD.TITLE}
           </h1>
           <p className="text-gray-500" style={{ fontSize: '14px' }}>
-            Resumen de ventas y operaciones
+            {ADMIN_DASHBOARD.SUBTITLE}
           </p>
         </div>
         <span
@@ -143,7 +146,7 @@ export default function AdminDashboardPage() {
           style={{ fontSize: '13px', fontWeight: 600 }}
         >
           <span className={`w-2 h-2 rounded-full ${settings.isOpen ? 'bg-green-500' : 'bg-red-500'}`} />
-          {settings.isOpen ? 'Abierto' : 'Cerrado'}
+          {settings.isOpen ? ADMIN_LAYOUT.OPEN : ADMIN_LAYOUT.CLOSED}
         </span>
       </div>
 
@@ -179,7 +182,7 @@ export default function AdminDashboardPage() {
       <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-gray-900" style={{ fontSize: '18px', fontWeight: 600 }}>
-            Resumen de Ventas
+            {ADMIN_DASHBOARD.SALES_SUMMARY_TITLE}
           </h2>
           <div className="flex bg-gray-100 rounded-xl p-1">
             <button
@@ -189,7 +192,7 @@ export default function AdminDashboardPage() {
               }`}
               style={{ fontSize: '13px', fontWeight: 500 }}
             >
-              Por Dia
+              {ADMIN_DASHBOARD.VIEW_BY_DAY}
             </button>
             <button
               onClick={() => setViewMode('mes')}
@@ -198,7 +201,7 @@ export default function AdminDashboardPage() {
               }`}
               style={{ fontSize: '13px', fontWeight: 500 }}
             >
-              Por Mes
+              {ADMIN_DASHBOARD.VIEW_BY_MONTH}
             </button>
           </div>
         </div>
@@ -227,10 +230,10 @@ export default function AdminDashboardPage() {
       {/* Quick stats row */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
-          { label: 'Confirmados', count: confirmedOrders.length, icon: CheckCircle, color: 'text-green-500' },
-          { label: 'Rechazados', count: rejectedOrders.length, icon: XCircle, color: 'text-red-500' },
-          { label: 'Pagados', count: paidOrders.length, icon: CreditCard, color: 'text-blue-500' },
-          { label: 'Entregados', count: deliveredOrders.length, icon: Package, color: 'text-purple-500' },
+          { label: ADMIN_DASHBOARD.CONFIRMED, count: confirmedOrders.length, icon: CheckCircle, color: 'text-green-500' },
+          { label: ADMIN_DASHBOARD.REJECTED, count: rejectedOrders.length, icon: XCircle, color: 'text-red-500' },
+          { label: ADMIN_DASHBOARD.PAID, count: paidOrders.length, icon: CreditCard, color: 'text-blue-500' },
+          { label: ADMIN_DASHBOARD.DELIVERED, count: deliveredOrders.length, icon: Package, color: 'text-purple-500' },
         ].map((s) => (
           <div key={s.label} className="bg-white rounded-xl p-4 border border-gray-100 flex items-center gap-3">
             <s.icon size={20} className={s.color} />
@@ -246,7 +249,7 @@ export default function AdminDashboardPage() {
       {pendingOrders.length > 0 && (
         <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
           <h2 className="text-gray-900 mb-4" style={{ fontSize: '18px', fontWeight: 600 }}>
-            Pedidos Pendientes
+            {ADMIN_DASHBOARD.PENDING_ORDERS_TITLE}
           </h2>
           <div className="space-y-3">
             {pendingOrders.slice(0, 5).map((order) => (
@@ -266,7 +269,7 @@ export default function AdminDashboardPage() {
                       {order.customerName}
                     </p>
                     <p className="text-gray-500" style={{ fontSize: '12px' }}>
-                      {order.items.length} producto(s) - {formatPrice(order.total)}
+                      {PRODUCT_COUNT(order.items.length)} - {formatPrice(order.total)}
                     </p>
                   </div>
                 </div>

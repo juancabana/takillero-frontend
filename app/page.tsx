@@ -7,14 +7,16 @@ import { motion } from 'motion/react';
 import { storeService } from '@/services/store.service';
 import { categoryService } from '@/services/category.service';
 import { BusinessClosed } from '@/components/BusinessClosed';
+import { HOME_PAGE } from '@/constants/pages/home';
 import type { StoreSettings } from '@/types/store.types';
 import type { Category } from '@/types/category.types';
 
-const FEATURES = [
-  { icon: Truck, title: 'Domicilio Rápido', desc: 'Entrega en 30-45 minutos a tu puerta' },
-  { icon: Clock, title: 'Abierto hasta tarde', desc: 'Viernes y sábados hasta la 1:00 AM' },
-  { icon: Star, title: 'Calidad Premium', desc: 'Ingredientes frescos todos los días' },
-];
+const FEATURE_ICONS = [Truck, Clock, Star];
+const FEATURES = HOME_PAGE.FEATURES.map((feat, i) => ({
+  icon: FEATURE_ICONS[i],
+  title: feat.title,
+  desc: feat.desc,
+}));
 
 export default function HomePage() {
   const [storeSettings, setStoreSettings] = useState<StoreSettings | null>(null);
@@ -54,24 +56,23 @@ export default function HomePage() {
                 style={{ fontSize: '14px', fontWeight: 500 }}
               >
                 <Truck size={16} />
-                Domicilios disponibles
+                {HOME_PAGE.BADGE_TEXT}
               </div>
               <h1
                 className="text-gray-900 mb-6"
                 style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)', fontWeight: 800, lineHeight: 1.1 }}
               >
-                El sabor que te{' '}
+                {HOME_PAGE.HERO_TITLE_PREFIX}{' '}
                 <span className="bg-gradient-to-r from-orange-500 to-red-600 bg-clip-text text-transparent">
-                  enamora
+                  {HOME_PAGE.HERO_TITLE_HIGHLIGHT}
                 </span>{' '}
-                en cada bocado
+                {HOME_PAGE.HERO_TITLE_SUFFIX}
               </h1>
               <p
                 className="text-gray-600 mb-8 max-w-lg"
                 style={{ fontSize: '18px', lineHeight: 1.7 }}
               >
-                Perros, hamburguesas, salchipapas y mucho más. Pide tu favorito y te lo llevamos
-                hasta la puerta de tu casa.
+                {HOME_PAGE.HERO_DESCRIPTION}
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link
@@ -79,14 +80,14 @@ export default function HomePage() {
                   className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-2xl transition-all shadow-lg shadow-orange-200 hover:shadow-xl hover:shadow-orange-300"
                   style={{ fontWeight: 600, fontSize: '18px' }}
                 >
-                  Ver Menú <ArrowRight size={20} />
+                  {HOME_PAGE.CTA_MENU} <ArrowRight size={20} />
                 </Link>
                 <Link
                   href="/ubicacion"
                   className="inline-flex items-center gap-2 bg-white border-2 border-gray-200 text-gray-700 hover:border-orange-300 px-8 py-4 rounded-2xl transition-all"
                   style={{ fontWeight: 600, fontSize: '18px' }}
                 >
-                  <MapPin size={20} /> Ubicación
+                  <MapPin size={20} /> {HOME_PAGE.CTA_LOCATION}
                 </Link>
               </div>
             </motion.div>
@@ -100,8 +101,8 @@ export default function HomePage() {
               <div className="relative w-full aspect-square max-w-md mx-auto">
                 <div className="absolute inset-0 bg-gradient-to-br from-orange-400 to-red-500 rounded-full opacity-20 blur-3xl" />
                 <img
-                  src="https://images.unsplash.com/photo-1709736792234-af63e72f1037?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXN0JTIwZm9vZCUyMHJlc3RhdXJhbnQlMjBuZW9uJTIwbmlnaHR8ZW58MXx8fHwxNzcyMjM3MTgzfDA&ixlib=rb-4.1.0&q=80&w=1080"
-                  alt="Takillero comida"
+                  src={HOME_PAGE.HERO_IMAGE_URL}
+                  alt={HOME_PAGE.HERO_IMAGE_ALT}
                   className="relative w-full h-full object-cover rounded-3xl shadow-2xl"
                 />
               </div>
@@ -146,10 +147,10 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-gray-900 mb-3" style={{ fontSize: '32px', fontWeight: 700 }}>
-              Nuestro Menú
+              {HOME_PAGE.MENU_SECTION_TITLE}
             </h2>
             <p className="text-gray-500 max-w-md mx-auto">
-              Explora nuestras categorías y encuentra tu antojo perfecto
+              {HOME_PAGE.MENU_SECTION_SUBTITLE}
             </p>
           </div>
 
@@ -187,7 +188,7 @@ export default function HomePage() {
               className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-xl transition-all shadow-md shadow-orange-200"
               style={{ fontWeight: 600 }}
             >
-              Ver Menú Completo <ArrowRight size={18} />
+              {HOME_PAGE.CTA_FULL_MENU} <ArrowRight size={18} />
             </Link>
           </div>
         </div>

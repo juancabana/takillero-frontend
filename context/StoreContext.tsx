@@ -3,6 +3,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { storeService } from '@/services/store.service';
 import type { StoreSettings } from '@/types/store.types';
+import { STORE_DEFAULTS } from '@/constants/shared';
 
 interface StoreContextType {
   settings: StoreSettings;
@@ -13,10 +14,10 @@ interface StoreContextType {
 
 const DEFAULT_SETTINGS: StoreSettings = {
   id: '',
-  businessName: 'Takillero',
+  businessName: STORE_DEFAULTS.BUSINESS_NAME,
   isOpen: true,
   closedMessage: null,
-  whatsappNumber: '573001234567',
+  whatsappNumber: STORE_DEFAULTS.WHATSAPP_NUMBER,
   deliveryZones: [],
   schedule: [],
 };

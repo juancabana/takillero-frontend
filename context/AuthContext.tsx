@@ -2,6 +2,7 @@
 
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { authService } from '@/services/auth.service';
+import { STORAGE_KEYS } from '@/constants/shared';
 
 interface AuthContextType {
   token: string | null;
@@ -11,19 +12,18 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-const TOKEN_KEY = 'takillero_admin_token';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState<string | null>(() => {
     if (typeof window === 'undefined') return null;
-    return localStorage.getItem(TOKEN_KEY);
+    return localStorage.getItem(STORAGE_KEYS.ADMIN_TOKEN);
   });
 
   useEffect(() => {
     if (token) {
-      localStorage.setItem(TOKEN_KEY, token);
+      localStorage.setItem(STORAGE_KEYS.ADMIN_TOKEN, token);
     } else {
-      localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem(STORAGE_KEYS.ADMIN_TOKEN);
     }
   }, [token]);
 

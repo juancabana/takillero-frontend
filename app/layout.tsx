@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { Providers } from '@/components/Providers';
 import { AppShell } from '@/components/AppShell';
+import { APP_METADATA } from '@/constants/app';
 
 const inter = Inter({
   variable: '--font-inter',
@@ -12,11 +13,10 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: 'Takillero — Comida Rápida',
-    template: '%s | Takillero',
+    default: APP_METADATA.TITLE_DEFAULT,
+    template: APP_METADATA.TITLE_TEMPLATE,
   },
-  description:
-    'La mejor comida rápida colombiana. Perros calientes, hamburguesas, salchipapas y más.',
+  description: APP_METADATA.DESCRIPTION,
 };
 
 export default function RootLayout({

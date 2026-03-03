@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { MapPin, Phone, Clock, MessageCircle, Shield } from 'lucide-react';
+import { FOOTER } from '@/constants/components/footer';
 
 export function Footer() {
   return (
@@ -15,60 +16,54 @@ export function Footer() {
               />
             </div>
             <p className="text-gray-400">
-              La mejor comida rápida de la ciudad. Preparada con amor y los mejores ingredientes.
+              {FOOTER.DESCRIPTION}
             </p>
           </div>
 
           <div>
-            <h3 className="text-white mb-4">Contacto</h3>
+            <h3 className="text-white mb-4">{FOOTER.CONTACT_TITLE}</h3>
             <div className="space-y-3">
               <div className="flex items-center gap-3 text-gray-400">
                 <MapPin size={18} className="text-orange-400 shrink-0" />
-                <span>Cra 15 #45-20, Barrio Centro, Bogotá</span>
+                <span>{FOOTER.ADDRESS}</span>
               </div>
               <div className="flex items-center gap-3 text-gray-400">
                 <Phone size={18} className="text-orange-400 shrink-0" />
-                <span>+57 300 123 4567</span>
+                <span>{FOOTER.PHONE}</span>
               </div>
               <a
-                href="https://wa.me/573001234567"
+                href={FOOTER.WHATSAPP_HREF}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 text-green-400 hover:text-green-300 transition-colors"
               >
                 <MessageCircle size={18} className="shrink-0" />
-                <span>WhatsApp: 300 123 4567</span>
+                <span>{FOOTER.WHATSAPP_LABEL}</span>
               </a>
             </div>
           </div>
 
           <div>
-            <h3 className="text-white mb-4">Horarios</h3>
+            <h3 className="text-white mb-4">{FOOTER.SCHEDULE_TITLE}</h3>
             <div className="space-y-2 text-gray-400">
-              <div className="flex items-center gap-3">
-                <Clock size={18} className="text-orange-400 shrink-0" />
-                <span>Lun - Jue: 4:00 PM - 11:00 PM</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Clock size={18} className="text-orange-400 shrink-0" />
-                <span>Vie - Sáb: 4:00 PM - 1:00 AM</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Clock size={18} className="text-orange-400 shrink-0" />
-                <span>Domingos: 12:00 PM - 10:00 PM</span>
-              </div>
+              {FOOTER.SCHEDULE.map((item) => (
+                <div key={item} className="flex items-center gap-3">
+                  <Clock size={18} className="text-orange-400 shrink-0" />
+                  <span>{item}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
 
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-500 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <p>© 2026 Takillero. Todos los derechos reservados.</p>
+          <p>{FOOTER.COPYRIGHT}</p>
           <Link
             href="/admin/login"
             className="inline-flex items-center gap-1 text-gray-600 hover:text-orange-400 transition-colors"
             style={{ fontSize: '13px' }}
           >
-            <Shield size={14} /> Admin
+            <Shield size={14} /> {FOOTER.ADMIN_LINK_LABEL}
           </Link>
         </div>
       </div>

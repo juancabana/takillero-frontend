@@ -6,6 +6,8 @@ import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft, ArrowRight } from 'lucide-
 import { motion, AnimatePresence } from 'motion/react';
 import { useCart } from '@/context/CartContext';
 import { useStore } from '@/context/StoreContext';
+import { CART_PAGE } from '@/constants/pages/cart';
+import { COMMON_LABELS, DEFAULT_PRODUCT_IMAGE } from '@/constants/shared';
 
 const formatPrice = (price: number) =>
   new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(price);
@@ -22,17 +24,17 @@ export default function CartPage() {
             <ShoppingBag size={40} className="text-orange-400" />
           </div>
           <h2 className="text-gray-900 mb-2" style={{ fontSize: '24px', fontWeight: 700 }}>
-            Tu carrito está vacío
+            {CART_PAGE.EMPTY_TITLE}
           </h2>
           <p className="text-gray-500 mb-6">
-            Agrega productos del menú para empezar tu pedido
+            {CART_PAGE.EMPTY_DESCRIPTION}
           </p>
           <Link
             href="/menu"
             className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-xl transition-all shadow-md shadow-orange-200"
             style={{ fontWeight: 600 }}
           >
-            <ArrowLeft size={18} /> Ver Menú
+            <ArrowLeft size={18} /> {CART_PAGE.EMPTY_CTA}
           </Link>
         </div>
       </div>
@@ -51,7 +53,7 @@ export default function CartPage() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-gray-900" style={{ fontSize: '32px', fontWeight: 700 }}>
-              Tu Carrito
+              {CART_PAGE.TITLE}
             </h1>
             <p className="text-gray-500">{items.length} producto(s)</p>
           </div>
@@ -59,7 +61,7 @@ export default function CartPage() {
             href="/menu"
             className="text-orange-500 hover:text-orange-600 flex items-center gap-1"
           >
-            <ArrowLeft size={18} /> Seguir comprando
+            <ArrowLeft size={18} /> {CART_PAGE.CONTINUE_SHOPPING}
           </Link>
         </div>
 
@@ -77,7 +79,7 @@ export default function CartPage() {
                   className="bg-white rounded-2xl p-4 flex gap-4 border border-gray-100 shadow-sm"
                 >
                   <img
-                    src={item.product.imageUrl ?? 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400'}
+                    src={item.product.imageUrl ?? DEFAULT_PRODUCT_IMAGE}
                     alt={item.product.name}
                     className="w-24 h-24 rounded-xl object-cover shrink-0"
                   />
@@ -128,22 +130,22 @@ export default function CartPage() {
           <div className="lg:col-span-1">
             <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm sticky top-24">
               <h3 className="text-gray-900 mb-4" style={{ fontSize: '18px', fontWeight: 600 }}>
-                Resumen del Pedido
+                {CART_PAGE.ORDER_SUMMARY}
               </h3>
               <div className="space-y-3 mb-4">
                 <div className="flex justify-between text-gray-600">
-                  <span>Subtotal</span>
+                  <span>{COMMON_LABELS.SUBTOTAL}</span>
                   <span>{formatPrice(totalPrice)}</span>
                 </div>
                 <div className="flex justify-between text-gray-600">
-                  <span>Domicilio (desde)</span>
+                  <span>{CART_PAGE.DELIVERY_FROM}</span>
                   <span>{formatPrice(domicilio)}</span>
                 </div>
                 <div
                   className="border-t border-gray-100 pt-3 flex justify-between text-gray-900"
                   style={{ fontWeight: 700, fontSize: '18px' }}
                 >
-                  <span>Total</span>
+                  <span>{COMMON_LABELS.TOTAL}</span>
                   <span className="text-orange-600">{formatPrice(total)}</span>
                 </div>
               </div>
@@ -153,7 +155,7 @@ export default function CartPage() {
                 className="w-full flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white py-3.5 rounded-xl transition-all shadow-md shadow-orange-200"
                 style={{ fontWeight: 600 }}
               >
-                Realizar Pedido <ArrowRight size={18} />
+                {CART_PAGE.PLACE_ORDER} <ArrowRight size={18} />
               </Link>
             </div>
           </div>

@@ -2,6 +2,7 @@
 
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import type { Product } from '@/types/product.types';
+import { STORAGE_KEYS } from '@/constants/shared';
 
 export interface CartItem {
   product: Product;
@@ -19,13 +20,12 @@ interface CartContextType {
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
-const CART_KEY = 'takillero_cart';
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>(() => {
     if (typeof window === 'undefined') return [];
     try {
-      const stored = localStorage.getItem(CART_KEY);
+      const stored = localStorage.getItem(STORAGE_KEYS.CART);
       return stored ? (JSON.parse(stored) as CartItem[]) : [];
     } catch {
       return [];
@@ -33,7 +33,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   });
 
   useEffect(() => {
-    localStorage.setItem(CART_KEY, JSON.stringify(items));
+    localStorage.setItem(STORAGE_KEYS.CART, JSON.stringify(items));
   }, [items]);
 
   const addToCart = useCallback((product: Product) => {
