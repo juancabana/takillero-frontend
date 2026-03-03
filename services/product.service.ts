@@ -2,10 +2,16 @@ import { apiFetch } from './api.client';
 import { API_ENDPOINTS } from '@/constants/api';
 import type { Product } from '@/types/product.types';
 
+/** Coerce decimal strings (from Postgres) to numbers */
+function normalizeProduct(p: Product): Product {
+  return { ...p, price: Number(p.price) };
+}
+
 export const productService = {
-  getProducts(categoryId?: string): Promise<Product[]> {
+  async getProducts(categoryId?: string): Promise<Product[]> {
     const query = categoryId ? `?categoryId=${categoryId}` : '';
-    return apiFetch<Product[]>(`${API_ENDPOINTS.PRODUCTS.LIST}${query}`);
+    const products = await apiFetch<Product[]>(`${API_ENDPOINTS.PRODUCTS.LIST}${query}`);
+    return products.map(normalizeProduct);
   },
 
   createProduct(data: Partial<Product>, token: string): Promise<Product> {

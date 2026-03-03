@@ -5,6 +5,12 @@ export interface DeliveryZone {
   active: boolean;
 }
 
+export interface StoreSchedule {
+  days: string;
+  open: string;
+  close: string;
+}
+
 export interface StoreSettings {
   id: string;
   businessName: string;
@@ -12,4 +18,5 @@ export interface StoreSettings {
   closedMessage: string | null;
   whatsappNumber: string | null;
   deliveryZones: DeliveryZone[];
+  schedule: StoreSchedule[];
 }

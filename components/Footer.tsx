@@ -8,10 +8,11 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl flex items-center justify-center">
-                <span style={{ fontSize: '20px' }}>🔥</span>
-              </div>
-              <span style={{ fontSize: '20px', fontWeight: 700 }}>Takillero</span>
+              <img
+                src="/logo.svg"
+                alt="Takillero"
+                className="w-32 h-20 rounded-xl"
+              />
             </div>
             <p className="text-gray-400">
               La mejor comida rápida de la ciudad. Preparada con amor y los mejores ingredientes.

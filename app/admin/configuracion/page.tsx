@@ -1,12 +1,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Store, Truck, Plus, Trash2, Save, MessageCircle } from 'lucide-react';
+import { Store, Clock, Truck, Plus, Trash2, Save, MessageCircle } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useStore } from '@/context/StoreContext';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
-import type { DeliveryZone } from '@/types/store.types';
+import type { DeliveryZone, StoreSchedule } from '@/types/store.types';
 
 const formatPrice = (price: number) =>
   new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(price);
@@ -19,6 +19,7 @@ export default function AdminConfiguracionPage() {
   const [whatsappNumber, setWhatsappNumber] = useState(settings.whatsappNumber ?? '');
   const [closedMessage, setClosedMessage] = useState(settings.closedMessage ?? '');
   const [zones, setZones] = useState<DeliveryZone[]>(settings.deliveryZones);
+  const [schedule, setSchedule] = useState<StoreSchedule[]>(settings.schedule ?? []);
   const [newZoneName, setNewZoneName] = useState('');
   const [newZoneFee, setNewZoneFee] = useState('5000');
   const [isSaving, setIsSaving] = useState(false);
@@ -28,6 +29,7 @@ export default function AdminConfiguracionPage() {
     setWhatsappNumber(settings.whatsappNumber ?? '');
     setClosedMessage(settings.closedMessage ?? '');
     setZones(settings.deliveryZones);
+    setSchedule(settings.schedule ?? []);
   }, [settings]);
 
   const handleSaveGeneral = async () => {
@@ -53,6 +55,19 @@ export default function AdminConfiguracionPage() {
       toast.success(settings.isOpen ? 'Negocio cerrado' : 'Negocio abierto');
     } catch {
       toast.error('Error al cambiar el estado');
+    }
+  };
+
+  const handleSaveSchedule = async () => {
+    if (!token) return;
+    setIsSaving(true);
+    try {
+      await updateSettings({ schedule }, token);
+      toast.success('Horarios guardados');
+    } catch {
+      toast.error('Error al guardar los horarios');
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -205,6 +220,74 @@ export default function AdminConfiguracionPage() {
           style={{ fontSize: '14px', fontWeight: 600 }}
         >
           <Save size={16} /> {isSaving ? 'Guardando...' : 'Guardar'}
+        </button>
+      </div>
+
+      {/* Schedule */}
+      <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+            <Clock size={20} className="text-blue-600" />
+          </div>
+          <div>
+            <h2 className="text-gray-900" style={{ fontWeight: 600 }}>Horarios</h2>
+            <p className="text-gray-500" style={{ fontSize: '14px' }}>Configura el horario del negocio</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-3 gap-2 mb-2">
+          <span className="text-gray-400" style={{ fontSize: '12px', fontWeight: 600 }}>DIAS</span>
+          <span className="text-gray-400" style={{ fontSize: '12px', fontWeight: 600 }}>APERTURA</span>
+          <span className="text-gray-400" style={{ fontSize: '12px', fontWeight: 600 }}>CIERRE</span>
+        </div>
+        <div className="space-y-2 mb-4">
+          {schedule.map((s, i) => (
+            <div key={i} className="grid grid-cols-3 gap-2 items-center">
+              <input
+                type="text"
+                value={s.days}
+                onChange={(e) => {
+                  const ns = [...schedule];
+                  ns[i] = { ...s, days: e.target.value };
+                  setSchedule(ns);
+                }}
+                className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg"
+                style={{ fontSize: '14px' }}
+                placeholder="Ej: Lunes - Viernes"
+              />
+              <input
+                type="time"
+                value={s.open}
+                onChange={(e) => {
+                  const ns = [...schedule];
+                  ns[i] = { ...s, open: e.target.value };
+                  setSchedule(ns);
+                }}
+                className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg"
+                style={{ fontSize: '14px' }}
+              />
+              <input
+                type="time"
+                value={s.close}
+                onChange={(e) => {
+                  const ns = [...schedule];
+                  ns[i] = { ...s, close: e.target.value };
+                  setSchedule(ns);
+                }}
+                className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg"
+                style={{ fontSize: '14px' }}
+              />
+            </div>
+          ))}
+        </div>
+
+        <button
+          onClick={() => void handleSaveSchedule()}
+          disabled={isSaving}
+          className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-300 text-white px-5 py-2.5 rounded-xl transition-all"
+          style={{ fontSize: '14px', fontWeight: 600 }}
+        >
+          <Save size={16} /> {isSaving ? 'Guardando...' : 'Guardar Horarios'}
         </button>
       </div>
 

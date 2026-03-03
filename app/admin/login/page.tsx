@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { Lock, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { motion } from 'motion/react';
@@ -15,12 +15,10 @@ export default function AdminLoginPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (isAuthenticated) {
-      router.replace('/admin');
-    }
+    if (isAuthenticated) router.replace('/admin');
   }, [isAuthenticated, router]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
     setIsLoading(true);
@@ -42,9 +40,11 @@ export default function AdminLoginPage() {
         className="w-full max-w-md"
       >
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <span style={{ fontSize: '28px' }}>🔥</span>
-          </div>
+          <img
+            src="/logo.svg"
+            alt="Takillero"
+            className="w-44 h-24 rounded-2xl mx-auto mb-4"
+          />
           <h1 className="text-white mb-2" style={{ fontSize: '28px', fontWeight: 700 }}>
             Panel Administrativo
           </h1>

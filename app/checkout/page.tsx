@@ -105,14 +105,8 @@ export default function CheckoutPage() {
         customerBarrio: form.barrio,
         paymentMethod: form.formaPago,
         notes: form.notas || undefined,
-        subtotal: totalPrice,
-        deliveryFee,
-        total,
         items: items.map((i) => ({
           productId: i.product.id,
-          name: i.product.name,
-          price: i.product.price,
-          imageUrl: i.product.imageUrl ?? undefined,
           quantity: i.quantity,
         })),
       };

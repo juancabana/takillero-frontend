@@ -51,6 +51,8 @@ export default function AdminPedidosPage() {
 
   useEffect(() => {
     void fetchOrders();
+    const interval = setInterval(() => void fetchOrders(), 30_000);
+    return () => clearInterval(interval);
   }, [fetchOrders]);
 
   const filteredOrders = orders.filter((o) => {

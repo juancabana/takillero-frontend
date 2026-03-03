@@ -2,7 +2,7 @@
 
 import React, { Suspense, useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { Search, ShoppingCart, Plus } from 'lucide-react';
+import { Search, ShoppingCart, Plus, Minus } from 'lucide-react';
 import { motion } from 'motion/react';
 import { productService } from '@/services/product.service';
 import { categoryService } from '@/services/category.service';
@@ -14,7 +14,7 @@ const formatPrice = (price: number) =>
   new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(price);
 
 function ProductCard({ product }: { product: Product }) {
-  const { addToCart, items } = useCart();
+  const { addToCart, removeFromCart, updateQuantity, items } = useCart();
   const inCart = items.find((i) => i.product.id === product.id);
 
   return (
@@ -48,21 +48,47 @@ function ProductCard({ product }: { product: Product }) {
           <span className="text-orange-600" style={{ fontSize: '18px', fontWeight: 700 }}>
             {formatPrice(product.price)}
           </span>
-          <button
-            onClick={() => addToCart(product)}
-            disabled={!product.isAvailable}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-xl transition-all ${
-              product.isAvailable
-                ? inCart
-                  ? 'bg-orange-100 text-orange-600 hover:bg-orange-200'
-                  : 'bg-orange-500 hover:bg-orange-600 text-white shadow-md shadow-orange-200'
-                : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-            }`}
-            style={{ fontWeight: 600, fontSize: '14px' }}
-          >
-            {inCart ? <ShoppingCart size={16} /> : <Plus size={16} />}
-            {inCart ? `(${inCart.quantity})` : 'Agregar'}
-          </button>
+
+          {inCart ? (
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() =>
+                  inCart.quantity === 1
+                    ? removeFromCart(product.id)
+                    : updateQuantity(product.id, inCart.quantity - 1)
+                }
+                className="w-8 h-8 rounded-lg flex items-center justify-center bg-orange-100 text-orange-600 hover:bg-orange-200 transition-colors"
+              >
+                <Minus size={16} />
+              </button>
+              <span
+                className="w-8 text-center text-orange-600"
+                style={{ fontWeight: 700, fontSize: '15px' }}
+              >
+                {inCart.quantity}
+              </span>
+              <button
+                onClick={() => updateQuantity(product.id, inCart.quantity + 1)}
+                className="w-8 h-8 rounded-lg flex items-center justify-center bg-orange-500 text-white hover:bg-orange-600 transition-colors shadow-sm"
+              >
+                <Plus size={16} />
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => addToCart(product)}
+              disabled={!product.isAvailable}
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl transition-all ${
+                product.isAvailable
+                  ? 'bg-orange-500 hover:bg-orange-600 text-white shadow-md shadow-orange-200'
+                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+              }`}
+              style={{ fontWeight: 600, fontSize: '14px' }}
+            >
+              <Plus size={16} />
+              Agregar
+            </button>
+          )}
         </div>
       </div>
     </motion.div>

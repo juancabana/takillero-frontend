@@ -2,7 +2,7 @@
 
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { storeService } from '@/services/store.service';
-import type { StoreSettings, DeliveryZone } from '@/types/store.types';
+import type { StoreSettings } from '@/types/store.types';
 
 interface StoreContextType {
   settings: StoreSettings;
@@ -18,6 +18,7 @@ const DEFAULT_SETTINGS: StoreSettings = {
   closedMessage: null,
   whatsappNumber: '573001234567',
   deliveryZones: [],
+  schedule: [],
 };
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);

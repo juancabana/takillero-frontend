@@ -44,8 +44,5 @@ export interface CreateOrderPayload {
   customerBarrio: string;
   paymentMethod: PaymentMethod;
   notes?: string;
-  items: OrderItem[];
-  subtotal: number;
-  deliveryFee: number;
-  total: number;
+  items: { productId: string; quantity: number }[];
 }
