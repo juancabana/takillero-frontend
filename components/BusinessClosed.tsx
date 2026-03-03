@@ -3,12 +3,7 @@
 import { Clock, XCircle } from 'lucide-react';
 import { motion } from 'motion/react';
 import type { StoreSettings } from '@/types/store.types';
-
-const DEFAULT_SCHEDULE = [
-  { days: 'Lun - Jue', open: '4:00 PM', close: '11:00 PM' },
-  { days: 'Vie - Sáb', open: '4:00 PM', close: '1:00 AM' },
-  { days: 'Domingos', open: '12:00 PM', close: '10:00 PM' },
-];
+import { BUSINESS_CLOSED } from '@/constants/components/business-closed';
 
 interface BusinessClosedProps {
   settings: StoreSettings;
@@ -34,19 +29,19 @@ export function BusinessClosed({ settings }: BusinessClosedProps) {
         </motion.div>
 
         <h1 className="text-white mb-3" style={{ fontSize: '32px', fontWeight: 700 }}>
-          Negocio Cerrado
+          {BUSINESS_CLOSED.TITLE}
         </h1>
         <p className="text-gray-300 mb-8" style={{ fontSize: '18px' }}>
-          {settings.closedMessage ?? 'Estamos cerrados por el momento.'}
+          {settings.closedMessage ?? BUSINESS_CLOSED.DEFAULT_MESSAGE}
         </p>
 
         <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left">
           <div className="flex items-center gap-2 text-orange-400 mb-4">
             <Clock size={20} />
-            <span style={{ fontWeight: 600 }}>Nuestro Horario</span>
+            <span style={{ fontWeight: 600 }}>{BUSINESS_CLOSED.SCHEDULE_TITLE}</span>
           </div>
           <div className="space-y-3">
-            {DEFAULT_SCHEDULE.map((s) => (
+            {BUSINESS_CLOSED.DEFAULT_SCHEDULE.map((s) => (
               <div
                 key={s.days}
                 className="flex justify-between items-center py-2 border-b border-white/10 last:border-0"
@@ -61,7 +56,7 @@ export function BusinessClosed({ settings }: BusinessClosedProps) {
         </div>
 
         <p className="text-gray-500 mt-6" style={{ fontSize: '14px' }}>
-          Vuelve pronto, te esperamos con los mejores sabores
+          {BUSINESS_CLOSED.FAREWELL_MESSAGE}
         </p>
       </div>
     </motion.div>

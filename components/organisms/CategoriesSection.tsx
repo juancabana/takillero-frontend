@@ -1,6 +1,6 @@
 import { Category } from '@/types/category.types';
 import { CategoryCard } from '@/components/molecules/CategoryCard';
-import { HOME_CONTENT } from '@/constants/ui';
+import { HOME_PAGE } from '@/constants/pages/home';
 
 interface CategoriesSectionProps {
   categories: Category[];
@@ -16,14 +16,14 @@ export function CategoriesSection({ categories }: CategoriesSectionProps) {
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-10">
           <h2 className="text-3xl md:text-4xl font-extrabold text-gray-800 mb-3">
-            {HOME_CONTENT.CATEGORIES_TITLE}
+            {HOME_PAGE.MENU_SECTION_TITLE}
           </h2>
-          <p className="text-gray-500 text-lg">{HOME_CONTENT.CATEGORIES_SUBTITLE}</p>
+          <p className="text-gray-500 text-lg">{HOME_PAGE.CATEGORIES_SUBTITLE_ALT}</p>
         </div>
 
         {categories.length === 0 ? (
           <p className="text-center text-gray-400 py-12">
-            No hay categorías disponibles en este momento.
+            {HOME_PAGE.CATEGORIES_EMPTY}
           </p>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 md:gap-6">

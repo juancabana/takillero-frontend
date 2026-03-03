@@ -18,16 +18,18 @@ import { orderService } from '@/services/order.service';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import type { Order, OrderStatus } from '@/types/order.types';
+import { ADMIN_ORDERS } from '@/constants/admin/orders';
+import { COMMON_LABELS, CUSTOMER_LABELS, PAYMENT_METHODS, PRODUCT_COUNT } from '@/constants/shared';
 
 const formatPrice = (price: number) =>
   new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(price);
 
 const statusConfig: Record<OrderStatus, { label: string; color: string; bg: string; icon: React.ElementType }> = {
-  pendiente: { label: 'Pendiente', color: 'text-yellow-700', bg: 'bg-yellow-100', icon: Clock },
-  confirmado: { label: 'Confirmado', color: 'text-blue-700', bg: 'bg-blue-100', icon: CheckCircle },
-  rechazado: { label: 'Rechazado', color: 'text-red-700', bg: 'bg-red-100', icon: XCircle },
-  pagado: { label: 'Pagado', color: 'text-green-700', bg: 'bg-green-100', icon: CreditCard },
-  entregado: { label: 'Entregado', color: 'text-purple-700', bg: 'bg-purple-100', icon: Package },
+  pendiente: { label: ADMIN_ORDERS.STATUS_PENDING, color: 'text-yellow-700', bg: 'bg-yellow-100', icon: Clock },
+  confirmado: { label: ADMIN_ORDERS.STATUS_CONFIRMED, color: 'text-blue-700', bg: 'bg-blue-100', icon: CheckCircle },
+  rechazado: { label: ADMIN_ORDERS.STATUS_REJECTED, color: 'text-red-700', bg: 'bg-red-100', icon: XCircle },
+  pagado: { label: ADMIN_ORDERS.STATUS_PAID, color: 'text-green-700', bg: 'bg-green-100', icon: CreditCard },
+  entregado: { label: ADMIN_ORDERS.STATUS_DELIVERED, color: 'text-purple-700', bg: 'bg-purple-100', icon: Package },
 };
 
 export default function AdminPedidosPage() {
@@ -45,7 +47,7 @@ export default function AdminPedidosPage() {
       const data = await orderService.getOrders(token);
       setOrders(data);
     } catch {
-      toast.error('Error al cargar pedidos');
+      toast.error(ADMIN_ORDERS.TOAST_LOAD_ERROR);
     }
   }, [token]);
 
@@ -71,7 +73,7 @@ export default function AdminPedidosPage() {
       const updated = await orderService.updateOrderStatus(id, status, token, rejectionReason);
       setOrders((prev) => prev.map((o) => (o.id === id ? updated : o)));
     } catch {
-      toast.error('Error al actualizar el pedido');
+      toast.error(ADMIN_ORDERS.TOAST_UPDATE_ERROR);
     }
   };
 
@@ -79,14 +81,14 @@ export default function AdminPedidosPage() {
     await updateStatus(order.id, 'confirmado');
     toast.success(`Pedido #${order.orderNumber} confirmado`);
     const msg = encodeURIComponent(
-      `Hola ${order.customerName}! Tu pedido #${order.orderNumber} ha sido *CONFIRMADO*. Estamos preparandolo. Total: ${formatPrice(order.total)}. Forma de pago: ${order.paymentMethod === 'efectivo' ? 'Efectivo' : 'Transferencia'}. Gracias por tu compra!`,
+      `Hola ${order.customerName}! Tu pedido #${order.orderNumber} ha sido *CONFIRMADO*. Estamos preparandolo. Total: ${formatPrice(order.total)}. Forma de pago: ${order.paymentMethod === 'efectivo' ? PAYMENT_METHODS.CASH_LABEL : PAYMENT_METHODS.TRANSFER_LABEL}. Gracias por tu compra!`,
     );
     window.open(`https://wa.me/${order.customerPhone.replace(/\D/g, '')}?text=${msg}`, '_blank');
   };
 
   const handleReject = async (orderId: string) => {
     if (!rejectReason.trim()) {
-      toast.error('Indica una razon para rechazar');
+      toast.error(ADMIN_ORDERS.TOAST_REJECTION_REASON_REQUIRED);
       return;
     }
     const order = orders.find((o) => o.id === orderId);
@@ -97,7 +99,7 @@ export default function AdminPedidosPage() {
       );
       window.open(`https://wa.me/${order.customerPhone.replace(/\D/g, '')}?text=${msg}`, '_blank');
     }
-    toast.info('Pedido rechazado');
+    toast.info(ADMIN_ORDERS.TOAST_REJECTED);
     setRejectingOrder(null);
     setRejectReason('');
   };
@@ -113,12 +115,12 @@ export default function AdminPedidosPage() {
   };
 
   const filterButtons: { value: 'todos' | OrderStatus; label: string }[] = [
-    { value: 'todos', label: 'Todos' },
-    { value: 'pendiente', label: 'Pendientes' },
-    { value: 'confirmado', label: 'Confirmados' },
-    { value: 'pagado', label: 'Pagados' },
-    { value: 'entregado', label: 'Entregados' },
-    { value: 'rechazado', label: 'Rechazados' },
+    { value: 'todos', label: ADMIN_ORDERS.FILTER_ALL },
+    { value: 'pendiente', label: ADMIN_ORDERS.FILTER_PENDING },
+    { value: 'confirmado', label: ADMIN_ORDERS.FILTER_CONFIRMED },
+    { value: 'pagado', label: ADMIN_ORDERS.FILTER_PAID },
+    { value: 'entregado', label: ADMIN_ORDERS.FILTER_DELIVERED },
+    { value: 'rechazado', label: ADMIN_ORDERS.FILTER_REJECTED },
   ];
 
   return (
@@ -138,7 +140,7 @@ export default function AdminPedidosPage() {
           <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
-            placeholder="Buscar por #pedido, nombre o telefono..."
+            placeholder={ADMIN_ORDERS.SEARCH_PLACEHOLDER}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-11 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-400 transition-all"
@@ -165,7 +167,7 @@ export default function AdminPedidosPage() {
         {filteredOrders.length === 0 ? (
           <div className="text-center py-16 bg-white rounded-2xl border border-gray-100">
             <Filter size={40} className="mx-auto text-gray-300 mb-4" />
-            <p className="text-gray-500">No hay pedidos para mostrar</p>
+            <p className="text-gray-500">{ADMIN_ORDERS.NO_ORDERS}</p>
           </div>
         ) : (
           filteredOrders.map((order) => {
@@ -202,7 +204,7 @@ export default function AdminPedidosPage() {
                           minute: '2-digit',
                         })}
                         {' - '}
-                        {order.items.length} producto(s)
+                        {PRODUCT_COUNT(order.items.length)}
                       </p>
                     </div>
                   </div>
@@ -242,14 +244,14 @@ export default function AdminPedidosPage() {
                               className="text-gray-500 mb-2"
                               style={{ fontSize: '12px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}
                             >
-                              Datos del Cliente
+                              {ADMIN_ORDERS.CUSTOMER_DATA_TITLE}
                             </h4>
                             <div className="space-y-1" style={{ fontSize: '14px' }}>
-                              <p><span className="text-gray-400">Nombre:</span> {order.customerName}</p>
-                              <p><span className="text-gray-400">Cedula:</span> {order.customerCedula}</p>
-                              <p><span className="text-gray-400">Telefono:</span> {order.customerPhone}</p>
-                              <p><span className="text-gray-400">Direccion:</span> {order.customerAddress}</p>
-                              <p><span className="text-gray-400">Barrio:</span> {order.customerBarrio}</p>
+                              <p><span className="text-gray-400">{CUSTOMER_LABELS.NAME}</span> {order.customerName}</p>
+                              <p><span className="text-gray-400">{CUSTOMER_LABELS.CEDULA}</span> {order.customerCedula}</p>
+                              <p><span className="text-gray-400">{CUSTOMER_LABELS.PHONE}</span> {order.customerPhone}</p>
+                              <p><span className="text-gray-400">{CUSTOMER_LABELS.ADDRESS}</span> {order.customerAddress}</p>
+                              <p><span className="text-gray-400">{CUSTOMER_LABELS.NEIGHBORHOOD}</span> {order.customerBarrio}</p>
                             </div>
                           </div>
 
@@ -259,7 +261,7 @@ export default function AdminPedidosPage() {
                               className="text-gray-500 mb-2"
                               style={{ fontSize: '12px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}
                             >
-                              Productos
+                              {ADMIN_ORDERS.PRODUCTS_TITLE}
                             </h4>
                             <div className="space-y-1" style={{ fontSize: '14px' }}>
                               {order.items.map((item) => (
@@ -270,11 +272,11 @@ export default function AdminPedidosPage() {
                               ))}
                               <div className="border-t border-gray-100 pt-1 mt-1">
                                 <div className="flex justify-between text-gray-400">
-                                  <span>Domicilio</span>
+                                  <span>{COMMON_LABELS.DELIVERY}</span>
                                   <span>{formatPrice(order.deliveryFee)}</span>
                                 </div>
                                 <div className="flex justify-between text-gray-900" style={{ fontWeight: 600 }}>
-                                  <span>Total</span>
+                                  <span>{COMMON_LABELS.TOTAL}</span>
                                   <span>{formatPrice(order.total)}</span>
                                 </div>
                               </div>
@@ -285,7 +287,7 @@ export default function AdminPedidosPage() {
                         {/* Payment & notes */}
                         <div className="mt-4 flex flex-wrap gap-3">
                           <span className="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-gray-100 text-gray-600" style={{ fontSize: '13px' }}>
-                            Pago: {order.paymentMethod === 'efectivo' ? 'Efectivo' : 'Transferencia'}
+                            Pago: {order.paymentMethod === 'efectivo' ? PAYMENT_METHODS.CASH_LABEL : PAYMENT_METHODS.TRANSFER_LABEL}
                           </span>
                           <span
                             className={`inline-flex items-center gap-1 px-3 py-1 rounded-lg ${
@@ -295,20 +297,20 @@ export default function AdminPedidosPage() {
                             }`}
                             style={{ fontSize: '13px' }}
                           >
-                            {order.paymentStatus === 'pagado' ? 'Pagado' : 'Pago pendiente'}
+                            {order.paymentStatus === 'pagado' ? COMMON_LABELS.PAID : COMMON_LABELS.PAYMENT_PENDING}
                           </span>
                         </div>
 
                         {order.notes && (
                           <div className="mt-3 p-3 bg-gray-50 rounded-xl" style={{ fontSize: '14px' }}>
-                            <span className="text-gray-400">Notas: </span>
+                            <span className="text-gray-400">{ADMIN_ORDERS.NOTES_PREFIX}</span>
                             <span className="text-gray-700">{order.notes}</span>
                           </div>
                         )}
 
                         {order.rejectionReason && (
                           <div className="mt-3 p-3 bg-red-50 rounded-xl text-red-700" style={{ fontSize: '14px' }}>
-                            <span className="text-red-500">Razon de rechazo: </span>
+                            <span className="text-red-500">{ADMIN_ORDERS.REJECTION_REASON_PREFIX}</span>
                             {order.rejectionReason}
                           </div>
                         )}
@@ -321,13 +323,13 @@ export default function AdminPedidosPage() {
                             className="mt-3 p-4 bg-red-50 rounded-xl border border-red-100"
                           >
                             <p className="text-red-700 mb-2" style={{ fontSize: '14px', fontWeight: 500 }}>
-                              Razon del rechazo:
+                              {ADMIN_ORDERS.REJECTION_FORM_LABEL}
                             </p>
                             <input
                               type="text"
                               value={rejectReason}
                               onChange={(e) => setRejectReason(e.target.value)}
-                              placeholder="Ej: Producto agotado, fuera de zona..."
+                              placeholder={ADMIN_ORDERS.REJECTION_PLACEHOLDER}
                               className="w-full px-3 py-2 bg-white border border-red-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-300 mb-2"
                               style={{ fontSize: '14px' }}
                             />
@@ -337,14 +339,14 @@ export default function AdminPedidosPage() {
                                 className="px-4 py-1.5 bg-red-500 text-white rounded-lg"
                                 style={{ fontSize: '13px', fontWeight: 600 }}
                               >
-                                Confirmar Rechazo
+                                {ADMIN_ORDERS.CONFIRM_REJECTION}
                               </button>
                               <button
                                 onClick={() => { setRejectingOrder(null); setRejectReason(''); }}
                                 className="px-4 py-1.5 text-gray-500"
                                 style={{ fontSize: '13px' }}
                               >
-                                Cancelar
+                                {COMMON_LABELS.CANCEL}
                               </button>
                             </div>
                           </motion.div>
@@ -359,14 +361,14 @@ export default function AdminPedidosPage() {
                                 className="flex items-center gap-1.5 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-xl transition-all"
                                 style={{ fontSize: '13px', fontWeight: 600 }}
                               >
-                                <CheckCircle size={16} /> Confirmar
+                                <CheckCircle size={16} /> {ADMIN_ORDERS.ACTION_CONFIRM}
                               </button>
                               <button
                                 onClick={() => setRejectingOrder(order.id)}
                                 className="flex items-center gap-1.5 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl transition-all"
                                 style={{ fontSize: '13px', fontWeight: 600 }}
                               >
-                                <XCircle size={16} /> Rechazar
+                                <XCircle size={16} /> {ADMIN_ORDERS.ACTION_REJECT}
                               </button>
                             </>
                           )}
@@ -378,7 +380,7 @@ export default function AdminPedidosPage() {
                                 className="flex items-center gap-1.5 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-xl transition-all"
                                 style={{ fontSize: '13px', fontWeight: 600 }}
                               >
-                                <CreditCard size={16} /> Marcar como Pagado
+                                <CreditCard size={16} /> {ADMIN_ORDERS.ACTION_MARK_PAID}
                               </button>
                             )}
 
@@ -388,7 +390,7 @@ export default function AdminPedidosPage() {
                               className="flex items-center gap-1.5 px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-xl transition-all"
                               style={{ fontSize: '13px', fontWeight: 600 }}
                             >
-                              <Package size={16} /> Marcar Entregado
+                              <Package size={16} /> {ADMIN_ORDERS.ACTION_MARK_DELIVERED}
                             </button>
                           )}
 

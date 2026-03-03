@@ -19,6 +19,8 @@ import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import type { Product } from '@/types/product.types';
 import type { Category } from '@/types/category.types';
+import { ADMIN_PRODUCTS } from '@/constants/admin/products';
+import { DEFAULT_PRODUCT_IMAGE } from '@/constants/shared';
 
 const formatPrice = (price: number) =>
   new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(price);
@@ -66,11 +68,11 @@ function ProductFormModal({
 
   const validate = (): boolean => {
     const newErrors: Partial<Record<keyof ProductFormData, string>> = {};
-    if (!form.name.trim()) newErrors.name = 'El nombre es requerido';
-    if (!form.description.trim()) newErrors.description = 'La descripcion es requerida';
+    if (!form.name.trim()) newErrors.name = ADMIN_PRODUCTS.VALIDATION_NAME_REQUIRED;
+    if (!form.description.trim()) newErrors.description = ADMIN_PRODUCTS.VALIDATION_DESCRIPTION_REQUIRED;
     if (!form.price || isNaN(Number(form.price)) || Number(form.price) <= 0)
-      newErrors.price = 'Ingresa un precio valido';
-    if (!form.categoryId) newErrors.categoryId = 'Selecciona una categoria';
+      newErrors.price = ADMIN_PRODUCTS.VALIDATION_PRICE_INVALID;
+    if (!form.categoryId) newErrors.categoryId = ADMIN_PRODUCTS.VALIDATION_CATEGORY_REQUIRED;
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -117,7 +119,7 @@ function ProductFormModal({
                 {form.imageUrl ? (
                   <img
                     src={form.imageUrl}
-                    alt="Vista previa"
+                    alt={ADMIN_PRODUCTS.FORM_IMAGE_PREVIEW_ALT}
                     className="w-32 h-32 rounded-xl object-cover border-2 border-gray-100"
                     onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                   />
@@ -131,13 +133,13 @@ function ProductFormModal({
               {/* Name */}
               <div>
                 <label className="block text-gray-700 mb-1" style={{ fontSize: '13px', fontWeight: 600 }}>
-                  Nombre del producto *
+                  {ADMIN_PRODUCTS.FORM_NAME_LABEL}
                 </label>
                 <input
                   type="text"
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  placeholder="Ej: Hamburguesa Premium"
+                  placeholder={ADMIN_PRODUCTS.FORM_PLACEHOLDER_NAME}
                   className={`w-full px-4 py-2.5 bg-gray-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-400 transition-all ${
                     errors.name ? 'border-red-300' : 'border-gray-200'
                   }`}
@@ -148,12 +150,12 @@ function ProductFormModal({
               {/* Description */}
               <div>
                 <label className="block text-gray-700 mb-1" style={{ fontSize: '13px', fontWeight: 600 }}>
-                  Descripcion *
+                  {ADMIN_PRODUCTS.FORM_DESCRIPTION_LABEL}
                 </label>
                 <textarea
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
-                  placeholder="Describe los ingredientes y preparacion..."
+                  placeholder={ADMIN_PRODUCTS.FORM_PLACEHOLDER_DESCRIPTION}
                   rows={3}
                   className={`w-full px-4 py-2.5 bg-gray-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-400 transition-all resize-none ${
                     errors.description ? 'border-red-300' : 'border-gray-200'
@@ -166,7 +168,7 @@ function ProductFormModal({
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-gray-700 mb-1" style={{ fontSize: '13px', fontWeight: 600 }}>
-                    Precio (COP) *
+                    {ADMIN_PRODUCTS.FORM_PRICE_LABEL}
                   </label>
                   <input
                     type="number"
@@ -182,7 +184,7 @@ function ProductFormModal({
                 </div>
                 <div>
                   <label className="block text-gray-700 mb-1" style={{ fontSize: '13px', fontWeight: 600 }}>
-                    Categoria *
+                    {ADMIN_PRODUCTS.FORM_CATEGORY_LABEL}
                   </label>
                   <select
                     value={form.categoryId}
@@ -191,7 +193,7 @@ function ProductFormModal({
                       errors.categoryId ? 'border-red-300' : 'border-gray-200'
                     }`}
                   >
-                    <option value="">Selecciona categoria</option>
+                    <option value="">{ADMIN_PRODUCTS.FORM_SELECT_CATEGORY}</option>
                     {categories.map((cat) => (
                       <option key={cat.id} value={cat.id}>
                         {cat.icon} {cat.name}
@@ -205,17 +207,17 @@ function ProductFormModal({
               {/* Image URL */}
               <div>
                 <label className="block text-gray-700 mb-1" style={{ fontSize: '13px', fontWeight: 600 }}>
-                  URL de imagen
+                  {ADMIN_PRODUCTS.FORM_IMAGE_URL_LABEL}
                 </label>
                 <input
                   type="url"
                   value={form.imageUrl}
                   onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
-                  placeholder="https://ejemplo.com/imagen.jpg"
+                  placeholder={ADMIN_PRODUCTS.FORM_PLACEHOLDER_IMAGE_URL}
                   className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-400 transition-all"
                 />
                 <p className="text-gray-400 mt-1" style={{ fontSize: '11px' }}>
-                  Opcional. Si no se proporciona, se usara una imagen por defecto.
+                  {ADMIN_PRODUCTS.FORM_IMAGE_URL_HINT}
                 </p>
               </div>
 
@@ -226,14 +228,14 @@ function ProductFormModal({
                   className="flex-1 px-4 py-2.5 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 transition-colors"
                   style={{ fontWeight: 500 }}
                 >
-                  Cancelar
+                  {ADMIN_PRODUCTS.FORM_CANCEL}
                 </button>
                 <button
                   type="submit"
                   className="flex-1 px-4 py-2.5 bg-orange-500 text-white rounded-xl hover:bg-orange-600 transition-colors shadow-md shadow-orange-200"
                   style={{ fontWeight: 600 }}
                 >
-                  {title.includes('Nuevo') ? 'Crear producto' : 'Guardar cambios'}
+                  {title.includes('Nuevo') ? ADMIN_PRODUCTS.FORM_CREATE : ADMIN_PRODUCTS.FORM_SAVE}
                 </button>
               </div>
             </form>
@@ -296,9 +298,9 @@ export default function AdminProductosPage() {
       );
       setProducts((prev) => [...prev, created]);
       setShowModal(false);
-      toast.success('Producto creado exitosamente');
+      toast.success(ADMIN_PRODUCTS.TOAST_CREATED);
     } catch {
-      toast.error('Error al crear el producto');
+      toast.error(ADMIN_PRODUCTS.TOAST_CREATE_ERROR);
     }
   };
 
@@ -318,9 +320,9 @@ export default function AdminProductosPage() {
       );
       setProducts((prev) => prev.map((p) => (p.id === updated.id ? updated : p)));
       setEditingProduct(null);
-      toast.success('Producto actualizado exitosamente');
+      toast.success(ADMIN_PRODUCTS.TOAST_UPDATED);
     } catch {
-      toast.error('Error al actualizar el producto');
+      toast.error(ADMIN_PRODUCTS.TOAST_UPDATE_ERROR);
     }
   };
 
@@ -333,21 +335,21 @@ export default function AdminProductosPage() {
         token,
       );
       setProducts((prev) => prev.map((p) => (p.id === updated.id ? updated : p)));
-      toast.success(product.isAvailable ? 'Producto marcado como agotado' : 'Producto disponible');
+      toast.success(product.isAvailable ? ADMIN_PRODUCTS.TOAST_SOLD_OUT : ADMIN_PRODUCTS.TOAST_AVAILABLE);
     } catch {
-      toast.error('Error al actualizar disponibilidad');
+      toast.error(ADMIN_PRODUCTS.TOAST_AVAILABILITY_ERROR);
     }
   };
 
   const handleDelete = async (product: Product) => {
     if (!token) return;
-    if (!confirm(`¿Eliminar "${product.name}"? Esta accion no se puede deshacer.`)) return;
+    if (!confirm(ADMIN_PRODUCTS.DELETE_CONFIRM(product.name))) return;
     try {
       await productService.deleteProduct(product.id, token);
       setProducts((prev) => prev.filter((p) => p.id !== product.id));
-      toast.success('Producto eliminado');
+      toast.success(ADMIN_PRODUCTS.TOAST_DELETED);
     } catch {
-      toast.error('Error al eliminar el producto');
+      toast.error(ADMIN_PRODUCTS.TOAST_DELETE_ERROR);
     }
   };
 
@@ -359,10 +361,10 @@ export default function AdminProductosPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-gray-900" style={{ fontSize: '28px', fontWeight: 700 }}>
-            Gestion de Productos
+            {ADMIN_PRODUCTS.TITLE}
           </h1>
           <p className="text-gray-500" style={{ fontSize: '14px' }}>
-            Agrega, edita y administra los productos del menu
+            {ADMIN_PRODUCTS.SUBTITLE}
           </p>
         </div>
         <button
@@ -370,22 +372,22 @@ export default function AdminProductosPage() {
           className="flex items-center gap-2 px-5 py-2.5 bg-orange-500 text-white rounded-xl hover:bg-orange-600 transition-colors shadow-md shadow-orange-200"
           style={{ fontWeight: 600, fontSize: '14px' }}
         >
-          <Plus size={18} /> Nuevo producto
+          <Plus size={18} /> {ADMIN_PRODUCTS.NEW_PRODUCT_BUTTON}
         </button>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-3">
         <div className="bg-white rounded-xl p-3 border border-gray-100 text-center">
-          <p className="text-gray-400" style={{ fontSize: '12px' }}>Total</p>
+          <p className="text-gray-400" style={{ fontSize: '12px' }}>{ADMIN_PRODUCTS.STATS_TOTAL}</p>
           <p className="text-gray-900" style={{ fontSize: '24px', fontWeight: 700 }}>{products.length}</p>
         </div>
         <div className="bg-white rounded-xl p-3 border border-green-100 text-center">
-          <p className="text-green-500" style={{ fontSize: '12px' }}>Disponibles</p>
+          <p className="text-green-500" style={{ fontSize: '12px' }}>{ADMIN_PRODUCTS.STATS_AVAILABLE}</p>
           <p className="text-green-600" style={{ fontSize: '24px', fontWeight: 700 }}>{activeCount}</p>
         </div>
         <div className="bg-white rounded-xl p-3 border border-red-100 text-center">
-          <p className="text-red-400" style={{ fontSize: '12px' }}>Agotados</p>
+          <p className="text-red-400" style={{ fontSize: '12px' }}>{ADMIN_PRODUCTS.STATS_SOLD_OUT}</p>
           <p className="text-red-500" style={{ fontSize: '24px', fontWeight: 700 }}>{disabledCount}</p>
         </div>
       </div>
@@ -395,7 +397,7 @@ export default function AdminProductosPage() {
         <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
         <input
           type="text"
-          placeholder="Buscar producto..."
+          placeholder={ADMIN_PRODUCTS.SEARCH_PLACEHOLDER}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-full pl-11 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-400 transition-all"
@@ -413,7 +415,7 @@ export default function AdminProductosPage() {
             }`}
             style={{ fontSize: '13px', fontWeight: 500 }}
           >
-            {s === 'all' ? 'Todos' : s === 'active' ? 'Disponibles' : 'Agotados'}
+            {s === 'all' ? ADMIN_PRODUCTS.FILTER_ALL : s === 'active' ? ADMIN_PRODUCTS.FILTER_AVAILABLE : ADMIN_PRODUCTS.FILTER_SOLD_OUT}
           </button>
         ))}
       </div>
@@ -427,7 +429,7 @@ export default function AdminProductosPage() {
           }`}
           style={{ fontSize: '13px', fontWeight: 500 }}
         >
-          Todos
+          {ADMIN_PRODUCTS.FILTER_ALL}
         </button>
         {categories.map((cat) => (
           <button
@@ -456,7 +458,7 @@ export default function AdminProductosPage() {
             <div className="flex items-start gap-4">
               <div className="relative shrink-0">
                 <img
-                  src={product.imageUrl ?? 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400'}
+                  src={product.imageUrl ?? DEFAULT_PRODUCT_IMAGE}
                   alt={product.name}
                   className={`w-16 h-16 rounded-xl object-cover ${!product.isAvailable ? 'opacity-60' : ''}`}
                 />
@@ -477,7 +479,7 @@ export default function AdminProductosPage() {
                       className="inline-flex items-center gap-1 bg-red-100 text-red-600 px-2 py-0.5 rounded-full"
                       style={{ fontSize: '11px', fontWeight: 600 }}
                     >
-                      Agotado
+                      {ADMIN_PRODUCTS.SOLD_OUT_BADGE}
                     </span>
                   )}
                 </div>
@@ -527,7 +529,7 @@ export default function AdminProductosPage() {
       {filteredProducts.length === 0 && (
         <div className="text-center py-16 bg-white rounded-2xl border border-gray-100">
           <Package size={40} className="mx-auto text-gray-300 mb-4" />
-          <p className="text-gray-500">No se encontraron productos</p>
+          <p className="text-gray-500">{ADMIN_PRODUCTS.NO_PRODUCTS}</p>
         </div>
       )}
 
@@ -537,7 +539,7 @@ export default function AdminProductosPage() {
         onClose={() => setShowModal(false)}
         onSubmit={(data) => void handleAdd(data)}
         initialData={{ ...emptyForm, categoryId: categories[0]?.id ?? '' }}
-        title="Nuevo Producto"
+        title={ADMIN_PRODUCTS.MODAL_TITLE_NEW}
         categories={categories}
       />
 
@@ -557,7 +559,7 @@ export default function AdminProductosPage() {
               }
             : emptyForm
         }
-        title="Editar Producto"
+        title={ADMIN_PRODUCTS.MODAL_TITLE_EDIT}
         categories={categories}
       />
     </div>

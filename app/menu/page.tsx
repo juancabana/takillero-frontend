@@ -7,6 +7,8 @@ import { motion } from 'motion/react';
 import { productService } from '@/services/product.service';
 import { categoryService } from '@/services/category.service';
 import { useCart } from '@/context/CartContext';
+import { MENU_PAGE } from '@/constants/pages/menu';
+import { DEFAULT_PRODUCT_IMAGE } from '@/constants/shared';
 import type { Product } from '@/types/product.types';
 import type { Category } from '@/types/category.types';
 
@@ -26,14 +28,14 @@ function ProductCard({ product }: { product: Product }) {
     >
       <div className="relative aspect-video overflow-hidden bg-gray-100">
         <img
-          src={product.imageUrl ?? 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400'}
+          src={product.imageUrl ?? DEFAULT_PRODUCT_IMAGE}
           alt={product.name}
           className="w-full h-full object-cover"
         />
         {!product.isAvailable && (
           <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
             <span className="bg-red-500 text-white px-3 py-1 rounded-full" style={{ fontSize: '13px', fontWeight: 600 }}>
-              Agotado
+              {MENU_PAGE.SOLD_OUT}
             </span>
           </div>
         )}
@@ -86,7 +88,7 @@ function ProductCard({ product }: { product: Product }) {
               style={{ fontWeight: 600, fontSize: '14px' }}
             >
               <Plus size={16} />
-              Agregar
+              {MENU_PAGE.ADD_TO_CART}
             </button>
           )}
         </div>
@@ -145,9 +147,9 @@ function MenuContent() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <h1 className="text-gray-900 mb-2" style={{ fontSize: '32px', fontWeight: 700 }}>
-            Nuestro Menú
+            {MENU_PAGE.TITLE}
           </h1>
-          <p className="text-gray-500">Elige tus favoritos y agrégalos al carrito</p>
+          <p className="text-gray-500">{MENU_PAGE.SUBTITLE}</p>
         </div>
 
         {/* Search */}
@@ -155,7 +157,7 @@ function MenuContent() {
           <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
-            placeholder="Buscar productos..."
+            placeholder={MENU_PAGE.SEARCH_PLACEHOLDER}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-400 transition-all"
@@ -173,7 +175,7 @@ function MenuContent() {
             }`}
             style={{ fontWeight: 500 }}
           >
-            Todos
+            {MENU_PAGE.ALL_CATEGORIES}
           </button>
           {categories.map((cat) => (
             <button
@@ -207,8 +209,8 @@ function MenuContent() {
           </div>
         ) : (
           <div className="text-center py-20">
-            <p className="text-gray-400" style={{ fontSize: '48px' }}>🔍</p>
-            <p className="text-gray-500 mt-4">No se encontraron productos</p>
+            <p className="text-gray-400" style={{ fontSize: '48px' }}>{MENU_PAGE.NO_PRODUCTS_EMOJI}</p>
+            <p className="text-gray-500 mt-4">{MENU_PAGE.NO_PRODUCTS_FOUND}</p>
           </div>
         )}
       </div>

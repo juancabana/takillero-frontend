@@ -7,6 +7,8 @@ import { useStore } from '@/context/StoreContext';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import type { DeliveryZone, StoreSchedule } from '@/types/store.types';
+import { ADMIN_SETTINGS } from '@/constants/admin/settings';
+import { COMMON_LABELS } from '@/constants/shared';
 
 const formatPrice = (price: number) =>
   new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(price);
@@ -40,9 +42,9 @@ export default function AdminConfiguracionPage() {
         { businessName, whatsappNumber, closedMessage },
         token,
       );
-      toast.success('Configuracion guardada');
+      toast.success(ADMIN_SETTINGS.TOAST_SAVED);
     } catch {
-      toast.error('Error al guardar la configuracion');
+      toast.error(ADMIN_SETTINGS.TOAST_SAVE_ERROR);
     } finally {
       setIsSaving(false);
     }
@@ -52,9 +54,9 @@ export default function AdminConfiguracionPage() {
     if (!token) return;
     try {
       await updateSettings({ isOpen: !settings.isOpen }, token);
-      toast.success(settings.isOpen ? 'Negocio cerrado' : 'Negocio abierto');
+      toast.success(settings.isOpen ? ADMIN_SETTINGS.TOAST_BUSINESS_CLOSED : ADMIN_SETTINGS.TOAST_BUSINESS_OPEN);
     } catch {
-      toast.error('Error al cambiar el estado');
+      toast.error(ADMIN_SETTINGS.TOAST_STATUS_ERROR);
     }
   };
 
@@ -63,9 +65,9 @@ export default function AdminConfiguracionPage() {
     setIsSaving(true);
     try {
       await updateSettings({ schedule }, token);
-      toast.success('Horarios guardados');
+      toast.success(ADMIN_SETTINGS.TOAST_SCHEDULE_SAVED);
     } catch {
-      toast.error('Error al guardar los horarios');
+      toast.error(ADMIN_SETTINGS.TOAST_SCHEDULE_ERROR);
     } finally {
       setIsSaving(false);
     }
@@ -76,9 +78,9 @@ export default function AdminConfiguracionPage() {
     setIsSaving(true);
     try {
       await updateSettings({ deliveryZones: zones }, token);
-      toast.success('Zonas de domicilio guardadas');
+      toast.success(ADMIN_SETTINGS.TOAST_ZONES_SAVED);
     } catch {
-      toast.error('Error al guardar las zonas');
+      toast.error(ADMIN_SETTINGS.TOAST_ZONES_ERROR);
     } finally {
       setIsSaving(false);
     }
@@ -86,7 +88,7 @@ export default function AdminConfiguracionPage() {
 
   const handleAddZone = () => {
     if (!newZoneName.trim()) {
-      toast.error('Ingresa el nombre del barrio/zona');
+      toast.error(ADMIN_SETTINGS.TOAST_ZONE_NAME_REQUIRED);
       return;
     }
     const newZone: DeliveryZone = {
@@ -118,10 +120,10 @@ export default function AdminConfiguracionPage() {
     <div className="space-y-6 max-w-3xl">
       <div>
         <h1 className="text-gray-900" style={{ fontSize: '28px', fontWeight: 700 }}>
-          Configuracion
+          {ADMIN_SETTINGS.TITLE}
         </h1>
         <p className="text-gray-500" style={{ fontSize: '14px' }}>
-          Configura los datos de tu negocio
+          {ADMIN_SETTINGS.SUBTITLE}
         </p>
       </div>
 
@@ -132,20 +134,20 @@ export default function AdminConfiguracionPage() {
             <Store size={20} className="text-orange-600" />
           </div>
           <div>
-            <h2 className="text-gray-900" style={{ fontWeight: 600 }}>Estado del Negocio</h2>
-            <p className="text-gray-500" style={{ fontSize: '14px' }}>Abre o cierra tu negocio</p>
+            <h2 className="text-gray-900" style={{ fontWeight: 600 }}>{ADMIN_SETTINGS.STORE_STATUS_TITLE}</h2>
+            <p className="text-gray-500" style={{ fontSize: '14px' }}>{ADMIN_SETTINGS.STORE_STATUS_SUBTITLE}</p>
           </div>
         </div>
 
         <div className="flex items-center justify-between p-4 rounded-xl bg-gray-50">
           <div>
             <p className="text-gray-900" style={{ fontWeight: 500 }}>
-              {settings.isOpen ? 'Negocio Abierto' : 'Negocio Cerrado'}
+              {settings.isOpen ? ADMIN_SETTINGS.BUSINESS_OPEN : ADMIN_SETTINGS.BUSINESS_CLOSED}
             </p>
             <p className="text-gray-400" style={{ fontSize: '13px' }}>
               {settings.isOpen
-                ? 'Los clientes pueden hacer pedidos'
-                : 'Los clientes veran el mensaje de negocio cerrado'}
+                ? ADMIN_SETTINGS.CLIENTS_CAN_ORDER
+                : ADMIN_SETTINGS.CLIENTS_SEE_CLOSED}
             </p>
           </div>
           <button
@@ -164,7 +166,7 @@ export default function AdminConfiguracionPage() {
 
         <div className="mt-4">
           <label className="block text-gray-700 mb-1.5" style={{ fontSize: '14px' }}>
-            Mensaje cuando esta cerrado
+            {ADMIN_SETTINGS.CLOSED_MESSAGE_LABEL}
           </label>
           <input
             type="text"
@@ -182,15 +184,15 @@ export default function AdminConfiguracionPage() {
             <MessageCircle size={20} className="text-green-600" />
           </div>
           <div>
-            <h2 className="text-gray-900" style={{ fontWeight: 600 }}>Datos del Negocio</h2>
-            <p className="text-gray-500" style={{ fontSize: '14px' }}>Informacion de contacto</p>
+            <h2 className="text-gray-900" style={{ fontWeight: 600 }}>{ADMIN_SETTINGS.BUSINESS_INFO_TITLE}</h2>
+            <p className="text-gray-500" style={{ fontSize: '14px' }}>{ADMIN_SETTINGS.BUSINESS_INFO_SUBTITLE}</p>
           </div>
         </div>
 
         <div className="space-y-4">
           <div>
             <label className="block text-gray-700 mb-1.5" style={{ fontSize: '14px' }}>
-              Nombre del negocio
+              {ADMIN_SETTINGS.BUSINESS_NAME_LABEL}
             </label>
             <input
               type="text"
@@ -201,13 +203,13 @@ export default function AdminConfiguracionPage() {
           </div>
           <div>
             <label className="block text-gray-700 mb-1.5" style={{ fontSize: '14px' }}>
-              Numero de WhatsApp (con codigo de pais, sin +)
+              {ADMIN_SETTINGS.WHATSAPP_LABEL}
             </label>
             <input
               type="text"
               value={whatsappNumber}
               onChange={(e) => setWhatsappNumber(e.target.value)}
-              placeholder="573001234567"
+              placeholder={ADMIN_SETTINGS.WHATSAPP_PLACEHOLDER}
               className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-300 transition-all"
             />
           </div>
@@ -219,7 +221,7 @@ export default function AdminConfiguracionPage() {
           className="mt-4 flex items-center gap-2 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-300 text-white px-5 py-2.5 rounded-xl transition-all"
           style={{ fontSize: '14px', fontWeight: 600 }}
         >
-          <Save size={16} /> {isSaving ? 'Guardando...' : 'Guardar'}
+          <Save size={16} /> {isSaving ? COMMON_LABELS.SAVING : COMMON_LABELS.SAVE}
         </button>
       </div>
 
@@ -230,15 +232,15 @@ export default function AdminConfiguracionPage() {
             <Clock size={20} className="text-blue-600" />
           </div>
           <div>
-            <h2 className="text-gray-900" style={{ fontWeight: 600 }}>Horarios</h2>
-            <p className="text-gray-500" style={{ fontSize: '14px' }}>Configura el horario del negocio</p>
+            <h2 className="text-gray-900" style={{ fontWeight: 600 }}>{ADMIN_SETTINGS.SCHEDULE_TITLE}</h2>
+            <p className="text-gray-500" style={{ fontSize: '14px' }}>{ADMIN_SETTINGS.SCHEDULE_SUBTITLE}</p>
           </div>
         </div>
 
         <div className="grid grid-cols-3 gap-2 mb-2">
-          <span className="text-gray-400" style={{ fontSize: '12px', fontWeight: 600 }}>DIAS</span>
-          <span className="text-gray-400" style={{ fontSize: '12px', fontWeight: 600 }}>APERTURA</span>
-          <span className="text-gray-400" style={{ fontSize: '12px', fontWeight: 600 }}>CIERRE</span>
+          <span className="text-gray-400" style={{ fontSize: '12px', fontWeight: 600 }}>{ADMIN_SETTINGS.SCHEDULE_COL_DAYS}</span>
+          <span className="text-gray-400" style={{ fontSize: '12px', fontWeight: 600 }}>{ADMIN_SETTINGS.SCHEDULE_COL_OPEN}</span>
+          <span className="text-gray-400" style={{ fontSize: '12px', fontWeight: 600 }}>{ADMIN_SETTINGS.SCHEDULE_COL_CLOSE}</span>
         </div>
         <div className="space-y-2 mb-4">
           {schedule.map((s, i) => (
@@ -253,7 +255,7 @@ export default function AdminConfiguracionPage() {
                 }}
                 className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg"
                 style={{ fontSize: '14px' }}
-                placeholder="Ej: Lunes - Viernes"
+                placeholder={ADMIN_SETTINGS.SCHEDULE_PLACEHOLDER}
               />
               <input
                 type="time"
@@ -287,7 +289,7 @@ export default function AdminConfiguracionPage() {
           className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-300 text-white px-5 py-2.5 rounded-xl transition-all"
           style={{ fontSize: '14px', fontWeight: 600 }}
         >
-          <Save size={16} /> {isSaving ? 'Guardando...' : 'Guardar Horarios'}
+          <Save size={16} /> {isSaving ? COMMON_LABELS.SAVING : ADMIN_SETTINGS.SAVE_SCHEDULE}
         </button>
       </div>
 
@@ -298,8 +300,8 @@ export default function AdminConfiguracionPage() {
             <Truck size={20} className="text-purple-600" />
           </div>
           <div>
-            <h2 className="text-gray-900" style={{ fontWeight: 600 }}>Zonas de Domicilio</h2>
-            <p className="text-gray-500" style={{ fontSize: '14px' }}>Configura los barrios y tarifas de domicilio</p>
+            <h2 className="text-gray-900" style={{ fontWeight: 600 }}>{ADMIN_SETTINGS.DELIVERY_ZONES_TITLE}</h2>
+            <p className="text-gray-500" style={{ fontSize: '14px' }}>{ADMIN_SETTINGS.DELIVERY_ZONES_SUBTITLE}</p>
           </div>
         </div>
 
@@ -355,7 +357,7 @@ export default function AdminConfiguracionPage() {
             type="text"
             value={newZoneName}
             onChange={(e) => setNewZoneName(e.target.value)}
-            placeholder="Nombre del barrio"
+            placeholder={ADMIN_SETTINGS.ZONE_NAME_PLACEHOLDER}
             className="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg"
             style={{ fontSize: '14px' }}
           />
@@ -363,7 +365,7 @@ export default function AdminConfiguracionPage() {
             type="number"
             value={newZoneFee}
             onChange={(e) => setNewZoneFee(e.target.value)}
-            placeholder="Tarifa"
+            placeholder={ADMIN_SETTINGS.ZONE_FEE_PLACEHOLDER}
             className="w-24 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg"
             style={{ fontSize: '14px' }}
           />
@@ -372,7 +374,7 @@ export default function AdminConfiguracionPage() {
             className="flex items-center gap-1 px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-all"
             style={{ fontSize: '13px', fontWeight: 600 }}
           >
-            <Plus size={16} /> Agregar
+            <Plus size={16} /> {ADMIN_SETTINGS.ADD_ZONE}
           </button>
         </div>
 
@@ -382,7 +384,7 @@ export default function AdminConfiguracionPage() {
           className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-300 text-white px-5 py-2.5 rounded-xl transition-all"
           style={{ fontSize: '14px', fontWeight: 600 }}
         >
-          <Save size={16} /> {isSaving ? 'Guardando...' : 'Guardar Zonas'}
+          <Save size={16} /> {isSaving ? COMMON_LABELS.SAVING : ADMIN_SETTINGS.SAVE_ZONES}
         </button>
       </div>
     </div>
