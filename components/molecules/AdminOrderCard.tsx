@@ -17,6 +17,7 @@ import type { OrderStatus } from '@/features/order/domain/entities/order-status'
 import { ADMIN_ORDERS } from '@/constants/admin/orders';
 import { COMMON_LABELS, CUSTOMER_LABELS, PAYMENT_METHODS, PRODUCT_COUNT } from '@/constants/shared';
 import { formatPrice } from '@/lib/format-price';
+import { buildWhatsAppUrl, buildAdminStatusMessage } from '@/lib/whatsapp';
 
 const statusConfig: Record<OrderStatus, { label: string; color: string; bg: string; icon: React.ElementType }> = {
   pendiente: { label: ADMIN_ORDERS.STATUS_PENDING, color: 'text-yellow-700', bg: 'bg-yellow-100', icon: Clock },
@@ -277,7 +278,7 @@ export function AdminOrderCard({
                 )}
 
                 <a
-                  href={`https://wa.me/${order.customerPhone.replace(/\D/g, '')}`}
+                  href={buildWhatsAppUrl(order.customerPhone, buildAdminStatusMessage(order))}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-1.5 px-4 py-2 bg-green-100 text-green-700 hover:bg-green-200 rounded-xl transition-all"

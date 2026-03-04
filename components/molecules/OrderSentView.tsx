@@ -7,7 +7,7 @@ import { motion } from 'motion/react';
 import { toast } from 'sonner';
 import { CHECKOUT_PAGE } from '@/constants/pages/checkout';
 import { PAYMENT_DATA } from '@/constants/shared';
-import { formatPrice } from '@/lib/format-price';
+import { buildWhatsAppUrl, buildReceiptMessage } from '@/lib/whatsapp';
 
 interface OrderSentViewProps {
   orderNumber: number;
@@ -77,7 +77,7 @@ export function OrderSentView({
               <p>{PAYMENT_DATA.BANCOLOMBIA}</p>
             </div>
             <a
-              href={`https://wa.me/${whatsapp}?text=${encodeURIComponent(`Hola! Soy ${customerName}. Quiero enviar el comprobante de pago de mi pedido #${orderNumber} por ${formatPrice(total)}.`)}`}
+              href={buildWhatsAppUrl(whatsapp, buildReceiptMessage(customerName, orderNumber, total))}
               target="_blank"
               rel="noopener noreferrer"
               className="mt-3 flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white py-2.5 rounded-xl transition-all"
@@ -97,7 +97,7 @@ export function OrderSentView({
             {CHECKOUT_PAGE.VIEW_ORDER_STATUS}
           </Link>
           <a
-            href={`https://wa.me/${whatsapp}?text=${whatsappMessage}`}
+            href={buildWhatsAppUrl(whatsapp, whatsappMessage)}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white py-3 rounded-xl transition-all"

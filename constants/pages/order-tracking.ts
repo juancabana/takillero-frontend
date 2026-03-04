@@ -53,9 +53,4 @@ export const ORDER_TRACKING_PAGE = {
   PAYMENT_PREFIX: 'Pago:',
   PAYMENT_STATUS_PAID: 'Pagado',
   PAYMENT_STATUS_PENDING: 'Pago pendiente',
-
-  // ── WhatsApp mensaje comprobante ───────────────────────────────────
-  WA_RECEIPT_GREETING: 'Hola! Soy',
-  WA_RECEIPT_MESSAGE: 'Quiero enviar el comprobante de pago de mi pedido',
-  WA_RECEIPT_AMOUNT_PREFIX: 'por',
 } as const;

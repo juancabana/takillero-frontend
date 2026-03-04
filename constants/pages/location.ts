@@ -32,7 +32,7 @@ export const LOCATION_PAGE = {
   CONTACT_TITLE: 'Contacto',
   PHONE_NUMBER: '+57 324 477 9505',
   PHONE_HREF: 'tel:+3244779505',
-  WHATSAPP_HREF: 'https://wa.me/573244779505',
+  WHATSAPP_NUMBER: '573244779505',
   WHATSAPP_CTA: 'Escríbenos por WhatsApp',
 
   // ── Zonas de domicilio ─────────────────────────────────────────────

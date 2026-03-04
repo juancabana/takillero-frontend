@@ -4,6 +4,7 @@ import Link from "next/link";
 import { MapPin, Phone, Clock, MessageCircle, Shield } from "lucide-react";
 import { FOOTER } from "@/constants/components/footer";
 import { useStoreSettings } from "@/features/store-settings/presentation/hooks/use-store-settings-queries";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import type { StoreSchedule } from "@/features/store-settings/domain/entities/store-settings";
 
 export function Footer() {
@@ -44,7 +45,7 @@ export function Footer() {
                 <span>+57-{storeSettings?.whatsappNumber}</span>
               </div>
               <a
-                href={FOOTER.WHATSAPP_HREF(storeSettings?.whatsappNumber ?? '')}
+                href={buildWhatsAppUrl(storeSettings?.whatsappNumber ?? '')}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 text-green-400 hover:text-green-300 transition-colors"

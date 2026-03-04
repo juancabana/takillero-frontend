@@ -5,7 +5,6 @@ export const FOOTER = {
   DESCRIPTION:
     'La mejor comida rápida de la ciudad. Preparada con amor y los mejores ingredientes.',
   CONTACT_TITLE: 'Contacto',
-  WHATSAPP_HREF: (number: string) =>  `https://wa.me/${number}`,
   SCHEDULE_TITLE: 'Horarios',
   COPYRIGHT: '© 2026 Takillero. Todos los derechos reservados.',
   ADMIN_LINK_LABEL: 'Admin',
