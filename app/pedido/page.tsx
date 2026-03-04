@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import Link from 'next/link';
+import { useSearchParams, useRouter } from 'next/navigation';
 import {
   Search,
   XCircle,
@@ -20,9 +21,23 @@ import { OrderDetailCard } from '@/components/molecules/OrderDetailCard';
 import { TransferPaymentCard } from '@/components/molecules/TransferPaymentCard';
 
 export default function PedidoPage() {
+  return (
+    <Suspense>
+      <PedidoContent />
+    </Suspense>
+  );
+}
+
+function PedidoContent() {
   const { settings } = useStore();
-  const [orderNum, setOrderNum] = useState('');
-  const [submittedNum, setSubmittedNum] = useState<number | null>(null);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const initialNum = searchParams.get('numero');
+  const [orderNum, setOrderNum] = useState(initialNum ?? '');
+  const [submittedNum, setSubmittedNum] = useState<number | null>(
+    initialNum ? parseInt(initialNum) : null,
+  );
 
   const { data: order, isLoading: isSearching, isError, isFetched } = useOrderByNumber(submittedNum);
 
@@ -37,6 +52,7 @@ export default function PedidoPage() {
       return;
     }
     setSubmittedNum(num);
+    router.replace(`/pedido?numero=${num}`);
   };
 
   return (

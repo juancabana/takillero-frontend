@@ -17,7 +17,6 @@ interface OrderSentViewProps {
   whatsapp: string;
   whatsappMessage: string;
   onNewOrder: () => void;
-  onClearCart: () => void;
 }
 
 export function OrderSentView({
@@ -28,7 +27,6 @@ export function OrderSentView({
   whatsapp,
   whatsappMessage,
   onNewOrder,
-  onClearCart,
 }: OrderSentViewProps) {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -92,10 +90,9 @@ export function OrderSentView({
 
         <div className="flex flex-col gap-3">
           <Link
-            href="/pedido"
+            href={`/pedido?numero=${orderNumber}`}
             className="flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl transition-all"
             style={{ fontWeight: 600 }}
-            onClick={onClearCart}
           >
             {CHECKOUT_PAGE.VIEW_ORDER_STATUS}
           </Link>
