@@ -1,95 +1,86 @@
 'use client';
 
+import React from 'react';
+import Link from 'next/link';
+import { ArrowRight, Truck, MapPin } from 'lucide-react';
 import { motion } from 'motion/react';
-import { Button } from '@/components/atoms/Button';
-import { appRoutes } from '@/config/appRoutes';
 import { HOME_PAGE } from '@/constants/pages/home';
 
-interface HeroSectionProps {
-  businessName: string;
-}
-
-/**
- * Organism: Sección hero del homepage.
- * Requiere 'use client' por las animaciones de Framer Motion (motion/react).
- */
-export function HeroSection({ businessName }: HeroSectionProps) {
+export function HeroSection() {
   return (
-    <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-orange-500 via-orange-600 to-red-700">
-      {/* Patrón decorativo de fondo */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 opacity-10"
-        style={{
-          backgroundImage:
-            'radial-gradient(circle at 25% 25%, white 1px, transparent 1px), radial-gradient(circle at 75% 75%, white 1px, transparent 1px)',
-          backgroundSize: '60px 60px',
-        }}
-      />
-
-      <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: 'easeOut' }}
-        >
-          <p className="text-orange-200 font-medium text-lg mb-2 uppercase tracking-widest">
-            {HOME_PAGE.HERO_WELCOME_PREFIX}
-          </p>
-          <h1 className="text-5xl md:text-7xl font-extrabold text-white mb-6 leading-tight">
-            {businessName}
-          </h1>
-        </motion.div>
-
-        <motion.p
-          className="text-orange-100 text-xl md:text-2xl mb-10 max-w-2xl mx-auto leading-relaxed"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.2, ease: 'easeOut' }}
-        >
-          {HOME_PAGE.HERO_SUBTITLE}
-        </motion.p>
-
-        <motion.div
-          className="flex flex-col sm:flex-row gap-4 justify-center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.4, ease: 'easeOut' }}
-        >
-          <Button
-            as="link"
-            href={appRoutes.MENU.getHref()}
-            variant="primary"
-            size="lg"
+    <section className="relative overflow-hidden bg-gradient-to-br from-orange-50 via-white to-red-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+        <div className="grid md:grid-cols-2 gap-12 items-center">
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
           >
-            {HOME_PAGE.CTA_MENU}
-          </Button>
-          <Button
-            as="link"
-            href={appRoutes.UBICACION.getHref()}
-            variant="outline"
-            size="lg"
+            <div
+              className="inline-flex items-center gap-2 bg-orange-100 text-orange-700 px-4 py-2 rounded-full mb-6"
+              style={{ fontSize: '14px', fontWeight: 500 }}
+            >
+              <Truck size={16} />
+              {HOME_PAGE.BADGE_TEXT}
+            </div>
+            <h1
+              className="text-gray-900 mb-6"
+              style={{
+                fontSize: 'clamp(2rem, 5vw, 3.5rem)',
+                fontWeight: 800,
+                lineHeight: 1.1,
+              }}
+            >
+              {HOME_PAGE.HERO_TITLE_PREFIX}{' '}
+              <span className="bg-gradient-to-r from-orange-500 to-red-600 bg-clip-text text-transparent">
+                {HOME_PAGE.HERO_TITLE_HIGHLIGHT}
+              </span>{' '}
+              {HOME_PAGE.HERO_TITLE_SUFFIX}
+            </h1>
+            <p
+              className="text-gray-600 mb-8 max-w-lg"
+              style={{ fontSize: '18px', lineHeight: 1.7 }}
+            >
+              {HOME_PAGE.HERO_DESCRIPTION}
+            </p>
+            <div className="flex flex-wrap gap-4">
+              <Link
+                href="/menu"
+                className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-2xl transition-all shadow-lg shadow-orange-200 hover:shadow-xl hover:shadow-orange-300"
+                style={{ fontWeight: 600, fontSize: '18px' }}
+              >
+                {HOME_PAGE.CTA_MENU} <ArrowRight size={20} />
+              </Link>
+              <Link
+                href="/ubicacion"
+                className="inline-flex items-center gap-2 bg-white border-2 border-gray-200 text-gray-700 hover:border-orange-300 px-8 py-4 rounded-2xl transition-all"
+                style={{ fontWeight: 600, fontSize: '18px' }}
+              >
+                <MapPin size={20} /> {HOME_PAGE.CTA_LOCATION}
+              </Link>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="relative hidden md:block"
           >
-            {HOME_PAGE.CTA_LOCATION_ALT}
-          </Button>
-        </motion.div>
+            <div className="relative w-full aspect-square max-w-md mx-auto">
+              <div className="absolute inset-0 bg-gradient-to-br from-orange-400 to-red-500 rounded-full opacity-20 blur-3xl" />
+              <img
+                src={HOME_PAGE.HERO_IMAGE_URL}
+                alt={HOME_PAGE.HERO_IMAGE_ALT}
+                className="relative w-full h-full object-cover rounded-3xl shadow-2xl"
+              />
+            </div>
+          </motion.div>
+        </div>
       </div>
 
-      {/* Ola decorativa inferior */}
-      <div
-        aria-hidden="true"
-        className="absolute bottom-0 left-0 right-0"
-      >
-        <svg
-          viewBox="0 0 1440 80"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          preserveAspectRatio="none"
-          className="w-full h-20 fill-white"
-        >
-          <path d="M0 80L1440 80L1440 40C1200 80 960 0 720 40C480 80 240 0 0 40L0 80Z" />
-        </svg>
-      </div>
+      <div className="absolute top-20 left-10 w-72 h-72 bg-orange-200 rounded-full blur-3xl opacity-20 pointer-events-none" />
+      <div className="absolute bottom-10 right-10 w-96 h-96 bg-red-200 rounded-full blur-3xl opacity-20 pointer-events-none" />
     </section>
   );
 }

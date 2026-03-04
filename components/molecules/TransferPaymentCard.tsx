@@ -1,0 +1,41 @@
+'use client';
+
+import React from 'react';
+import { MessageCircle } from 'lucide-react';
+import { ORDER_TRACKING_PAGE } from '@/constants/pages/order-tracking';
+import { PAYMENT_DATA } from '@/constants/shared';
+import { formatPrice } from '@/lib/format-price';
+
+interface TransferPaymentCardProps {
+  orderNumber: number;
+  customerName: string;
+  total: number;
+  whatsapp: string;
+}
+
+export function TransferPaymentCard({ orderNumber, customerName, total, whatsapp }: TransferPaymentCardProps) {
+  return (
+    <div className="bg-blue-50 rounded-2xl p-6 border border-blue-200">
+      <h3 className="text-blue-800 mb-2" style={{ fontWeight: 600 }}>
+        {ORDER_TRACKING_PAGE.TRANSFER_PAYMENT_TITLE}
+      </h3>
+      <div className="space-y-1 text-blue-700 mb-4" style={{ fontSize: '14px' }}>
+        <p>{PAYMENT_DATA.NEQUI}</p>
+        <p>{PAYMENT_DATA.DAVIPLATA}</p>
+        <p>{PAYMENT_DATA.BANCOLOMBIA}</p>
+      </div>
+      <p className="text-blue-600 mb-4" style={{ fontSize: '13px' }}>
+        {ORDER_TRACKING_PAGE.TRANSFER_RECEIPT_HINT_PREFIX} #{orderNumber}
+      </p>
+      <a
+        href={`https://wa.me/${whatsapp}?text=${encodeURIComponent(`${ORDER_TRACKING_PAGE.WA_RECEIPT_GREETING} ${customerName}. ${ORDER_TRACKING_PAGE.WA_RECEIPT_MESSAGE} #${orderNumber} ${ORDER_TRACKING_PAGE.WA_RECEIPT_AMOUNT_PREFIX} ${formatPrice(total)}.`)}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-xl transition-all"
+        style={{ fontWeight: 600 }}
+      >
+        <MessageCircle size={20} /> {ORDER_TRACKING_PAGE.SEND_RECEIPT_WHATSAPP}
+      </a>
+    </div>
+  );
+}
