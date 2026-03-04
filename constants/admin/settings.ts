@@ -20,6 +20,8 @@ export const ADMIN_SETTINGS = {
   BUSINESS_NAME_LABEL: 'Nombre del negocio',
   WHATSAPP_LABEL: 'Numero de WhatsApp (con codigo de pais, sin +)',
   WHATSAPP_PLACEHOLDER: '573001234567',
+  ADDRESS_LABEL: 'Dirección del local',
+  ADDRESS_PLACEHOLDER: 'Ej: CR 59C #24A–97, Tacarena, Cartagena de Indias',
 
   // ── Horarios ───────────────────────────────────────────────────────
   SCHEDULE_TITLE: 'Horarios',

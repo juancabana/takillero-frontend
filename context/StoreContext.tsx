@@ -1,16 +1,10 @@
 'use client';
 
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { storeService } from '@/services/store.service';
-import type { StoreSettings } from '@/types/store.types';
+import React, { createContext, useContext } from 'react';
+import { useStoreSettings, useUpdateStoreSettings } from '@/features/store-settings/presentation/hooks/use-store-settings-queries';
+import type { StoreSettings } from '@/features/store-settings/domain/entities/store-settings';
+import type { UpdateStoreSettingsRequest } from '@/features/store-settings/domain/dto/update-store-settings-request';
 import { STORE_DEFAULTS } from '@/constants/shared';
-
-interface StoreContextType {
-  settings: StoreSettings;
-  isLoading: boolean;
-  updateSettings: (partial: Partial<StoreSettings>, token: string) => Promise<void>;
-  refetch: () => Promise<void>;
-}
 
 const DEFAULT_SETTINGS: StoreSettings = {
   id: '',
@@ -18,38 +12,37 @@ const DEFAULT_SETTINGS: StoreSettings = {
   isOpen: true,
   closedMessage: null,
   whatsappNumber: STORE_DEFAULTS.WHATSAPP_NUMBER,
+  address: null,
   deliveryZones: [],
   schedule: [],
 };
 
+interface StoreContextType {
+  settings: StoreSettings;
+  isLoading: boolean;
+  updateSettings: (partial: UpdateStoreSettingsRequest, token: string) => Promise<void>;
+  refetch: () => void;
+}
+
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
 
 export function StoreProvider({ children }: { children: React.ReactNode }) {
-  const [settings, setSettings] = useState<StoreSettings>(DEFAULT_SETTINGS);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data, isLoading, refetch } = useStoreSettings();
+  const { mutateAsync } = useUpdateStoreSettings();
 
-  const fetchSettings = useCallback(async () => {
-    try {
-      const data = await storeService.getSettings();
-      setSettings(data);
-    } catch {
-      // keep defaults on error
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    void fetchSettings();
-  }, [fetchSettings]);
-
-  const updateSettings = useCallback(async (partial: Partial<StoreSettings>, token: string) => {
-    const updated = await storeService.updateSettings(partial, token);
-    setSettings(updated);
-  }, []);
+  const updateSettings = async (partial: UpdateStoreSettingsRequest, token: string) => {
+    await mutateAsync({ data: partial, token });
+  };
 
   return (
-    <StoreContext.Provider value={{ settings, isLoading, updateSettings, refetch: fetchSettings }}>
+    <StoreContext.Provider
+      value={{
+        settings: data ?? DEFAULT_SETTINGS,
+        isLoading,
+        updateSettings,
+        refetch,
+      }}
+    >
       {children}
     </StoreContext.Provider>
   );

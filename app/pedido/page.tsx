@@ -14,10 +14,10 @@ import {
   Copy,
 } from 'lucide-react';
 import { motion } from 'motion/react';
-import { orderService } from '@/services/order.service';
+import { useOrderByNumber } from '@/features/order/presentation/hooks/use-order-queries';
 import { useStore } from '@/context/StoreContext';
 import { toast } from 'sonner';
-import type { Order, OrderStatus } from '@/types/order.types';
+import type { OrderStatus } from '@/features/order/domain/entities/order-status';
 import { ORDER_TRACKING_PAGE } from '@/constants/pages/order-tracking';
 import { COMMON_LABELS, PAYMENT_DATA, PAYMENT_METHODS, DEFAULT_WHATSAPP_NUMBER } from '@/constants/shared';
 
@@ -42,31 +42,21 @@ const statusOrder: Record<OrderStatus, number> = {
 export default function PedidoPage() {
   const { settings } = useStore();
   const [orderNum, setOrderNum] = useState('');
-  const [isSearching, setIsSearching] = useState(false);
-  const [searched, setSearched] = useState(false);
-  const [order, setOrder] = useState<Order | null>(null);
+  const [submittedNum, setSubmittedNum] = useState<number | null>(null);
+
+  const { data: order, isLoading: isSearching, isError, isFetched } = useOrderByNumber(submittedNum);
 
   const whatsapp = settings?.whatsappNumber ?? DEFAULT_WHATSAPP_NUMBER;
+  const searched = isFetched && submittedNum !== null;
 
-  const handleSearch = async (e: React.FormEvent) => {
+  const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     const num = parseInt(orderNum);
     if (isNaN(num)) {
       toast.error(ORDER_TRACKING_PAGE.TOAST_INVALID_ORDER);
       return;
     }
-    setIsSearching(true);
-    setSearched(false);
-    setOrder(null);
-    try {
-      const found = await orderService.getOrderByNumber(num);
-      setOrder(found);
-    } catch {
-      setOrder(null);
-    } finally {
-      setIsSearching(false);
-      setSearched(true);
-    }
+    setSubmittedNum(num);
   };
 
   const currentStep = order ? statusOrder[order.status] : -1;
@@ -111,7 +101,7 @@ export default function PedidoPage() {
         </form>
 
         {/* Not found */}
-        {searched && !order && (
+        {searched && (isError || !order) && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

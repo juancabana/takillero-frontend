@@ -3,8 +3,12 @@
 import { MapPin, Clock, Phone, MessageCircle, Navigation } from "lucide-react";
 import { motion } from "motion/react";
 import { LOCATION_PAGE } from '@/constants/pages/location';
+import { useStoreSettings } from '@/features/store-settings/presentation/hooks/use-store-settings-queries';
 
 export default function UbicacionPage() {
+  const { data: storeSettings } = useStoreSettings();
+  const address = storeSettings?.address ?? `${LOCATION_PAGE.ADDRESS_LINE_1}\n${LOCATION_PAGE.ADDRESS_LINE_2}\n${LOCATION_PAGE.ADDRESS_LINE_3}`;
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -65,12 +69,8 @@ export default function UbicacionPage() {
                   {LOCATION_PAGE.ADDRESS_TITLE}
                 </h3>
               </div>
-              <p className="text-gray-600">
-                {LOCATION_PAGE.ADDRESS_LINE_1}
-                <br />
-                {LOCATION_PAGE.ADDRESS_LINE_2}
-                <br />
-                {LOCATION_PAGE.ADDRESS_LINE_3}
+              <p className="text-gray-600" style={{ whiteSpace: 'pre-line' }}>
+                {address}
               </p>
               <p className="text-gray-500 mt-2" style={{ fontSize: "14px" }}>
                 {LOCATION_PAGE.ADDRESS_REFERENCE} 

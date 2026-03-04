@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Category } from '@/types/category.types';
+import { Category } from '@/features/category/domain/entities/category';
 import { appRoutes } from '@/config/appRoutes';
 
 interface CategoryCardProps {

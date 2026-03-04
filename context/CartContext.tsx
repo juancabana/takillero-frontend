@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import type { Product } from '@/types/product.types';
+import type { Product } from '@/features/product/domain/entities/product';
 import { STORAGE_KEYS } from '@/constants/shared';
 
 export interface CartItem {

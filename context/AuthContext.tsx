@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { authService } from '@/services/auth.service';
+import { useLogin } from '@/features/auth/presentation/hooks/use-auth-mutations';
 import { STORAGE_KEYS } from '@/constants/shared';
 
 interface AuthContextType {
@@ -19,6 +19,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return localStorage.getItem(STORAGE_KEYS.ADMIN_TOKEN);
   });
 
+  const loginMutation = useLogin();
+
   useEffect(() => {
     if (token) {
       localStorage.setItem(STORAGE_KEYS.ADMIN_TOKEN, token);
@@ -27,15 +29,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [token]);
 
-  const login = useCallback(async (password: string): Promise<boolean> => {
-    try {
-      const res = await authService.login(password);
-      setToken(res.access_token);
-      return true;
-    } catch {
-      return false;
-    }
-  }, []);
+  const login = useCallback(
+    async (password: string): Promise<boolean> => {
+      try {
+        const res = await loginMutation.mutateAsync(password);
+        setToken(res.access_token);
+        return true;
+      } catch {
+        return false;
+      }
+    },
+    [loginMutation],
+  );
 
   const logout = useCallback(() => {
     setToken(null);

@@ -1,12 +1,4 @@
-export type OrderStatus =
-  | 'pendiente'
-  | 'confirmado'
-  | 'rechazado'
-  | 'pagado'
-  | 'entregado';
-
-export type PaymentMethod = 'efectivo' | 'transferencia';
-export type PaymentStatus = 'pendiente' | 'pagado';
+import type { OrderStatus, PaymentMethod, PaymentStatus } from './order-status';
 
 export interface OrderItem {
   productId: string;
@@ -34,15 +26,4 @@ export interface Order {
   rejectionReason: string | null;
   items: OrderItem[];
   createdAt: string;
-}
-
-export interface CreateOrderPayload {
-  customerName: string;
-  customerCedula: string;
-  customerPhone: string;
-  customerAddress: string;
-  customerBarrio: string;
-  paymentMethod: PaymentMethod;
-  notes?: string;
-  items: { productId: string; quantity: number }[];
 }

@@ -6,7 +6,7 @@ import { motion } from 'motion/react';
 import { useStore } from '@/context/StoreContext';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
-import type { DeliveryZone, StoreSchedule } from '@/types/store.types';
+import type { DeliveryZone, StoreSchedule } from '@/features/store-settings/domain/entities/store-settings';
 import { ADMIN_SETTINGS } from '@/constants/admin/settings';
 import { COMMON_LABELS } from '@/constants/shared';
 
@@ -20,6 +20,7 @@ export default function AdminConfiguracionPage() {
   const [businessName, setBusinessName] = useState(settings.businessName);
   const [whatsappNumber, setWhatsappNumber] = useState(settings.whatsappNumber ?? '');
   const [closedMessage, setClosedMessage] = useState(settings.closedMessage ?? '');
+  const [address, setAddress] = useState(settings.address ?? '');
   const [zones, setZones] = useState<DeliveryZone[]>(settings.deliveryZones);
   const [schedule, setSchedule] = useState<StoreSchedule[]>(settings.schedule ?? []);
   const [newZoneName, setNewZoneName] = useState('');
@@ -30,6 +31,7 @@ export default function AdminConfiguracionPage() {
     setBusinessName(settings.businessName);
     setWhatsappNumber(settings.whatsappNumber ?? '');
     setClosedMessage(settings.closedMessage ?? '');
+    setAddress(settings.address ?? '');
     setZones(settings.deliveryZones);
     setSchedule(settings.schedule ?? []);
   }, [settings]);
@@ -39,7 +41,7 @@ export default function AdminConfiguracionPage() {
     setIsSaving(true);
     try {
       await updateSettings(
-        { businessName, whatsappNumber, closedMessage },
+        { businessName, whatsappNumber, closedMessage, address: address || null },
         token,
       );
       toast.success(ADMIN_SETTINGS.TOAST_SAVED);
@@ -211,6 +213,19 @@ export default function AdminConfiguracionPage() {
               onChange={(e) => setWhatsappNumber(e.target.value)}
               placeholder={ADMIN_SETTINGS.WHATSAPP_PLACEHOLDER}
               className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-300 transition-all"
+            />
+          </div>
+          <div>
+            <label className="block text-gray-700 mb-1.5" style={{ fontSize: '14px' }}>
+              {ADMIN_SETTINGS.ADDRESS_LABEL}
+            </label>
+            <textarea
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              placeholder={ADMIN_SETTINGS.ADDRESS_PLACEHOLDER}
+              rows={3}
+              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-300 transition-all resize-none"
+              style={{ fontSize: '14px' }}
             />
           </div>
         </div>

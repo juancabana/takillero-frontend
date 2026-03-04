@@ -18,11 +18,10 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import { useCart } from '@/context/CartContext';
 import { useStore } from '@/context/StoreContext';
-import { orderService } from '@/services/order.service';
+import { useCreateOrder } from '@/features/order/presentation/hooks/use-order-queries';
 import { toast } from 'sonner';
 import { CHECKOUT_PAGE } from '@/constants/pages/checkout';
 import { COMMON_LABELS, CUSTOMER_LABELS, PAYMENT_DATA, PAYMENT_METHODS, DEFAULT_WHATSAPP_NUMBER, DEFAULT_PRODUCT_IMAGE, STORE_DEFAULTS } from '@/constants/shared';
-import type { CreateOrderPayload } from '@/types/order.types';
 
 const formatPrice = (price: number) =>
   new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(price);
@@ -45,8 +44,8 @@ export default function CheckoutPage() {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [orderSent, setOrderSent] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [createdOrder, setCreatedOrder] = useState<{ orderNumber: number; id: string } | null>(null);
+  const createOrderMutation = useCreateOrder();
   const [form, setForm] = useState<FormData>({
     cedula: '',
     nombre: '',
@@ -97,9 +96,8 @@ export default function CheckoutPage() {
   };
 
   const handleSendOrder = async () => {
-    setIsSubmitting(true);
     try {
-      const payload: CreateOrderPayload = {
+      const order = await createOrderMutation.mutateAsync({
         customerName: form.nombre,
         customerCedula: form.cedula,
         customerPhone: form.telefono,
@@ -111,9 +109,7 @@ export default function CheckoutPage() {
           productId: i.product.id,
           quantity: i.quantity,
         })),
-      };
-
-      const order = await orderService.createOrder(payload);
+      });
       setCreatedOrder({ orderNumber: order.orderNumber, id: order.id });
 
       // Send WhatsApp
@@ -122,10 +118,10 @@ export default function CheckoutPage() {
       setOrderSent(true);
     } catch {
       toast.error(CHECKOUT_PAGE.ERROR_CREATE_ORDER);
-    } finally {
-      setIsSubmitting(false);
     }
   };
+
+  const isSubmitting = createOrderMutation.isPending;
 
   const handleNewOrder = () => {
     clearCart();
