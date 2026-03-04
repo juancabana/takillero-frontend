@@ -21,9 +21,9 @@ import type { Order } from '@/features/order/domain/entities/order';
 import type { OrderStatus } from '@/features/order/domain/entities/order-status';
 import { ADMIN_ORDERS } from '@/constants/admin/orders';
 import { COMMON_LABELS, CUSTOMER_LABELS, PAYMENT_METHODS, PRODUCT_COUNT } from '@/constants/shared';
-
-const formatPrice = (price: number) =>
-  new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(price);
+import { formatPrice } from '@/lib/format-price';
+import { SearchInput } from '@/components/atoms';
+import { btn, card, badge, layout, text, input as inputTokens } from '@/config/theme';
 
 const statusConfig: Record<OrderStatus, { label: string; color: string; bg: string; icon: React.ElementType }> = {
   pendiente: { label: ADMIN_ORDERS.STATUS_PENDING, color: 'text-yellow-700', bg: 'bg-yellow-100', icon: Clock },

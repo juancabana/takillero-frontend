@@ -2,17 +2,18 @@
 
 import React, { Suspense, useState, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { Search, Plus, Minus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useProducts } from '@/features/product/presentation/hooks/use-product-queries';
 import { useCategories } from '@/features/category/presentation/hooks/use-category-queries';
 import { useCart } from '@/context/CartContext';
 import { MENU_PAGE } from '@/constants/pages/menu';
 import { DEFAULT_PRODUCT_IMAGE } from '@/constants/shared';
+import { formatPrice } from '@/lib/format-price';
+import { SearchInput, PillFilter, QuantityStepper, PageHeader } from '@/components/atoms';
+import type { PillOption } from '@/components/atoms';
+import { btn, card, text, layout, skeleton, pill } from '@/config/theme';
 import type { Product } from '@/features/product/domain/entities/product';
-
-const formatPrice = (price: number) =>
-  new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(price);
 
 function ProductCard({ product }: { product: Product }) {
   const { addToCart, removeFromCart, updateQuantity, items } = useCart();
@@ -23,7 +24,7 @@ function ProductCard({ product }: { product: Product }) {
       layout
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-shadow"
+      className={card.hover + ' overflow-hidden'}
     >
       <div className="relative aspect-video overflow-hidden bg-gray-100">
         <img
@@ -51,38 +52,23 @@ function ProductCard({ product }: { product: Product }) {
           </span>
 
           {inCart ? (
-            <div className="flex items-center gap-1">
-              <button
-                onClick={() =>
-                  inCart.quantity === 1
-                    ? removeFromCart(product.id)
-                    : updateQuantity(product.id, inCart.quantity - 1)
-                }
-                className="w-8 h-8 rounded-lg flex items-center justify-center bg-orange-100 text-orange-600 hover:bg-orange-200 transition-colors"
-              >
-                <Minus size={16} />
-              </button>
-              <span
-                className="w-8 text-center text-orange-600"
-                style={{ fontWeight: 700, fontSize: '15px' }}
-              >
-                {inCart.quantity}
-              </span>
-              <button
-                onClick={() => updateQuantity(product.id, inCart.quantity + 1)}
-                className="w-8 h-8 rounded-lg flex items-center justify-center bg-orange-500 text-white hover:bg-orange-600 transition-colors shadow-sm"
-              >
-                <Plus size={16} />
-              </button>
-            </div>
+            <QuantityStepper
+              quantity={inCart.quantity}
+              onDecrement={() =>
+                inCart.quantity === 1
+                  ? removeFromCart(product.id)
+                  : updateQuantity(product.id, inCart.quantity - 1)
+              }
+              onIncrement={() => updateQuantity(product.id, inCart.quantity + 1)}
+            />
           ) : (
             <button
               onClick={() => addToCart(product)}
               disabled={!product.isAvailable}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl transition-all ${
+              className={`${btn.base} gap-1.5 px-4 py-2 ${
                 product.isAvailable
-                  ? 'bg-orange-500 hover:bg-orange-600 text-white shadow-md shadow-orange-200'
-                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  ? btn.primary
+                  : btn.disabled
               }`}
               style={{ fontWeight: 600, fontSize: '14px' }}
             >
@@ -128,63 +114,41 @@ function MenuContent() {
     return matchCat && matchSearch;
   });
 
+  const categoryPills: PillOption[] = [
+    { value: 'todos', label: MENU_PAGE.ALL_CATEGORIES },
+    ...categories.map((cat) => ({ value: cat.id, label: cat.name, icon: cat.icon })),
+  ];
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className={layout.page}>
+      <div className={`${layout.container} py-8`}>
         <div className="mb-8">
-          <h1 className="text-gray-900 mb-2" style={{ fontSize: '32px', fontWeight: 700 }}>
-            {MENU_PAGE.TITLE}
-          </h1>
-          <p className="text-gray-500">{MENU_PAGE.SUBTITLE}</p>
+          <PageHeader title={MENU_PAGE.TITLE} subtitle={MENU_PAGE.SUBTITLE} />
         </div>
 
         {/* Search */}
-        <div className="relative mb-6">
-          <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input
-            type="text"
-            placeholder={MENU_PAGE.SEARCH_PLACEHOLDER}
+        <div className="mb-6">
+          <SearchInput
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-400 transition-all"
+            onChange={setSearch}
+            placeholder={MENU_PAGE.SEARCH_PLACEHOLDER}
           />
         </div>
 
         {/* Category filters */}
-        <div className="flex gap-2 overflow-x-auto pb-4 mb-8">
-          <button
-            onClick={() => handleCategoryChange('todos')}
-            className={`shrink-0 px-5 py-2.5 rounded-xl transition-all ${
-              activeCategory === 'todos'
-                ? 'bg-orange-500 text-white shadow-md shadow-orange-200'
-                : 'bg-white text-gray-600 border border-gray-200 hover:border-orange-300'
-            }`}
-            style={{ fontWeight: 500 }}
-          >
-            {MENU_PAGE.ALL_CATEGORIES}
-          </button>
-          {categories.map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => handleCategoryChange(cat.id)}
-              className={`shrink-0 px-5 py-2.5 rounded-xl transition-all flex items-center gap-2 ${
-                activeCategory === cat.id
-                  ? 'bg-orange-500 text-white shadow-md shadow-orange-200'
-                  : 'bg-white text-gray-600 border border-gray-200 hover:border-orange-300'
-              }`}
-              style={{ fontWeight: 500 }}
-            >
-              <span>{cat.icon}</span>
-              {cat.name}
-            </button>
-          ))}
+        <div className="mb-8">
+          <PillFilter
+            options={categoryPills}
+            value={activeCategory}
+            onChange={handleCategoryChange}
+          />
         </div>
 
         {/* Products grid */}
         {isLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="bg-white rounded-2xl h-72 animate-pulse border border-gray-100" />
+              <div key={i} className={`${skeleton.base} h-72`} />
             ))}
           </div>
         ) : filtered.length > 0 ? (

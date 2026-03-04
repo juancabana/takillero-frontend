@@ -9,9 +9,9 @@ import { toast } from 'sonner';
 import type { DeliveryZone, StoreSchedule } from '@/features/store-settings/domain/entities/store-settings';
 import { ADMIN_SETTINGS } from '@/constants/admin/settings';
 import { COMMON_LABELS } from '@/constants/shared';
-
-const formatPrice = (price: number) =>
-  new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(price);
+import { formatPrice } from '@/lib/format-price';
+import { ToggleSwitch, IconBox, FormField, FormTextarea } from '@/components/atoms';
+import { btn, card, input as inputTokens, text, iconBox } from '@/config/theme';
 
 export default function AdminConfiguracionPage() {
   const { settings, updateSettings } = useStore();

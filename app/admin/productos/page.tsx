@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Search,
   Package,
@@ -8,243 +8,22 @@ import {
   Pencil,
   EyeOff,
   Eye,
-  X,
-  ImageIcon,
   Trash2,
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 import { useProducts, useCreateProduct, useUpdateProduct, useDeleteProduct, useToggleProductAvailability } from '@/features/product/presentation/hooks/use-product-queries';
 import { useCategories } from '@/features/category/presentation/hooks/use-category-queries';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import type { Product } from '@/features/product/domain/entities/product';
-import type { Category } from '@/features/category/domain/entities/category';
 import { ADMIN_PRODUCTS } from '@/constants/admin/products';
 import { DEFAULT_PRODUCT_IMAGE } from '@/constants/shared';
-
-const formatPrice = (price: number) =>
-  new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(price);
-
-interface ProductFormData {
-  name: string;
-  description: string;
-  price: string;
-  imageUrl: string;
-  categoryId: string;
-}
-
-const emptyForm: ProductFormData = {
-  name: '',
-  description: '',
-  price: '',
-  imageUrl: '',
-  categoryId: '',
-};
-
-function ProductFormModal({
-  isOpen,
-  onClose,
-  onSubmit,
-  initialData,
-  title,
-  categories,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-  onSubmit: (data: ProductFormData) => void;
-  initialData: ProductFormData;
-  title: string;
-  categories: Category[];
-}) {
-  const [form, setForm] = useState<ProductFormData>(initialData);
-  const [errors, setErrors] = useState<Partial<Record<keyof ProductFormData, string>>>({});
-
-  useEffect(() => {
-    if (isOpen) {
-      setForm(initialData);
-      setErrors({});
-    }
-  }, [isOpen, initialData]);
-
-  const validate = (): boolean => {
-    const newErrors: Partial<Record<keyof ProductFormData, string>> = {};
-    if (!form.name.trim()) newErrors.name = ADMIN_PRODUCTS.VALIDATION_NAME_REQUIRED;
-    if (!form.description.trim()) newErrors.description = ADMIN_PRODUCTS.VALIDATION_DESCRIPTION_REQUIRED;
-    if (!form.price || isNaN(Number(form.price)) || Number(form.price) <= 0)
-      newErrors.price = ADMIN_PRODUCTS.VALIDATION_PRICE_INVALID;
-    if (!form.categoryId) newErrors.categoryId = ADMIN_PRODUCTS.VALIDATION_CATEGORY_REQUIRED;
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (validate()) onSubmit(form);
-  };
-
-  if (!isOpen) return null;
-
-  return (
-    <AnimatePresence>
-      {isOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
-          onClick={onClose}
-        >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between p-5 border-b border-gray-100">
-              <h2 className="text-gray-900" style={{ fontSize: '20px', fontWeight: 700 }}>
-                {title}
-              </h2>
-              <button
-                onClick={onClose}
-                className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors"
-              >
-                <X size={18} />
-              </button>
-            </div>
-
-            <form onSubmit={handleSubmit} className="p-5 space-y-4">
-              {/* Image preview */}
-              <div className="flex flex-col items-center gap-3">
-                {form.imageUrl ? (
-                  <img
-                    src={form.imageUrl}
-                    alt={ADMIN_PRODUCTS.FORM_IMAGE_PREVIEW_ALT}
-                    className="w-32 h-32 rounded-xl object-cover border-2 border-gray-100"
-                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                  />
-                ) : (
-                  <div className="w-32 h-32 rounded-xl bg-gray-100 flex items-center justify-center border-2 border-dashed border-gray-300">
-                    <ImageIcon size={32} className="text-gray-400" />
-                  </div>
-                )}
-              </div>
-
-              {/* Name */}
-              <div>
-                <label className="block text-gray-700 mb-1" style={{ fontSize: '13px', fontWeight: 600 }}>
-                  {ADMIN_PRODUCTS.FORM_NAME_LABEL}
-                </label>
-                <input
-                  type="text"
-                  value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  placeholder={ADMIN_PRODUCTS.FORM_PLACEHOLDER_NAME}
-                  className={`w-full px-4 py-2.5 bg-gray-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-400 transition-all ${
-                    errors.name ? 'border-red-300' : 'border-gray-200'
-                  }`}
-                />
-                {errors.name && <p className="text-red-500 mt-1" style={{ fontSize: '12px' }}>{errors.name}</p>}
-              </div>
-
-              {/* Description */}
-              <div>
-                <label className="block text-gray-700 mb-1" style={{ fontSize: '13px', fontWeight: 600 }}>
-                  {ADMIN_PRODUCTS.FORM_DESCRIPTION_LABEL}
-                </label>
-                <textarea
-                  value={form.description}
-                  onChange={(e) => setForm({ ...form, description: e.target.value })}
-                  placeholder={ADMIN_PRODUCTS.FORM_PLACEHOLDER_DESCRIPTION}
-                  rows={3}
-                  className={`w-full px-4 py-2.5 bg-gray-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-400 transition-all resize-none ${
-                    errors.description ? 'border-red-300' : 'border-gray-200'
-                  }`}
-                />
-                {errors.description && <p className="text-red-500 mt-1" style={{ fontSize: '12px' }}>{errors.description}</p>}
-              </div>
-
-              {/* Price & Category */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-gray-700 mb-1" style={{ fontSize: '13px', fontWeight: 600 }}>
-                    {ADMIN_PRODUCTS.FORM_PRICE_LABEL}
-                  </label>
-                  <input
-                    type="number"
-                    value={form.price}
-                    onChange={(e) => setForm({ ...form, price: e.target.value })}
-                    placeholder="12000"
-                    min="0"
-                    className={`w-full px-4 py-2.5 bg-gray-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-400 transition-all ${
-                      errors.price ? 'border-red-300' : 'border-gray-200'
-                    }`}
-                  />
-                  {errors.price && <p className="text-red-500 mt-1" style={{ fontSize: '12px' }}>{errors.price}</p>}
-                </div>
-                <div>
-                  <label className="block text-gray-700 mb-1" style={{ fontSize: '13px', fontWeight: 600 }}>
-                    {ADMIN_PRODUCTS.FORM_CATEGORY_LABEL}
-                  </label>
-                  <select
-                    value={form.categoryId}
-                    onChange={(e) => setForm({ ...form, categoryId: e.target.value })}
-                    className={`w-full px-4 py-2.5 bg-gray-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-400 transition-all ${
-                      errors.categoryId ? 'border-red-300' : 'border-gray-200'
-                    }`}
-                  >
-                    <option value="">{ADMIN_PRODUCTS.FORM_SELECT_CATEGORY}</option>
-                    {categories.map((cat) => (
-                      <option key={cat.id} value={cat.id}>
-                        {cat.icon} {cat.name}
-                      </option>
-                    ))}
-                  </select>
-                  {errors.categoryId && <p className="text-red-500 mt-1" style={{ fontSize: '12px' }}>{errors.categoryId}</p>}
-                </div>
-              </div>
-
-              {/* Image URL */}
-              <div>
-                <label className="block text-gray-700 mb-1" style={{ fontSize: '13px', fontWeight: 600 }}>
-                  {ADMIN_PRODUCTS.FORM_IMAGE_URL_LABEL}
-                </label>
-                <input
-                  type="url"
-                  value={form.imageUrl}
-                  onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
-                  placeholder={ADMIN_PRODUCTS.FORM_PLACEHOLDER_IMAGE_URL}
-                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-400 transition-all"
-                />
-                <p className="text-gray-400 mt-1" style={{ fontSize: '11px' }}>
-                  {ADMIN_PRODUCTS.FORM_IMAGE_URL_HINT}
-                </p>
-              </div>
-
-              <div className="flex gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="flex-1 px-4 py-2.5 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 transition-colors"
-                  style={{ fontWeight: 500 }}
-                >
-                  {ADMIN_PRODUCTS.FORM_CANCEL}
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 px-4 py-2.5 bg-orange-500 text-white rounded-xl hover:bg-orange-600 transition-colors shadow-md shadow-orange-200"
-                  style={{ fontWeight: 600 }}
-                >
-                  {title.includes('Nuevo') ? ADMIN_PRODUCTS.FORM_CREATE : ADMIN_PRODUCTS.FORM_SAVE}
-                </button>
-              </div>
-            </form>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-}
+import { formatPrice } from '@/lib/format-price';
+import { ProductFormModal, emptyProductForm } from '@/components/modals/ProductFormModal';
+import type { ProductFormData } from '@/components/modals/ProductFormModal';
+import { SearchInput, PillFilter, PageHeader } from '@/components/atoms';
+import type { PillOption } from '@/components/atoms';
+import { btn, card, badge, layout, text, pill } from '@/config/theme';
 
 export default function AdminProductosPage() {
   const { token } = useAuth();
@@ -526,7 +305,7 @@ export default function AdminProductosPage() {
         isOpen={showModal}
         onClose={() => setShowModal(false)}
         onSubmit={(data) => void handleAdd(data)}
-        initialData={{ ...emptyForm, categoryId: categories[0]?.id ?? '' }}
+        initialData={{ ...emptyProductForm, categoryId: categories[0]?.id ?? '' }}
         title={ADMIN_PRODUCTS.MODAL_TITLE_NEW}
         categories={categories}
       />
@@ -545,7 +324,7 @@ export default function AdminProductosPage() {
                 imageUrl: editingProduct.imageUrl ?? '',
                 categoryId: editingProduct.categoryId,
               }
-            : emptyForm
+            : emptyProductForm
         }
         title={ADMIN_PRODUCTS.MODAL_TITLE_EDIT}
         categories={categories}

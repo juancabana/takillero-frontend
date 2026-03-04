@@ -20,9 +20,8 @@ import { toast } from 'sonner';
 import type { OrderStatus } from '@/features/order/domain/entities/order-status';
 import { ORDER_TRACKING_PAGE } from '@/constants/pages/order-tracking';
 import { COMMON_LABELS, PAYMENT_DATA, PAYMENT_METHODS, DEFAULT_WHATSAPP_NUMBER } from '@/constants/shared';
-
-const formatPrice = (price: number) =>
-  new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(price);
+import { formatPrice } from '@/lib/format-price';
+import { btn, card, layout, text, badge, input as inputTokens, stepper as stepperTokens } from '@/config/theme';
 
 const statusSteps: { status: OrderStatus; label: string; icon: React.ElementType }[] = [
   { status: 'pendiente', label: ORDER_TRACKING_PAGE.STATUS_STEPS.RECEIVED, icon: Clock },
@@ -62,8 +61,8 @@ export default function PedidoPage() {
   const currentStep = order ? statusOrder[order.status] : -1;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8">
+    <div className={layout.page}>
+      <div className={`${layout.containerXNarrow} py-8`}>
         <Link
           href="/"
           className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-900 mb-6 transition-colors"

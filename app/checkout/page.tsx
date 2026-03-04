@@ -9,11 +9,13 @@ import {
   CreditCard,
   MapPin,
   MessageCircle,
+  ArrowBigLeft,
   Check,
   Banknote,
   Smartphone,
   Copy,
   Clock,
+  ArrowRight,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useCart } from '@/context/CartContext';
@@ -22,9 +24,12 @@ import { useCreateOrder } from '@/features/order/presentation/hooks/use-order-qu
 import { toast } from 'sonner';
 import { CHECKOUT_PAGE } from '@/constants/pages/checkout';
 import { COMMON_LABELS, CUSTOMER_LABELS, PAYMENT_DATA, PAYMENT_METHODS, DEFAULT_WHATSAPP_NUMBER, DEFAULT_PRODUCT_IMAGE, STORE_DEFAULTS } from '@/constants/shared';
-
-const formatPrice = (price: number) =>
-  new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(price);
+import { formatPrice } from '@/lib/format-price';
+import { btn, card, input as inputTokens, layout, text, stepper as stepperTokens, iconBox } from '@/config/theme';
+import { EmptyState } from '@/components/atoms';
+import { InfoBanner } from '@/components/atoms';
+import { FormField, FormTextarea, FormSelect } from '@/components/atoms';
+import { IconBox } from '@/components/atoms';
 
 type PaymentMethod = 'efectivo' | 'transferencia';
 
@@ -112,9 +117,6 @@ export default function CheckoutPage() {
       });
       setCreatedOrder({ orderNumber: order.orderNumber, id: order.id });
 
-      // Send WhatsApp
-      const message = generateWhatsAppMessage(order.orderNumber);
-      window.open(`https://wa.me/${whatsapp}?text=${message}`, '_blank');
       setOrderSent(true);
     } catch {
       toast.error(CHECKOUT_PAGE.ERROR_CREATE_ORDER);
@@ -130,20 +132,13 @@ export default function CheckoutPage() {
 
   if (items.length === 0 && !orderSent) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center p-8">
-          <p className="text-gray-400" style={{ fontSize: '48px' }}>🛒</p>
-          <h2 className="text-gray-900 mt-4 mb-2" style={{ fontSize: '24px', fontWeight: 700 }}>
-            {CHECKOUT_PAGE.EMPTY_CART_TITLE}
-          </h2>
-          <Link
-            href="/menu"
-            className="inline-flex items-center gap-2 mt-4 bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-xl transition-all"
-            style={{ fontWeight: 600 }}
-          >
-            {CHECKOUT_PAGE.EMPTY_CART_CTA}
-          </Link>
-        </div>
+      <div className={layout.page}>
+        <EmptyState
+          emoji="🛒"
+          title={CHECKOUT_PAGE.EMPTY_CART_TITLE}
+          actionLabel={CHECKOUT_PAGE.EMPTY_CART_CTA}
+          actionHref="/menu"
+        />
       </div>
     );
   }
@@ -240,8 +235,8 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className={layout.page}>
+      <div className={`${layout.containerNarrow} py-8`}>
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
           <Link
@@ -578,13 +573,13 @@ export default function CheckoutPage() {
                       <ArrowLeft size={18} /> {COMMON_LABELS.BACK}
                     </button>
                     <button
-                      onClick={() => void handleSendOrder()}
+                      onClick={handleSendOrder}
                       disabled={isSubmitting}
                       className="flex items-center gap-2 bg-green-500 hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-8 py-3 rounded-xl transition-all shadow-md shadow-green-200"
                       style={{ fontWeight: 600 }}
                     >
-                      <MessageCircle size={20} />
                       {isSubmitting ? CHECKOUT_PAGE.SUBMITTING : CHECKOUT_PAGE.SUBMIT_ORDER}
+                      <ArrowRight size={20} />
                     </button>
                   </div>
                 </motion.div>
