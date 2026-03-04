@@ -27,9 +27,8 @@ import {
 import { ADMIN_DASHBOARD } from '@/constants/admin/dashboard';
 import { ADMIN_LAYOUT } from '@/constants/admin/layout';
 import { PRODUCT_COUNT } from '@/constants/shared';
-
-const formatPrice = (price: number) =>
-  new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(price);
+import { formatPrice } from '@/lib/format-price';
+import { badge, card, text, btn } from '@/config/theme';
 
 export default function AdminDashboardPage() {
   const { settings } = useStore();

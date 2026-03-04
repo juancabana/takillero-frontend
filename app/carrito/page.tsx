@@ -8,9 +8,10 @@ import { useCart } from '@/context/CartContext';
 import { useStore } from '@/context/StoreContext';
 import { CART_PAGE } from '@/constants/pages/cart';
 import { COMMON_LABELS, DEFAULT_PRODUCT_IMAGE } from '@/constants/shared';
-
-const formatPrice = (price: number) =>
-  new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(price);
+import { formatPrice } from '@/lib/format-price';
+import { EmptyState } from '@/components/atoms';
+import { OrderSummaryCard } from '@/components/molecules/OrderSummaryCard';
+import { btn, card, layout, text } from '@/config/theme';
 
 export default function CartPage() {
   const { items, removeFromCart, updateQuantity, totalPrice } = useCart();
@@ -18,25 +19,15 @@ export default function CartPage() {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center p-8">
-          <div className="w-24 h-24 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <ShoppingBag size={40} className="text-orange-400" />
-          </div>
-          <h2 className="text-gray-900 mb-2" style={{ fontSize: '24px', fontWeight: 700 }}>
-            {CART_PAGE.EMPTY_TITLE}
-          </h2>
-          <p className="text-gray-500 mb-6">
-            {CART_PAGE.EMPTY_DESCRIPTION}
-          </p>
-          <Link
-            href="/menu"
-            className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-xl transition-all shadow-md shadow-orange-200"
-            style={{ fontWeight: 600 }}
-          >
-            <ArrowLeft size={18} /> {CART_PAGE.EMPTY_CTA}
-          </Link>
-        </div>
+      <div className={layout.page}>
+        <EmptyState
+          icon={ShoppingBag}
+          title={CART_PAGE.EMPTY_TITLE}
+          description={CART_PAGE.EMPTY_DESCRIPTION}
+          actionLabel={CART_PAGE.EMPTY_CTA}
+          actionHref="/menu"
+          actionIcon={ArrowLeft}
+        />
       </div>
     );
   }
@@ -48,8 +39,8 @@ export default function CartPage() {
   const total = totalPrice + domicilio;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className={layout.page}>
+      <div className={`${layout.containerNarrow} py-8`}>
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-gray-900" style={{ fontSize: '32px', fontWeight: 700 }}>
@@ -128,36 +119,24 @@ export default function CartPage() {
 
           {/* Summary */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm sticky top-24">
-              <h3 className="text-gray-900 mb-4" style={{ fontSize: '18px', fontWeight: 600 }}>
-                {CART_PAGE.ORDER_SUMMARY}
-              </h3>
-              <div className="space-y-3 mb-4">
-                <div className="flex justify-between text-gray-600">
-                  <span>{COMMON_LABELS.SUBTOTAL}</span>
-                  <span>{formatPrice(totalPrice)}</span>
-                </div>
-                <div className="flex justify-between text-gray-600">
-                  <span>{CART_PAGE.DELIVERY_FROM}</span>
-                  <span>{formatPrice(domicilio)}</span>
-                </div>
-                <div
-                  className="border-t border-gray-100 pt-3 flex justify-between text-gray-900"
-                  style={{ fontWeight: 700, fontSize: '18px' }}
+            <OrderSummaryCard
+              title={CART_PAGE.ORDER_SUMMARY}
+              rows={[
+                { label: COMMON_LABELS.SUBTOTAL, value: totalPrice },
+                { label: CART_PAGE.DELIVERY_FROM, value: domicilio },
+                { label: COMMON_LABELS.TOTAL, value: total, highlight: true },
+              ]}
+              sticky
+              action={
+                <Link
+                  href="/checkout"
+                  className={`w-full ${btn.base} ${btn.primary} gap-2 py-3.5 justify-center`}
+                  style={{ fontWeight: 600 }}
                 >
-                  <span>{COMMON_LABELS.TOTAL}</span>
-                  <span className="text-orange-600">{formatPrice(total)}</span>
-                </div>
-              </div>
-
-              <Link
-                href="/checkout"
-                className="w-full flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white py-3.5 rounded-xl transition-all shadow-md shadow-orange-200"
-                style={{ fontWeight: 600 }}
-              >
-                {CART_PAGE.PLACE_ORDER} <ArrowRight size={18} />
-              </Link>
-            </div>
+                  {CART_PAGE.PLACE_ORDER} <ArrowRight size={18} />
+                </Link>
+              }
+            />
           </div>
         </div>
       </div>
