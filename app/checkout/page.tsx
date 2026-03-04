@@ -10,9 +10,9 @@ import { useStore } from '@/context/StoreContext';
 import { useCreateOrder } from '@/features/order/presentation/hooks/use-order-queries';
 import { toast } from 'sonner';
 import { CHECKOUT_PAGE } from '@/constants/pages/checkout';
-import { PAYMENT_METHODS, DEFAULT_WHATSAPP_NUMBER, STORE_DEFAULTS } from '@/constants/shared';
-import { formatPrice } from '@/lib/format-price';
+import { DEFAULT_WHATSAPP_NUMBER, STORE_DEFAULTS } from '@/constants/shared';
 import { layout } from '@/config/theme';
+import { buildNewOrderMessage } from '@/lib/whatsapp';
 import { EmptyState } from '@/components/atoms/EmptyState';
 import { CheckoutProgress } from '@/components/molecules/CheckoutProgress';
 import { CheckoutStepPersonal } from '@/components/molecules/CheckoutStepPersonal';
@@ -65,30 +65,22 @@ export default function CheckoutPage() {
     form.cedula.trim() !== '' && form.nombre.trim() !== '' && form.telefono.trim() !== '';
   const isStep2Valid = form.direccion.trim() !== '' && form.barrio.trim() !== '';
 
-  const generateWhatsAppMessage = (orderNumber: number) => {
-    let msg = `${CHECKOUT_PAGE.WA_MSG_HEADER} #${orderNumber} - ${settings?.businessName ?? STORE_DEFAULTS.BUSINESS_NAME}*\n\n`;
-    msg += `${CHECKOUT_PAGE.WA_MSG_CUSTOMER_TITLE}\n`;
-    msg += `${CHECKOUT_PAGE.WA_MSG_CUSTOMER_NAME} ${form.nombre}\n`;
-    msg += `${CHECKOUT_PAGE.WA_MSG_CUSTOMER_CEDULA} ${form.cedula}\n`;
-    msg += `${CHECKOUT_PAGE.WA_MSG_CUSTOMER_PHONE} ${form.telefono}\n\n`;
-    msg += `${CHECKOUT_PAGE.WA_MSG_ADDRESS_TITLE}\n`;
-    msg += `${form.direccion}\n`;
-    msg += `${CHECKOUT_PAGE.WA_MSG_NEIGHBORHOOD} ${form.barrio}\n\n`;
-    msg += `${CHECKOUT_PAGE.WA_MSG_ORDER_TITLE}\n`;
-    items.forEach((item) => {
-      msg += `• ${item.quantity}x ${item.product.name} - ${formatPrice(item.product.price * item.quantity)}\n`;
+  const generateWhatsAppMessage = (orderNumber: number) =>
+    buildNewOrderMessage({
+      orderNumber,
+      businessName: settings?.businessName ?? STORE_DEFAULTS.BUSINESS_NAME,
+      customerName: form.nombre,
+      customerCedula: form.cedula,
+      customerPhone: form.telefono,
+      address: form.direccion,
+      barrio: form.barrio,
+      items: items.map((i) => ({ name: i.product.name, quantity: i.quantity, price: i.product.price })),
+      subtotal: totalPrice,
+      deliveryFee,
+      total,
+      paymentMethod: form.formaPago,
+      notes: form.notas || undefined,
     });
-    msg += `\n${CHECKOUT_PAGE.WA_MSG_SUBTOTAL} ${formatPrice(totalPrice)}\n`;
-    msg += `${CHECKOUT_PAGE.WA_MSG_DELIVERY} ${formatPrice(deliveryFee)}\n`;
-    msg += `${CHECKOUT_PAGE.WA_MSG_TOTAL} ${formatPrice(total)}*\n\n`;
-    msg += `${CHECKOUT_PAGE.WA_MSG_PAYMENT} ${form.formaPago === 'efectivo' ? PAYMENT_METHODS.CASH_LABEL : PAYMENT_METHODS.TRANSFER_LABEL}\n`;
-    if (form.notas) {
-      msg += `\n${CHECKOUT_PAGE.WA_MSG_NOTES} ${form.notas}\n`;
-    }
-    msg += `\n${CHECKOUT_PAGE.WA_MSG_STATUS}`;
-    msg += `\n${CHECKOUT_PAGE.WA_MSG_AWAITING}`;
-    return encodeURIComponent(msg);
-  };
 
   const handleSendOrder = async () => {
     try {

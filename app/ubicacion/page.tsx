@@ -4,6 +4,7 @@ import { MapPin, Clock, Phone, MessageCircle, Navigation } from "lucide-react";
 import { motion } from "motion/react";
 import { LOCATION_PAGE } from '@/constants/pages/location';
 import { useStoreSettings } from '@/features/store-settings/presentation/hooks/use-store-settings-queries';
+import { buildWhatsAppUrl } from '@/lib/whatsapp';
 
 export default function UbicacionPage() {
   const { data: storeSettings } = useStoreSettings();
@@ -133,7 +134,7 @@ export default function UbicacionPage() {
                   {LOCATION_PAGE.PHONE_NUMBER}
                 </a>
                 <a
-                  href={LOCATION_PAGE.WHATSAPP_HREF}
+                  href={buildWhatsAppUrl(LOCATION_PAGE.WHATSAPP_NUMBER)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-3 bg-green-500 hover:bg-green-600 text-white px-4 py-3 rounded-xl transition-all"

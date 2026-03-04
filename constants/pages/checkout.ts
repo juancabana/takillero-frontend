@@ -69,21 +69,4 @@ export const CHECKOUT_PAGE = {
 
   // ── Errores ────────────────────────────────────────────────────────
   ERROR_CREATE_ORDER: 'Error al crear el pedido. Intenta nuevamente.',
-
-  // ── Plantilla mensaje WhatsApp ─────────────────────────────────────
-  WA_MSG_HEADER: '🔥 *NUEVO PEDIDO',
-  WA_MSG_CUSTOMER_TITLE: '👤 *Datos del cliente:*',
-  WA_MSG_CUSTOMER_NAME: 'Nombre:',
-  WA_MSG_CUSTOMER_CEDULA: 'Cedula:',
-  WA_MSG_CUSTOMER_PHONE: 'Telefono:',
-  WA_MSG_ADDRESS_TITLE: '📍 *Direccion de entrega:*',
-  WA_MSG_NEIGHBORHOOD: 'Barrio:',
-  WA_MSG_ORDER_TITLE: '🛒 *Pedido:*',
-  WA_MSG_SUBTOTAL: '💰 Subtotal:',
-  WA_MSG_DELIVERY: '🛵 Domicilio:',
-  WA_MSG_TOTAL: '💵 *TOTAL:',
-  WA_MSG_PAYMENT: '💳 Forma de pago:',
-  WA_MSG_NOTES: '📝 Notas:',
-  WA_MSG_STATUS: '⏳ *Estado: PENDIENTE DE CONFIRMACION*',
-  WA_MSG_AWAITING: 'El cliente espera confirmacion de su pedido.',
 } as const;

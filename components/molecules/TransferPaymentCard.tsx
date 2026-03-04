@@ -4,7 +4,7 @@ import React from 'react';
 import { MessageCircle } from 'lucide-react';
 import { ORDER_TRACKING_PAGE } from '@/constants/pages/order-tracking';
 import { PAYMENT_DATA } from '@/constants/shared';
-import { formatPrice } from '@/lib/format-price';
+import { buildWhatsAppUrl, buildReceiptMessage } from '@/lib/whatsapp';
 
 interface TransferPaymentCardProps {
   orderNumber: number;
@@ -28,7 +28,7 @@ export function TransferPaymentCard({ orderNumber, customerName, total, whatsapp
         {ORDER_TRACKING_PAGE.TRANSFER_RECEIPT_HINT_PREFIX} #{orderNumber}
       </p>
       <a
-        href={`https://wa.me/${whatsapp}?text=${encodeURIComponent(`${ORDER_TRACKING_PAGE.WA_RECEIPT_GREETING} ${customerName}. ${ORDER_TRACKING_PAGE.WA_RECEIPT_MESSAGE} #${orderNumber} ${ORDER_TRACKING_PAGE.WA_RECEIPT_AMOUNT_PREFIX} ${formatPrice(total)}.`)}`}
+        href={buildWhatsAppUrl(whatsapp, buildReceiptMessage(customerName, orderNumber, total))}
         target="_blank"
         rel="noopener noreferrer"
         className="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-xl transition-all"

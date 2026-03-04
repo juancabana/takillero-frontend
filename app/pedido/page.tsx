@@ -16,6 +16,7 @@ import { toast } from 'sonner';
 import { ORDER_TRACKING_PAGE } from '@/constants/pages/order-tracking';
 import { DEFAULT_WHATSAPP_NUMBER } from '@/constants/shared';
 import { layout } from '@/config/theme';
+import { buildWhatsAppUrl } from '@/lib/whatsapp';
 import { OrderStatusTracker } from '@/components/molecules/OrderStatusTracker';
 import { OrderDetailCard } from '@/components/molecules/OrderDetailCard';
 import { TransferPaymentCard } from '@/components/molecules/TransferPaymentCard';
@@ -134,7 +135,7 @@ function PedidoContent() {
                 </p>
               </div>
               <a
-                href={`https://wa.me/${whatsapp}`}
+                href={buildWhatsAppUrl(whatsapp)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-xl transition-all"

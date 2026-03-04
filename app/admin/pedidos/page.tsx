@@ -65,17 +65,7 @@ export default function AdminPedidosPage() {
       toast.error(ADMIN_ORDERS.TOAST_REJECTION_REASON_REQUIRED);
       return;
     }
-    const order = orders.find((o) => o.id === orderId);
     await updateStatus(orderId, "rechazado", rejectReason);
-    if (order) {
-      const msg = encodeURIComponent(
-        `Hola ${order.customerName}. Lamentablemente tu pedido #${order.orderNumber} no pudo ser procesado. Razon: ${rejectReason}. Disculpa las molestias!`,
-      );
-      window.open(
-        `https://wa.me/${order.customerPhone.replace(/\D/g, "")}?text=${msg}`,
-        "_blank",
-      );
-    }
     toast.info(ADMIN_ORDERS.TOAST_REJECTED);
     setRejectingOrder(null);
     setRejectReason("");
