@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import {
   DollarSign,
   ShoppingBag,
@@ -11,29 +11,21 @@ import {
   CreditCard,
   Package,
 } from 'lucide-react';
-import { motion } from 'motion/react';
 import { useOrders } from '@/features/order/presentation/hooks/use-order-queries';
 import { useStore } from '@/context/StoreContext';
 import { useAuth } from '@/context/AuthContext';
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from 'recharts';
 import { ADMIN_DASHBOARD } from '@/constants/admin/dashboard';
 import { ADMIN_LAYOUT } from '@/constants/admin/layout';
 import { PRODUCT_COUNT } from '@/constants/shared';
 import { formatPrice } from '@/lib/format-price';
-import { badge, card, text, btn } from '@/config/theme';
+import { DashboardStatsGrid } from '@/components/molecules/DashboardStatsGrid';
+import { SalesChart } from '@/components/molecules/SalesChart';
+import { QuickStatsRow } from '@/components/molecules/QuickStatsRow';
+import { PendingOrdersList } from '@/components/molecules/PendingOrdersList';
 
 export default function AdminDashboardPage() {
   const { settings } = useStore();
   const { token } = useAuth();
-  const [viewMode, setViewMode] = useState<'dia' | 'mes'>('dia');
   const { data: orders = [] } = useOrders(token ?? '');
 
   const today = new Date().toISOString().split('T')[0];
@@ -87,8 +79,6 @@ export default function AdminDashboardPage() {
     return data;
   };
 
-  const chartData = viewMode === 'dia' ? getLast7DaysData() : getLast6MonthsData();
-
   const stats = [
     {
       label: ADMIN_DASHBOARD.SALES_TODAY,
@@ -120,6 +110,13 @@ export default function AdminDashboardPage() {
     },
   ];
 
+  const quickStats = [
+    { label: ADMIN_DASHBOARD.CONFIRMED, count: confirmedOrders.length, icon: CheckCircle, color: 'text-green-500' },
+    { label: ADMIN_DASHBOARD.REJECTED, count: rejectedOrders.length, icon: XCircle, color: 'text-red-500' },
+    { label: ADMIN_DASHBOARD.PAID, count: paidOrders.length, icon: CreditCard, color: 'text-blue-500' },
+    { label: ADMIN_DASHBOARD.DELIVERED, count: deliveredOrders.length, icon: Package, color: 'text-purple-500' },
+  ];
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -143,137 +140,13 @@ export default function AdminDashboardPage() {
         </span>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {stats.map((stat, i) => (
-          <motion.div
-            key={stat.label}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-            className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm"
-          >
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-gray-500" style={{ fontSize: '13px' }}>
-                {stat.label}
-              </span>
-              <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${stat.color}`}>
-                <stat.icon size={18} />
-              </div>
-            </div>
-            <p className="text-gray-900" style={{ fontSize: '24px', fontWeight: 700 }}>
-              {stat.value}
-            </p>
-            <p className="text-gray-400" style={{ fontSize: '12px' }}>
-              {stat.sub}
-            </p>
-          </motion.div>
-        ))}
-      </div>
+      <DashboardStatsGrid stats={stats} />
 
-      {/* Chart */}
-      <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-gray-900" style={{ fontSize: '18px', fontWeight: 600 }}>
-            {ADMIN_DASHBOARD.SALES_SUMMARY_TITLE}
-          </h2>
-          <div className="flex bg-gray-100 rounded-xl p-1">
-            <button
-              onClick={() => setViewMode('dia')}
-              className={`px-4 py-1.5 rounded-lg transition-all ${
-                viewMode === 'dia' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500'
-              }`}
-              style={{ fontSize: '13px', fontWeight: 500 }}
-            >
-              {ADMIN_DASHBOARD.VIEW_BY_DAY}
-            </button>
-            <button
-              onClick={() => setViewMode('mes')}
-              className={`px-4 py-1.5 rounded-lg transition-all ${
-                viewMode === 'mes' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500'
-              }`}
-              style={{ fontSize: '13px', fontWeight: 500 }}
-            >
-              {ADMIN_DASHBOARD.VIEW_BY_MONTH}
-            </button>
-          </div>
-        </div>
+      <SalesChart dailyData={getLast7DaysData()} monthlyData={getLast6MonthsData()} />
 
-        <div className="h-64">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <XAxis dataKey="name" tick={{ fontSize: 12 }} stroke="#9ca3af" />
-              <YAxis
-                tick={{ fontSize: 12 }}
-                stroke="#9ca3af"
-                tickFormatter={(v: number) => `$${(v / 1000).toFixed(0)}k`}
-              />
-              <Tooltip
-                formatter={(value: number | undefined) => (value != null ? formatPrice(value) : '')}
-                labelStyle={{ fontWeight: 600 }}
-                contentStyle={{ borderRadius: 12, border: '1px solid #e5e7eb' }}
-              />
-              <Bar dataKey="ventas" fill="#f97316" radius={[6, 6, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
+      <QuickStatsRow stats={quickStats} />
 
-      {/* Quick stats row */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        {[
-          { label: ADMIN_DASHBOARD.CONFIRMED, count: confirmedOrders.length, icon: CheckCircle, color: 'text-green-500' },
-          { label: ADMIN_DASHBOARD.REJECTED, count: rejectedOrders.length, icon: XCircle, color: 'text-red-500' },
-          { label: ADMIN_DASHBOARD.PAID, count: paidOrders.length, icon: CreditCard, color: 'text-blue-500' },
-          { label: ADMIN_DASHBOARD.DELIVERED, count: deliveredOrders.length, icon: Package, color: 'text-purple-500' },
-        ].map((s) => (
-          <div key={s.label} className="bg-white rounded-xl p-4 border border-gray-100 flex items-center gap-3">
-            <s.icon size={20} className={s.color} />
-            <div>
-              <p className="text-gray-900" style={{ fontWeight: 600 }}>{s.count}</p>
-              <p className="text-gray-400" style={{ fontSize: '12px' }}>{s.label}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Recent pending orders */}
-      {pendingOrders.length > 0 && (
-        <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-          <h2 className="text-gray-900 mb-4" style={{ fontSize: '18px', fontWeight: 600 }}>
-            {ADMIN_DASHBOARD.PENDING_ORDERS_TITLE}
-          </h2>
-          <div className="space-y-3">
-            {pendingOrders.slice(0, 5).map((order) => (
-              <div
-                key={order.id}
-                className="flex items-center justify-between p-3 bg-yellow-50 rounded-xl border border-yellow-100"
-              >
-                <div className="flex items-center gap-3">
-                  <span
-                    className="bg-yellow-200 text-yellow-800 px-2 py-1 rounded-lg"
-                    style={{ fontSize: '13px', fontWeight: 600 }}
-                  >
-                    #{order.orderNumber}
-                  </span>
-                  <div>
-                    <p className="text-gray-900" style={{ fontSize: '14px', fontWeight: 500 }}>
-                      {order.customerName}
-                    </p>
-                    <p className="text-gray-500" style={{ fontSize: '12px' }}>
-                      {PRODUCT_COUNT(order.items.length)} - {formatPrice(order.total)}
-                    </p>
-                  </div>
-                </div>
-                <span className="text-gray-400" style={{ fontSize: '12px' }}>
-                  {new Date(order.createdAt).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' })}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      <PendingOrdersList orders={pendingOrders} />
     </div>
   );
 }
