@@ -1,4 +1,4 @@
-import { Category } from '@/types/category.types';
+import { Category } from '@/features/category/domain/entities/category';
 import { CategoryCard } from '@/components/molecules/CategoryCard';
 import { HOME_PAGE } from '@/constants/pages/home';
 

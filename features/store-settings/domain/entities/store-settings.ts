@@ -17,6 +17,7 @@ export interface StoreSettings {
   isOpen: boolean;
   closedMessage: string | null;
   whatsappNumber: string | null;
+  address: string | null;
   deliveryZones: DeliveryZone[];
   schedule: StoreSchedule[];
 }

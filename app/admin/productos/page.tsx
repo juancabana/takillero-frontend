@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Search,
   Package,
@@ -13,12 +13,12 @@ import {
   Trash2,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { productService } from '@/services/product.service';
-import { categoryService } from '@/services/category.service';
+import { useProducts, useCreateProduct, useUpdateProduct, useDeleteProduct, useToggleProductAvailability } from '@/features/product/presentation/hooks/use-product-queries';
+import { useCategories } from '@/features/category/presentation/hooks/use-category-queries';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
-import type { Product } from '@/types/product.types';
-import type { Category } from '@/types/category.types';
+import type { Product } from '@/features/product/domain/entities/product';
+import type { Category } from '@/features/category/domain/entities/category';
 import { ADMIN_PRODUCTS } from '@/constants/admin/products';
 import { DEFAULT_PRODUCT_IMAGE } from '@/constants/shared';
 
@@ -248,26 +248,18 @@ function ProductFormModal({
 
 export default function AdminProductosPage() {
   const { token } = useAuth();
-  const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const { data: products = [] } = useProducts();
+  const { data: categories = [] } = useCategories();
+  const createProductMutation = useCreateProduct();
+  const updateProductMutation = useUpdateProduct();
+  const deleteProductMutation = useDeleteProduct();
+  const toggleAvailabilityMutation = useToggleProductAvailability();
+
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState('todos');
   const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'disabled'>('all');
   const [showModal, setShowModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-
-  const fetchAll = useCallback(async () => {
-    const [prods, cats] = await Promise.all([
-      productService.getProducts(),
-      categoryService.getActiveCategories(),
-    ]);
-    setProducts(prods);
-    setCategories(cats);
-  }, []);
-
-  useEffect(() => {
-    void fetchAll();
-  }, [fetchAll]);
 
   const filteredProducts = products.filter((p) => {
     const matchCategory = activeCategory === 'todos' || p.categoryId === activeCategory;
@@ -285,18 +277,17 @@ export default function AdminProductosPage() {
   const handleAdd = async (data: ProductFormData) => {
     if (!token) return;
     try {
-      const created = await productService.createProduct(
-        {
+      await createProductMutation.mutateAsync({
+        data: {
           name: data.name.trim(),
           description: data.description.trim(),
           price: Number(data.price),
-          imageUrl: data.imageUrl.trim() || null,
+          imageUrl: data.imageUrl.trim() || undefined,
           categoryId: data.categoryId,
           isAvailable: true,
         },
         token,
-      );
-      setProducts((prev) => [...prev, created]);
+      });
       setShowModal(false);
       toast.success(ADMIN_PRODUCTS.TOAST_CREATED);
     } catch {
@@ -307,9 +298,9 @@ export default function AdminProductosPage() {
   const handleEdit = async (data: ProductFormData) => {
     if (!token || !editingProduct) return;
     try {
-      const updated = await productService.updateProduct(
-        editingProduct.id,
-        {
+      await updateProductMutation.mutateAsync({
+        id: editingProduct.id,
+        data: {
           name: data.name.trim(),
           description: data.description.trim(),
           price: Number(data.price),
@@ -317,8 +308,7 @@ export default function AdminProductosPage() {
           categoryId: data.categoryId,
         },
         token,
-      );
-      setProducts((prev) => prev.map((p) => (p.id === updated.id ? updated : p)));
+      });
       setEditingProduct(null);
       toast.success(ADMIN_PRODUCTS.TOAST_UPDATED);
     } catch {
@@ -329,12 +319,11 @@ export default function AdminProductosPage() {
   const handleToggleAvailable = async (product: Product) => {
     if (!token) return;
     try {
-      const updated = await productService.updateProduct(
-        product.id,
-        { isAvailable: !product.isAvailable },
+      await toggleAvailabilityMutation.mutateAsync({
+        id: product.id,
+        isAvailable: !product.isAvailable,
         token,
-      );
-      setProducts((prev) => prev.map((p) => (p.id === updated.id ? updated : p)));
+      });
       toast.success(product.isAvailable ? ADMIN_PRODUCTS.TOAST_SOLD_OUT : ADMIN_PRODUCTS.TOAST_AVAILABLE);
     } catch {
       toast.error(ADMIN_PRODUCTS.TOAST_AVAILABILITY_ERROR);
@@ -345,8 +334,7 @@ export default function AdminProductosPage() {
     if (!token) return;
     if (!confirm(ADMIN_PRODUCTS.DELETE_CONFIRM(product.name))) return;
     try {
-      await productService.deleteProduct(product.id, token);
-      setProducts((prev) => prev.filter((p) => p.id !== product.id));
+      await deleteProductMutation.mutateAsync({ id: product.id, token });
       toast.success(ADMIN_PRODUCTS.TOAST_DELETED);
     } catch {
       toast.error(ADMIN_PRODUCTS.TOAST_DELETE_ERROR);

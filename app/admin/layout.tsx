@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useStore } from "@/context/StoreContext";
-import { orderService } from "@/services/order.service";
+import { useOrders } from "@/features/order/presentation/hooks/use-order-queries";
 import { ADMIN_LAYOUT } from '@/constants/admin/layout';
 
 const navItems = [
@@ -49,23 +49,14 @@ export default function AdminLayout({
   const { settings, updateSettings } = useStore();
   const router = useRouter();
   const pathname = usePathname();
+  const { data: orders = [] } = useOrders(token ?? '');
+  const pendingCount = orders.filter((o) => o.status === "pendiente").length;
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [pendingCount, setPendingCount] = useState(0);
 
   useEffect(() => {
     if (!isAuthenticated && pathname !== "/admin/login")
       router.replace("/admin/login");
   }, [isAuthenticated, pathname, router]);
-
-  useEffect(() => {
-    if (!token) return;
-    orderService
-      .getOrders(token)
-      .then((orders) => {
-        setPendingCount(orders.filter((o) => o.status === "pendiente").length);
-      })
-      .catch(() => {});
-  }, [token]);
 
   // Mientras no está autenticado, solo renderizar el children (página de login)
   if (!isAuthenticated) {

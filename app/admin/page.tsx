@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   DollarSign,
   ShoppingBag,
@@ -12,7 +12,7 @@ import {
   Package,
 } from 'lucide-react';
 import { motion } from 'motion/react';
-import { orderService } from '@/services/order.service';
+import { useOrders } from '@/features/order/presentation/hooks/use-order-queries';
 import { useStore } from '@/context/StoreContext';
 import { useAuth } from '@/context/AuthContext';
 import {
@@ -24,7 +24,6 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
-import type { Order } from '@/types/order.types';
 import { ADMIN_DASHBOARD } from '@/constants/admin/dashboard';
 import { ADMIN_LAYOUT } from '@/constants/admin/layout';
 import { PRODUCT_COUNT } from '@/constants/shared';
@@ -35,13 +34,8 @@ const formatPrice = (price: number) =>
 export default function AdminDashboardPage() {
   const { settings } = useStore();
   const { token } = useAuth();
-  const [orders, setOrders] = useState<Order[]>([]);
   const [viewMode, setViewMode] = useState<'dia' | 'mes'>('dia');
-
-  useEffect(() => {
-    if (!token) return;
-    orderService.getOrders(token).then(setOrders).catch(() => setOrders([]));
-  }, [token]);
+  const { data: orders = [] } = useOrders(token ?? '');
 
   const today = new Date().toISOString().split('T')[0];
   const todayOrders = orders.filter((o) => o.createdAt.startsWith(today) && o.status !== 'rechazado');

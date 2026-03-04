@@ -1,16 +1,15 @@
 'use client';
 
-import React, { Suspense, useState, useEffect, useCallback } from 'react';
+import React, { Suspense, useState, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { Search, ShoppingCart, Plus, Minus } from 'lucide-react';
+import { Search, Plus, Minus } from 'lucide-react';
 import { motion } from 'motion/react';
-import { productService } from '@/services/product.service';
-import { categoryService } from '@/services/category.service';
+import { useProducts } from '@/features/product/presentation/hooks/use-product-queries';
+import { useCategories } from '@/features/category/presentation/hooks/use-category-queries';
 import { useCart } from '@/context/CartContext';
 import { MENU_PAGE } from '@/constants/pages/menu';
 import { DEFAULT_PRODUCT_IMAGE } from '@/constants/shared';
-import type { Product } from '@/types/product.types';
-import type { Category } from '@/types/category.types';
+import type { Product } from '@/features/product/domain/entities/product';
 
 const formatPrice = (price: number) =>
   new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(price);
@@ -102,24 +101,11 @@ function MenuContent() {
   const router = useRouter();
   const categoryParam = searchParams.get('categoria');
 
-  const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState<string>(categoryParam ?? 'todos');
   const [search, setSearch] = useState('');
 
-  useEffect(() => {
-    Promise.all([productService.getProducts(), categoryService.getActiveCategories()])
-      .then(([prods, cats]) => {
-        setProducts(prods);
-        setCategories(cats);
-      })
-      .finally(() => setIsLoading(false));
-  }, []);
-
-  useEffect(() => {
-    if (categoryParam) setActiveCategory(categoryParam);
-  }, [categoryParam]);
+  const { data: products = [], isLoading } = useProducts();
+  const { data: categories = [] } = useCategories();
 
   const handleCategoryChange = useCallback(
     (catId: string) => {

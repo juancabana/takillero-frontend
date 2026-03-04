@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import {
   Clock,
   CheckCircle,
@@ -14,10 +14,11 @@ import {
   Filter,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { orderService } from '@/services/order.service';
+import { useOrders, useUpdateOrderStatus } from '@/features/order/presentation/hooks/use-order-queries';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
-import type { Order, OrderStatus } from '@/types/order.types';
+import type { Order } from '@/features/order/domain/entities/order';
+import type { OrderStatus } from '@/features/order/domain/entities/order-status';
 import { ADMIN_ORDERS } from '@/constants/admin/orders';
 import { COMMON_LABELS, CUSTOMER_LABELS, PAYMENT_METHODS, PRODUCT_COUNT } from '@/constants/shared';
 
@@ -34,28 +35,14 @@ const statusConfig: Record<OrderStatus, { label: string; color: string; bg: stri
 
 export default function AdminPedidosPage() {
   const { token } = useAuth();
-  const [orders, setOrders] = useState<Order[]>([]);
+  const { data: orders = [] } = useOrders(token ?? '', { refetchInterval: 30_000 });
+  const updateStatusMutation = useUpdateOrderStatus();
+
   const [filter, setFilter] = useState<'todos' | OrderStatus>('todos');
   const [search, setSearch] = useState('');
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
   const [rejectReason, setRejectReason] = useState('');
   const [rejectingOrder, setRejectingOrder] = useState<string | null>(null);
-
-  const fetchOrders = useCallback(async () => {
-    if (!token) return;
-    try {
-      const data = await orderService.getOrders(token);
-      setOrders(data);
-    } catch {
-      toast.error(ADMIN_ORDERS.TOAST_LOAD_ERROR);
-    }
-  }, [token]);
-
-  useEffect(() => {
-    void fetchOrders();
-    const interval = setInterval(() => void fetchOrders(), 30_000);
-    return () => clearInterval(interval);
-  }, [fetchOrders]);
 
   const filteredOrders = orders.filter((o) => {
     const matchFilter = filter === 'todos' || o.status === filter;
@@ -70,8 +57,7 @@ export default function AdminPedidosPage() {
   const updateStatus = async (id: string, status: OrderStatus, rejectionReason?: string) => {
     if (!token) return;
     try {
-      const updated = await orderService.updateOrderStatus(id, status, token, rejectionReason);
-      setOrders((prev) => prev.map((o) => (o.id === id ? updated : o)));
+      await updateStatusMutation.mutateAsync({ id, data: { status, rejectionReason }, token });
     } catch {
       toast.error(ADMIN_ORDERS.TOAST_UPDATE_ERROR);
     }

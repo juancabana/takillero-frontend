@@ -19,7 +19,7 @@ export const HOME_PAGE = {
   HERO_IMAGE_ALT: 'Takillero comida',
   FEATURES: [
     { title: 'Domicilio Rápido', desc: 'Entrega en 30-45 minutos a tu puerta' },
-    { title: 'Abierto hasta tarde', desc: 'Viernes y sábados hasta la 1:00 AM' },
+    { title: 'Abierto hasta tarde', desc: 'Todos los días hasta las 11:30 PM' },
     { title: 'Calidad Premium', desc: 'Ingredientes frescos todos los días' },
   ],
   CLASSIC_FEATURES: [

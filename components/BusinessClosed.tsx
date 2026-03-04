@@ -2,7 +2,7 @@
 
 import { Clock, XCircle } from 'lucide-react';
 import { motion } from 'motion/react';
-import type { StoreSettings } from '@/types/store.types';
+import type { StoreSettings } from '@/features/store-settings/domain/entities/store-settings';
 import { BUSINESS_CLOSED } from '@/constants/components/business-closed';
 
 interface BusinessClosedProps {
