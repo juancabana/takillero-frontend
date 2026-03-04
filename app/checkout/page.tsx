@@ -105,6 +105,7 @@ export default function CheckoutPage() {
           quantity: i.quantity,
         })),
       });
+      clearCart();
       setCreatedOrder({ orderNumber: order.orderNumber, id: order.id });
       setOrderSent(true);
     } catch {
@@ -142,7 +143,6 @@ export default function CheckoutPage() {
         whatsapp={whatsapp}
         whatsappMessage={generateWhatsAppMessage(createdOrder.orderNumber)}
         onNewOrder={handleNewOrder}
-        onClearCart={clearCart}
       />
     );
   }
