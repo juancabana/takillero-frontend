@@ -40,6 +40,8 @@ export default function AdminConfiguracionPage() {
   const [zones, setZones] = useState<DeliveryZone[]>(settings.deliveryZones);
   const [schedule, setSchedule] = useState<StoreSchedule[]>(settings.schedule ?? []);
   const [isSaving, setIsSaving] = useState(false);
+  const [togglingOpen, setTogglingOpen] = useState(false);
+  const [togglingDelivery, setTogglingDelivery] = useState(false);
 
   const hasGeneralChanges = useMemo(
     () =>
@@ -86,22 +88,28 @@ export default function AdminConfiguracionPage() {
   };
 
   const handleToggleOpen = async () => {
-    if (!token) return;
+    if (!token || togglingOpen) return;
+    setTogglingOpen(true);
     try {
       await updateSettings({ isOpen: !settings.isOpen }, token);
       toast.success(settings.isOpen ? ADMIN_SETTINGS.TOAST_BUSINESS_CLOSED : ADMIN_SETTINGS.TOAST_BUSINESS_OPEN);
     } catch {
       toast.error(ADMIN_SETTINGS.TOAST_STATUS_ERROR);
+    } finally {
+      setTogglingOpen(false);
     }
   };
 
   const handleToggleDelivery = async () => {
-    if (!token) return;
+    if (!token || togglingDelivery) return;
+    setTogglingDelivery(true);
     try {
       await updateSettings({ deliveryEnabled: !settings.deliveryEnabled }, token);
       toast.success(settings.deliveryEnabled ? ADMIN_SETTINGS.TOAST_DELIVERY_OFF : ADMIN_SETTINGS.TOAST_DELIVERY_ON);
     } catch {
       toast.error(ADMIN_SETTINGS.TOAST_STATUS_ERROR);
+    } finally {
+      setTogglingDelivery(false);
     }
   };
 
@@ -139,7 +147,7 @@ export default function AdminConfiguracionPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-3xl">
+    <div className="space-y-6 max-w-3xl w-full">
       <div>
         <h1 className="text-gray-900" style={{ fontSize: '28px', fontWeight: 700 }}>
           {ADMIN_SETTINGS.TITLE}
@@ -153,6 +161,8 @@ export default function AdminConfiguracionPage() {
         isOpen={settings.isOpen}
         closedMessage={closedMessage}
         deliveryEnabled={settings.deliveryEnabled}
+        togglingOpen={togglingOpen}
+        togglingDelivery={togglingDelivery}
         onToggleOpen={() => void handleToggleOpen()}
         onClosedMessageChange={setClosedMessage}
         onToggleDelivery={() => void handleToggleDelivery()}

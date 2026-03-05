@@ -8,6 +8,8 @@ interface StoreStatusSectionProps {
   isOpen: boolean;
   closedMessage: string;
   deliveryEnabled: boolean;
+  togglingOpen: boolean;
+  togglingDelivery: boolean;
   onToggleOpen: () => void;
   onClosedMessageChange: (value: string) => void;
   onToggleDelivery: () => void;
@@ -17,6 +19,8 @@ export function StoreStatusSection({
   isOpen,
   closedMessage,
   deliveryEnabled,
+  togglingOpen,
+  togglingDelivery,
   onToggleOpen,
   onClosedMessageChange,
   onToggleDelivery,
@@ -46,7 +50,8 @@ export function StoreStatusSection({
         </div>
         <button
           onClick={onToggleOpen}
-          className={`relative w-14 h-8 rounded-full transition-all ${
+          disabled={togglingOpen}
+          className={`relative w-14 h-8 rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
             isOpen ? 'bg-green-500' : 'bg-gray-300'
           }`}
         >
@@ -74,7 +79,8 @@ export function StoreStatusSection({
         </div>
         <button
           onClick={onToggleDelivery}
-          className={`relative w-14 h-8 rounded-full transition-all ${
+          disabled={togglingDelivery}
+          className={`relative w-14 h-8 rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
             deliveryEnabled ? 'bg-teal-500' : 'bg-gray-300'
           }`}
         >

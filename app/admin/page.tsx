@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import {
   DollarSign,
   ShoppingBag,
@@ -30,12 +29,12 @@ export default function AdminDashboardPage() {
 
   const today = new Date().toISOString().split('T')[0];
   const todayOrders = orders.filter((o) => o.createdAt.startsWith(today) && o.status !== 'rechazado');
-  const todayTotal = todayOrders.reduce((s, o) => s + o.total, 0);
+  const todayTotal = todayOrders.reduce((s, o) => s + Number(o.total), 0);
 
   const now = new Date();
   const monthPrefix = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
   const monthOrders = orders.filter((o) => o.createdAt.startsWith(monthPrefix) && o.status !== 'rechazado');
-  const monthTotal = monthOrders.reduce((s, o) => s + o.total, 0);
+  const monthTotal = monthOrders.reduce((s, o) => s + Number(o.total), 0);
 
   const pendingOrders = orders.filter((o) => o.status === 'pendiente');
   const confirmedOrders = orders.filter((o) => o.status === 'confirmado');
@@ -54,7 +53,7 @@ export default function AdminDashboardPage() {
       );
       data.push({
         name: date.toLocaleDateString('es-CO', { weekday: 'short' }),
-        ventas: dayOrders.reduce((s, o) => s + o.total, 0),
+        ventas: dayOrders.reduce((s, o) => s + Number(o.total), 0),
         pedidos: dayOrders.length,
       });
     }
@@ -72,7 +71,7 @@ export default function AdminDashboardPage() {
       const mOrders = orders.filter((o) => o.createdAt.startsWith(prefix) && o.status !== 'rechazado');
       data.push({
         name: date.toLocaleDateString('es-CO', { month: 'short' }),
-        ventas: mOrders.reduce((s, o) => s + o.total, 0),
+        ventas: mOrders.reduce((s, o) => s + Number(o.total), 0),
         pedidos: mOrders.length,
       });
     }
@@ -118,7 +117,7 @@ export default function AdminDashboardPage() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-5xl w-full">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
@@ -129,15 +128,26 @@ export default function AdminDashboardPage() {
             {ADMIN_DASHBOARD.SUBTITLE}
           </p>
         </div>
-        <span
-          className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full ${
-            settings.isOpen ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-          }`}
-          style={{ fontSize: '13px', fontWeight: 600 }}
-        >
-          <span className={`w-2 h-2 rounded-full ${settings.isOpen ? 'bg-green-500' : 'bg-red-500'}`} />
-          {settings.isOpen ? ADMIN_LAYOUT.OPEN : ADMIN_LAYOUT.CLOSED}
-        </span>
+        <div className="flex items-center gap-2">
+          <span
+            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full ${
+              settings.isOpen ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+            }`}
+            style={{ fontSize: '13px', fontWeight: 600 }}
+          >
+            <span className={`w-2 h-2 rounded-full ${settings.isOpen ? 'bg-green-500' : 'bg-red-500'}`} />
+            {settings.isOpen ? ADMIN_LAYOUT.OPEN : ADMIN_LAYOUT.CLOSED}
+          </span>
+          <span
+            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full ${
+              settings.deliveryEnabled ? 'bg-teal-100 text-teal-700' : 'bg-gray-100 text-gray-500'
+            }`}
+            style={{ fontSize: '13px', fontWeight: 600 }}
+          >
+            <span className={`w-2 h-2 rounded-full ${settings.deliveryEnabled ? 'bg-teal-500' : 'bg-gray-400'}`} />
+            {settings.deliveryEnabled ? ADMIN_LAYOUT.DELIVERY_ON : ADMIN_LAYOUT.DELIVERY_OFF}
+          </span>
+        </div>
       </div>
 
       <DashboardStatsGrid stats={stats} />
