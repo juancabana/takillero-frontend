@@ -60,6 +60,8 @@ export default function AdminLayout({
   const { data: orders = [] } = useOrders(token ?? '');
   const pendingCount = orders.filter((o) => o.status === "pendiente").length;
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [togglingOpen, setTogglingOpen] = useState(false);
+  const [togglingDelivery, setTogglingDelivery] = useState(false);
 
   useEffect(() => {
     if (!isAuthenticated && pathname !== "/admin/login")
@@ -82,20 +84,26 @@ export default function AdminLayout({
   };
 
   const handleToggleOpen = async () => {
-    if (!token) return;
+    if (!token || togglingOpen) return;
+    setTogglingOpen(true);
     try {
       await updateSettings({ isOpen: !settings.isOpen }, token);
     } catch {
       // ignore
+    } finally {
+      setTogglingOpen(false);
     }
   };
 
   const handleToggleDelivery = async () => {
-    if (!token) return;
+    if (!token || togglingDelivery) return;
+    setTogglingDelivery(true);
     try {
       await updateSettings({ deliveryEnabled: !settings.deliveryEnabled }, token);
     } catch {
       // ignore
+    } finally {
+      setTogglingDelivery(false);
     }
   };
 
@@ -147,7 +155,8 @@ export default function AdminLayout({
           <div className="p-4 border-t border-gray-800 space-y-3">
             <button
               onClick={() => void handleToggleOpen()}
-              className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-xl transition-all ${
+              disabled={togglingOpen}
+              className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
                 settings.isOpen
                   ? "bg-green-500/20 text-green-400 hover:bg-green-500/30"
                   : "bg-red-500/20 text-red-400 hover:bg-red-500/30"
@@ -163,7 +172,8 @@ export default function AdminLayout({
             {settings.isOpen && (
               <button
                 onClick={() => void handleToggleDelivery()}
-                className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-xl transition-all ${
+                disabled={togglingDelivery}
+                className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
                   settings.deliveryEnabled
                     ? "bg-teal-500/20 text-teal-400 hover:bg-teal-500/30"
                     : "bg-amber-500/20 text-amber-400 hover:bg-amber-500/30"
@@ -212,7 +222,8 @@ export default function AdminLayout({
         </div>
         <button
           onClick={() => void handleToggleOpen()}
-          className={`px-3 py-1 rounded-full ${
+          disabled={togglingOpen}
+          className={`px-3 py-1 rounded-full disabled:opacity-50 disabled:cursor-not-allowed ${
             settings.isOpen
               ? "bg-green-500/20 text-green-400"
               : "bg-red-500/20 text-red-400"
@@ -266,7 +277,8 @@ export default function AdminLayout({
               {settings.isOpen && (
                 <button
                   onClick={() => void handleToggleDelivery()}
-                  className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-xl transition-all ${
+                  disabled={togglingDelivery}
+                  className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
                     settings.deliveryEnabled
                       ? "bg-teal-500/20 text-teal-400 hover:bg-teal-500/30"
                       : "bg-amber-500/20 text-amber-400 hover:bg-amber-500/30"
@@ -301,7 +313,7 @@ export default function AdminLayout({
       <main
         className={`flex-1 pt-14 lg:pt-0 min-h-screen overflow-auto ${isAuthenticated ? "lg:ml-64" : ""}`}
       >
-        <div className={`${isAuthenticated ? "p-4 sm:p-6 lg:p-8" : ""}`}>
+        <div className={`${isAuthenticated ? "p-4 sm:p-6 lg:p-8 flex justify-center" : ""}`}>
           {children}
         </div>
       </main>

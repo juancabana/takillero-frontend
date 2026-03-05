@@ -23,7 +23,7 @@ export function SearchInput({ value, onChange, placeholder }: SearchInputProps) 
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className={`${input.base} ${input.withIcon}`}
+        className={`${input.base} ${input.withIcon} !bg-white`}
       />
     </div>
   );
