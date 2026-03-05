@@ -34,7 +34,16 @@ export const ADMIN_SETTINGS = {
   SCHEDULE_COL_OPEN: 'APERTURA',
   SCHEDULE_COL_CLOSE: 'CIERRE',
   SCHEDULE_PLACEHOLDER: 'Ej: Lunes - Viernes',
+  SCHEDULE_ADD_ROW: 'Agregar franja',
+  SCHEDULE_DEFAULT_DAYS: 'Nuevo horario',
+  SCHEDULE_DEFAULT_OPEN: '08:00',
+  SCHEDULE_DEFAULT_CLOSE: '22:00',
+  SCHEDULE_MIN_ROWS: 'Debe haber al menos una franja horaria',
+  SCHEDULE_DISABLED_LABEL: 'Franja desactivada',
+  SCHEDULE_EMPTY: 'No hay franjas horarias configuradas',
   SAVE_SCHEDULE: 'Guardar Horarios',
+  TOAST_SCHEDULE_ROW_ADDED: 'Franja horaria agregada',
+  TOAST_SCHEDULE_ROW_REMOVED: 'Franja horaria eliminada',
 
   // ── Zonas de domicilio ─────────────────────────────────────────────
   DELIVERY_ZONES_TITLE: 'Zonas de Domicilio',
