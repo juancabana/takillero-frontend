@@ -28,6 +28,9 @@ export function CartItemCard({ product, quantity, onRemove, onIncrement, onDecre
         src={product.imageUrl ?? DEFAULT_PRODUCT_IMAGE}
         alt={product.name}
         className="w-24 h-24 rounded-xl object-cover shrink-0"
+        onError={(e) => {
+          (e.target as HTMLImageElement).src = DEFAULT_PRODUCT_IMAGE;
+        }}
       />
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2">

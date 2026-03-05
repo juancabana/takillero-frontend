@@ -17,6 +17,7 @@ import {
   Shield,
   Users,
 } from "lucide-react";
+import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import { useStore } from "@/context/StoreContext";
 import { useOrders } from "@/features/order/presentation/hooks/use-order-queries";
@@ -88,7 +89,7 @@ export default function AdminLayout({
     try {
       await updateSettings({ isOpen: !settings.isOpen }, token);
     } catch {
-      // ignore
+      toast.error("No se pudo cambiar el estado de la tienda");
     } finally {
       setTogglingOpen(false);
     }
@@ -100,7 +101,7 @@ export default function AdminLayout({
     try {
       await updateSettings({ deliveryEnabled: !settings.deliveryEnabled }, token);
     } catch {
-      // ignore
+      toast.error("No se pudo cambiar el estado de domicilios");
     } finally {
       setTogglingDelivery(false);
     }
