@@ -16,6 +16,7 @@ const DEFAULT_SETTINGS: StoreSettings = {
   address: null,
   deliveryZones: [],
   schedule: [],
+  bankAccounts: [],
 };
 
 interface StoreContextType {

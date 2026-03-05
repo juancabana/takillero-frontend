@@ -27,10 +27,11 @@ export function CategoriesSection({ categories }: CategoriesSectionProps) {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="flex flex-wrap justify-center gap-4">
           {categories.map((cat, i) => (
             <motion.div
               key={cat.id}
+              className="w-[calc(50%-8px)] md:w-[calc(33.333%-11px)] lg:w-[calc(16.666%-14px)]"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}

@@ -137,6 +137,7 @@ export default function CheckoutPage() {
         paymentMethod={form.formaPago}
         whatsapp={whatsapp}
         whatsappMessage={generateWhatsAppMessage(createdOrder.orderNumber)}
+        bankAccounts={settings?.bankAccounts ?? []}
         onNewOrder={handleNewOrder}
       />
     );
@@ -211,6 +212,7 @@ export default function CheckoutPage() {
                   form={form}
                   isSubmitting={isSubmitting}
                   isStoreClosed={!settings?.isOpen}
+                  bankAccounts={settings?.bankAccounts ?? []}
                   onBack={() => setStep(2)}
                   onSubmit={() => void handleSendOrder()}
                 />

@@ -1,4 +1,4 @@
-import type { DeliveryZone, StoreSchedule } from '../entities/store-settings';
+import type { BankAccount, DeliveryZone, StoreSchedule } from '../entities/store-settings';
 
 export type UpdateStoreSettingsRequest = Partial<{
   businessName: string;
@@ -9,4 +9,5 @@ export type UpdateStoreSettingsRequest = Partial<{
   address: string | null;
   deliveryZones: DeliveryZone[];
   schedule: StoreSchedule[];
+  bankAccounts: BankAccount[];
 }>;

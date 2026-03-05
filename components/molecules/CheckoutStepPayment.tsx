@@ -11,7 +11,8 @@ import {
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { CHECKOUT_PAGE } from '@/constants/pages/checkout';
-import { COMMON_LABELS, CUSTOMER_LABELS, PAYMENT_DATA, PAYMENT_METHODS } from '@/constants/shared';
+import { COMMON_LABELS, CUSTOMER_LABELS, PAYMENT_METHODS } from '@/constants/shared';
+import type { BankAccount } from '@/features/store-settings/domain/entities/store-settings';
 import { formatPrice } from '@/lib/format-price';
 import type { CartItem } from '@/context/CartContext';
 
@@ -35,6 +36,7 @@ interface CheckoutStepPaymentProps {
   form: FormSummary;
   isSubmitting: boolean;
   isStoreClosed?: boolean;
+  bankAccounts: BankAccount[];
   onBack: () => void;
   onSubmit: () => void;
 }
@@ -49,6 +51,7 @@ export function CheckoutStepPayment({
   form,
   isSubmitting,
   isStoreClosed = false,
+  bankAccounts,
   onBack,
   onSubmit,
 }: CheckoutStepPaymentProps) {
@@ -122,10 +125,16 @@ export function CheckoutStepPayment({
           <p className="text-blue-800" style={{ fontWeight: 600, fontSize: '14px' }}>
             {CHECKOUT_PAGE.TRANSFER_DATA_TITLE}
           </p>
-          <div className="mt-2 space-y-1 text-blue-700" style={{ fontSize: '14px' }}>
-            <p>{PAYMENT_DATA.NEQUI}</p>
-            <p>{PAYMENT_DATA.DAVIPLATA}</p>
-            <p>{PAYMENT_DATA.BANCOLOMBIA}</p>
+          <div className="mt-2 space-y-3 text-blue-700" style={{ fontSize: '14px' }}>
+            {bankAccounts.map((account, idx) => (
+              <div key={idx}>
+                <p style={{ fontWeight: 500 }}>{account.holderName}</p>
+                <p>{account.bank} {account.accountType}: {account.accountNumber}</p>
+              </div>
+            ))}
+            <p className="text-blue-600" style={{ fontSize: '13px' }}>
+              Agradecemos enviar soporte de transferencia al número de WhatsApp.
+            </p>
           </div>
           <p className="mt-2 text-blue-600" style={{ fontSize: '13px' }}>
             {CHECKOUT_PAGE.TRANSFER_RECEIPT_HINT}

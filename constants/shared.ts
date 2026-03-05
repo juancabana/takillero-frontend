@@ -9,19 +9,12 @@ export const CURRENCY_CONFIG = {
   MINIMUM_FRACTION_DIGITS: 0,
 } as const;
 
-// ── Datos bancarios / transferencias ─────────────────────────────────
-export const PAYMENT_DATA = {
-  NEQUI: 'Nequi: 300 123 4567 - Juan López',
-  DAVIPLATA: 'Daviplata: 300 123 4567',
-  BANCOLOMBIA: 'Bancolombia Ahorros: 123-456789-00',
-} as const;
-
 // ── Métodos de pago ──────────────────────────────────────────────────
 export const PAYMENT_METHODS = {
   CASH_LABEL: 'Efectivo',
   TRANSFER_LABEL: 'Transferencia',
   CASH_DESCRIPTION: 'Pago contra entrega',
-  TRANSFER_DESCRIPTION: 'Nequi / Daviplata / Bancolombia',
+  TRANSFER_DESCRIPTION: 'Transferencia Bancolombia',
 } as const;
 
 // ── Etiquetas comunes ────────────────────────────────────────────────
@@ -55,6 +48,7 @@ export const CUSTOMER_LABELS = {
 } as const;
 
 // ── Defaults ─────────────────────────────────────────────────────────
+// TODO [PRODUCCIÓN]: Actualizar con el número real de WhatsApp del negocio
 export const DEFAULT_WHATSAPP_NUMBER = '573001234567';
 export const DEFAULT_DELIVERY_FEE = 5000;
 export const DEFAULT_PRODUCT_IMAGE =
