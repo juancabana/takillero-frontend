@@ -97,7 +97,7 @@ export default function AdminPedidosPage() {
           className="text-gray-900"
           style={{ fontSize: "28px", fontWeight: 700 }}
         >
-          Gestion de Pedidos
+          Gestión de Pedidos
         </h1>
         <p className="text-gray-500" style={{ fontSize: "14px" }}>
           Administra y gestiona los pedidos entrantes

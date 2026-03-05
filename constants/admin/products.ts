@@ -2,8 +2,8 @@
  * Constantes de la gestión de productos de admin (app/admin/productos/page.tsx).
  */
 export const ADMIN_PRODUCTS = {
-  TITLE: 'Gestion de Productos',
-  SUBTITLE: 'Agrega, edita y administra los productos del menu',
+  TITLE: 'Gestión de Productos',
+  SUBTITLE: 'Agrega, edita y administra los productos del menú',
   NEW_PRODUCT_BUTTON: 'Nuevo producto',
 
   // ── Stats ──────────────────────────────────────────────────────────
@@ -19,18 +19,18 @@ export const ADMIN_PRODUCTS = {
 
   // ── Formulario ─────────────────────────────────────────────────────
   FORM_NAME_LABEL: 'Nombre del producto *',
-  FORM_DESCRIPTION_LABEL: 'Descripcion *',
+  FORM_DESCRIPTION_LABEL: 'Descripción *',
   FORM_PRICE_LABEL: 'Precio (COP) *',
-  FORM_CATEGORY_LABEL: 'Categoria *',
-  FORM_SELECT_CATEGORY: 'Selecciona categoria',
+  FORM_CATEGORY_LABEL: 'Categoría *',
+  FORM_SELECT_CATEGORY: 'Selecciona categoría',
   FORM_IMAGE_URL_LABEL: 'URL de imagen',
-  FORM_IMAGE_URL_HINT: 'Opcional. Si no se proporciona, se usara una imagen por defecto.',
+  FORM_IMAGE_URL_HINT: 'Opcional. Si no se proporciona, se usará una imagen por defecto.',
   FORM_IMAGE_PREVIEW_ALT: 'Vista previa',
   FORM_CANCEL: 'Cancelar',
   FORM_CREATE: 'Crear producto',
   FORM_SAVE: 'Guardar cambios',
   FORM_PLACEHOLDER_NAME: 'Ej: Hamburguesa Premium',
-  FORM_PLACEHOLDER_DESCRIPTION: 'Describe los ingredientes y preparacion...',
+  FORM_PLACEHOLDER_DESCRIPTION: 'Describe los ingredientes y preparación...',
   FORM_PLACEHOLDER_IMAGE_URL: 'https://ejemplo.com/imagen.jpg',
 
   // ── Modales ────────────────────────────────────────────────────────
@@ -43,13 +43,13 @@ export const ADMIN_PRODUCTS = {
 
   // ── Validaciones ───────────────────────────────────────────────────
   VALIDATION_NAME_REQUIRED: 'El nombre es requerido',
-  VALIDATION_DESCRIPTION_REQUIRED: 'La descripcion es requerida',
-  VALIDATION_PRICE_INVALID: 'Ingresa un precio valido',
-  VALIDATION_CATEGORY_REQUIRED: 'Selecciona una categoria',
+  VALIDATION_DESCRIPTION_REQUIRED: 'La descripción es requerida',
+  VALIDATION_PRICE_INVALID: 'Ingresa un precio válido',
+  VALIDATION_CATEGORY_REQUIRED: 'Selecciona una categoría',
 
   // ── Confirmaciones ─────────────────────────────────────────────────
   DELETE_CONFIRM: (name: string) =>
-    `¿Eliminar "${name}"? Esta accion no se puede deshacer.`,
+    `¿Eliminar "${name}"? Esta acción no se puede deshacer.`,
 
   // ── Toasts ─────────────────────────────────────────────────────────
   TOAST_CREATED: 'Producto creado exitosamente',

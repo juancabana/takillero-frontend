@@ -61,9 +61,9 @@ export function buildNewOrderMessage(params: NewOrderMessageParams): string {
   let msg = `🔥 *NUEVO PEDIDO #${params.orderNumber} - ${params.businessName}*\n\n`;
   msg += `👤 *Datos del cliente:*\n`;
   msg += `Nombre: ${params.customerName}\n`;
-  msg += `Cedula: ${params.customerCedula}\n`;
-  msg += `Telefono: ${params.customerPhone}\n\n`;
-  msg += `📍 *Direccion de entrega:*\n`;
+  msg += `Cédula: ${params.customerCedula}\n`;
+  msg += `Teléfono: ${params.customerPhone}\n\n`;
+  msg += `📍 *Dirección de entrega:*\n`;
   msg += `${params.address}\n`;
   msg += `Barrio: ${params.barrio}\n\n`;
   msg += `🛒 *Pedido:*\n`;
@@ -77,8 +77,8 @@ export function buildNewOrderMessage(params: NewOrderMessageParams): string {
   if (params.notes) {
     msg += `\n📝 Notas: ${params.notes}\n`;
   }
-  msg += `\n⏳ *Estado: PENDIENTE DE CONFIRMACION*`;
-  msg += `\nEl cliente espera confirmacion de su pedido.`;
+  msg += `\n⏳ *Estado: PENDIENTE DE CONFIRMACIÓN*`;
+  msg += `\nEl cliente espera confirmación de su pedido.`;
   return msg;
 }
 

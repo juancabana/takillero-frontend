@@ -4,12 +4,12 @@
 export const ORDER_TRACKING_PAGE = {
   BACK_TO_HOME: 'Volver al inicio',
   TITLE: 'Estado de tu Pedido',
-  SUBTITLE: 'Ingresa tu numero de pedido para ver el estado',
-  SEARCH_PLACEHOLDER: 'Numero de pedido',
+  SUBTITLE: 'Ingresa tu número de pedido para ver el estado',
+  SEARCH_PLACEHOLDER: 'Número de pedido',
   SEARCHING: 'Buscando...',
 
   // ── No encontrado ──────────────────────────────────────────────────
-  NOT_FOUND_PREFIX: 'No se encontro el pedido',
+  NOT_FOUND_PREFIX: 'No se encontró el pedido',
 
   // ── Encabezado de pedido ───────────────────────────────────────────
   ORDER_LABEL: 'Pedido',
@@ -24,8 +24,8 @@ export const ORDER_TRACKING_PAGE = {
 
   // ── Rechazado ──────────────────────────────────────────────────────
   REJECTED_TITLE: 'Pedido Rechazado',
-  REJECTED_REASON_PREFIX: 'Razon:',
-  REJECTED_CONTACT: 'Comunicate con nosotros para mas informacion',
+  REJECTED_REASON_PREFIX: 'Razón:',
+  REJECTED_CONTACT: 'Comunícate con nosotros para más información',
 
   // ── Secciones ──────────────────────────────────────────────────────
   STATUS_SECTION_TITLE: 'Estado del Pedido',
@@ -35,16 +35,16 @@ export const ORDER_TRACKING_PAGE = {
   // ── Transferencia ──────────────────────────────────────────────────
   TRANSFER_PAYMENT_TITLE: 'Pago por Transferencia',
   TRANSFER_RECEIPT_HINT_PREFIX:
-    'Envia tu comprobante de pago por WhatsApp indicando tu numero de pedido',
+    'Envía tu comprobante de pago por WhatsApp indicando tu número de pedido',
   SEND_RECEIPT_WHATSAPP: 'Enviar Comprobante por WhatsApp',
 
   // ── Ayuda / contacto ──────────────────────────────────────────────
-  NEED_HELP: 'Necesitas ayuda?',
-  WRITE_US_WHATSAPP: 'Escribenos por WhatsApp',
+  NEED_HELP: '¿Necesitas ayuda?',
+  WRITE_US_WHATSAPP: 'Escríbenos por WhatsApp',
 
   // ── Toasts ─────────────────────────────────────────────────────────
-  TOAST_NUMBER_COPIED: 'Numero copiado',
-  TOAST_INVALID_ORDER: 'Ingresa un numero de pedido valido',
+  TOAST_NUMBER_COPIED: 'Número copiado',
+  TOAST_INVALID_ORDER: 'Ingresa un número de pedido válido',
 
   // ── Búsqueda ───────────────────────────────────────────────────────
   SEARCH_BUTTON: 'Buscar',

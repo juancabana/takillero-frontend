@@ -2,9 +2,9 @@
  * Constantes de la gestión de pedidos de admin (app/admin/pedidos/page.tsx).
  */
 export const ADMIN_ORDERS = {
-  TITLE: 'Gestion de Pedidos',
+  TITLE: 'Gestión de Pedidos',
   SUBTITLE: 'Administra y gestiona los pedidos entrantes',
-  SEARCH_PLACEHOLDER: 'Buscar por #pedido, nombre o telefono...',
+  SEARCH_PLACEHOLDER: 'Buscar por #pedido, nombre o teléfono...',
 
   // ── Filtros ────────────────────────────────────────────────────────
   FILTER_ALL: 'Todos',
@@ -25,10 +25,10 @@ export const ADMIN_ORDERS = {
   CUSTOMER_DATA_TITLE: 'Datos del Cliente',
   PRODUCTS_TITLE: 'Productos',
   NOTES_PREFIX: 'Notas: ',
-  REJECTION_REASON_PREFIX: 'Razon de rechazo: ',
+  REJECTION_REASON_PREFIX: 'Razón de rechazo: ',
 
   // ── Formulario de rechazo ──────────────────────────────────────────
-  REJECTION_FORM_LABEL: 'Razon del rechazo:',
+  REJECTION_FORM_LABEL: 'Razón del rechazo:',
   REJECTION_PLACEHOLDER: 'Ej: Producto agotado, fuera de zona...',
   CONFIRM_REJECTION: 'Confirmar Rechazo',
 
@@ -45,5 +45,5 @@ export const ADMIN_ORDERS = {
   TOAST_LOAD_ERROR: 'Error al cargar pedidos',
   TOAST_UPDATE_ERROR: 'Error al actualizar el pedido',
   TOAST_REJECTED: 'Pedido rechazado',
-  TOAST_REJECTION_REASON_REQUIRED: 'Indica una razon para rechazar',
+  TOAST_REJECTION_REASON_REQUIRED: 'Indica una razón para rechazar',
 } as const;
