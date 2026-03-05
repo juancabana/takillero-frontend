@@ -63,6 +63,7 @@ export const STORE_DEFAULTS = {
 // ── Claves de almacenamiento local ───────────────────────────────────
 export const STORAGE_KEYS = {
   ADMIN_TOKEN: 'takillero_admin_token',
+  ADMIN_USER: 'takillero_admin_user',
   CART: 'takillero_cart',
 } as const;
 

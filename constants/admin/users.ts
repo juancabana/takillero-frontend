@@ -1,0 +1,31 @@
+/**
+ * Constantes de la página de gestión de usuarios (app/admin/usuarios/page.tsx).
+ */
+export const ADMIN_USERS = {
+  TITLE: 'Gestión de Usuarios',
+  SUBTITLE: 'Administra los accesos y roles del sistema',
+  NEW_USER_BUTTON: 'Nuevo Usuario',
+  CANCEL_BUTTON: 'Cancelar',
+  CREATE_FORM_TITLE: 'Crear Nuevo Usuario',
+  CREATE_FORM_SUBTITLE: 'Asigna un rol y credenciales de acceso',
+  DISPLAY_NAME_LABEL: 'Nombre para mostrar',
+  DISPLAY_NAME_PLACEHOLDER: 'Ej: Juan Cajero',
+  USERNAME_LABEL: 'Usuario (login)',
+  USERNAME_PLACEHOLDER: 'Ej: juan_cajero',
+  PASSWORD_LABEL: 'Contraseña',
+  PASSWORD_PLACEHOLDER: 'Contraseña segura',
+  ROLE_LABEL: 'Rol',
+  CREATE_BUTTON: 'Crear Usuario',
+  EDITING_PREFIX: 'Editando:',
+  SAVE_BUTTON: 'Guardar',
+  YOU_BADGE: 'TÚ',
+  TOAST_CREATED: 'Usuario creado exitosamente',
+  TOAST_UPDATED: 'Usuario actualizado',
+  TOAST_DELETED: 'Usuario eliminado',
+  TOAST_USERNAME_REQUIRED: 'Ingresa un nombre de usuario',
+  TOAST_PASSWORD_REQUIRED: 'Ingresa una contraseña',
+  TOAST_DISPLAY_NAME_REQUIRED: 'Ingresa un nombre para mostrar',
+  TOAST_USERNAME_EXISTS: 'Ya existe un usuario con ese nombre',
+  TOAST_FIELDS_REQUIRED: 'Completa todos los campos',
+  TOAST_CANNOT_DELETE_SELF: 'No puedes eliminar tu propia cuenta',
+} as const;

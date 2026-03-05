@@ -14,6 +14,7 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import type { Order } from '@/features/order/domain/entities/order';
 import type { OrderStatus } from '@/features/order/domain/entities/order-status';
+import type { UserRole } from '@/features/auth/domain/entities/user-role';
 import { ADMIN_ORDERS } from '@/constants/admin/orders';
 import { COMMON_LABELS, CUSTOMER_LABELS, PAYMENT_METHODS, PRODUCT_COUNT } from '@/constants/shared';
 import { formatPrice } from '@/lib/format-price';
@@ -40,6 +41,8 @@ interface AdminOrderCardProps {
   onReject: () => void;
   onMarkPaid: () => void;
   onMarkDelivered: () => void;
+  onMarkReady?: () => void;
+  role?: UserRole | null;
 }
 
 export function AdminOrderCard({
@@ -55,8 +58,13 @@ export function AdminOrderCard({
   onReject,
   onMarkPaid,
   onMarkDelivered,
+  onMarkReady,
+  role = 'admin',
 }: AdminOrderCardProps) {
   const sc = statusConfig[order.status];
+  const isAdmin = role === 'admin';
+  const isCocina = role === 'cocina';
+  const isDomiciliario = role === 'domiciliario';
 
   return (
     <motion.div
@@ -213,8 +221,8 @@ export function AdminOrderCard({
                 </div>
               )}
 
-              {/* Reject form */}
-              {rejectingOrder === order.id && (
+              {/* Reject form — admin only */}
+              {isAdmin && rejectingOrder === order.id && (
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
@@ -252,7 +260,8 @@ export function AdminOrderCard({
 
               {/* Actions */}
               <div className="mt-4 flex flex-wrap gap-2">
-                {order.status === 'pendiente' && (
+                {/* Admin: full controls */}
+                {isAdmin && order.status === 'pendiente' && (
                   <>
                     <button
                       onClick={onConfirm}
@@ -271,7 +280,8 @@ export function AdminOrderCard({
                   </>
                 )}
 
-                {(order.status === 'confirmado' || order.status === 'pendiente') &&
+                {isAdmin &&
+                  (order.status === 'confirmado' || order.status === 'pendiente') &&
                   order.paymentStatus !== 'pagado' && (
                     <button
                       onClick={onMarkPaid}
@@ -282,7 +292,7 @@ export function AdminOrderCard({
                     </button>
                   )}
 
-                {(order.status === 'confirmado' || order.status === 'pagado') && (
+                {isAdmin && (order.status === 'confirmado' || order.status === 'pagado') && (
                   <button
                     onClick={onMarkDelivered}
                     className="flex items-center gap-1.5 px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-xl transition-all"
@@ -292,15 +302,39 @@ export function AdminOrderCard({
                   </button>
                 )}
 
-                <a
-                  href={buildWhatsAppUrl(order.customerPhone, buildAdminStatusMessage(order))}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 px-4 py-2 bg-green-100 text-green-700 hover:bg-green-200 rounded-xl transition-all"
-                  style={{ fontSize: '13px', fontWeight: 600 }}
-                >
-                  <MessageCircle size={16} /> WhatsApp
-                </a>
+                {isAdmin && (
+                  <a
+                    href={buildWhatsAppUrl(order.customerPhone, buildAdminStatusMessage(order))}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 px-4 py-2 bg-green-100 text-green-700 hover:bg-green-200 rounded-xl transition-all"
+                    style={{ fontSize: '13px', fontWeight: 600 }}
+                  >
+                    <MessageCircle size={16} /> WhatsApp
+                  </a>
+                )}
+
+                {/* Cocina: "Pedido Listo" button */}
+                {isCocina && (order.status === 'confirmado' || order.status === 'pagado') && onMarkReady && (
+                  <button
+                    onClick={onMarkReady}
+                    className="flex items-center gap-1.5 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl transition-all"
+                    style={{ fontSize: '13px', fontWeight: 600 }}
+                  >
+                    <CheckCircle size={16} /> Pedido Listo
+                  </button>
+                )}
+
+                {/* Domiciliario: "Marcar Entregado" button */}
+                {isDomiciliario && (order.status === 'confirmado' || order.status === 'pagado') && (
+                  <button
+                    onClick={onMarkDelivered}
+                    className="flex items-center gap-1.5 px-4 py-2 bg-teal-500 hover:bg-teal-600 text-white rounded-xl transition-all"
+                    style={{ fontSize: '13px', fontWeight: 600 }}
+                  >
+                    <Package size={16} /> Marcar Entregado
+                  </button>
+                )}
               </div>
             </div>
           </motion.div>
