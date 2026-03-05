@@ -9,6 +9,7 @@ export interface StoreSchedule {
   days: string;
   open: string;
   close: string;
+  enabled?: boolean;
 }
 
 export interface StoreSettings {

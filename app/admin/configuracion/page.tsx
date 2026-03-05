@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useStore } from '@/context/StoreContext';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
@@ -10,6 +10,24 @@ import { StoreStatusSection } from '@/components/molecules/StoreStatusSection';
 import { BusinessInfoSection } from '@/components/molecules/BusinessInfoSection';
 import { ScheduleSection } from '@/components/molecules/ScheduleSection';
 import { DeliveryZonesSection } from '@/components/molecules/DeliveryZonesSection';
+
+function normalizeTo24h(time: string): string {
+  // Already HH:MM format
+  if (/^\d{1,2}:\d{2}$/.test(time.trim())) return time.trim();
+
+  // Handle "6:00 PM" / "11:30 AM" style
+  const match = time.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  if (match) {
+    let hour = parseInt(match[1]);
+    const min = match[2];
+    const period = match[3].toUpperCase();
+    if (period === 'PM' && hour < 12) hour += 12;
+    if (period === 'AM' && hour === 12) hour = 0;
+    return `${hour.toString().padStart(2, '0')}:${min}`;
+  }
+
+  return time.trim();
+}
 
 export default function AdminConfiguracionPage() {
   const { settings, updateSettings } = useStore();
@@ -22,6 +40,25 @@ export default function AdminConfiguracionPage() {
   const [zones, setZones] = useState<DeliveryZone[]>(settings.deliveryZones);
   const [schedule, setSchedule] = useState<StoreSchedule[]>(settings.schedule ?? []);
   const [isSaving, setIsSaving] = useState(false);
+
+  const hasGeneralChanges = useMemo(
+    () =>
+      businessName !== settings.businessName ||
+      whatsappNumber !== (settings.whatsappNumber ?? '') ||
+      closedMessage !== (settings.closedMessage ?? '') ||
+      address !== (settings.address ?? ''),
+    [businessName, whatsappNumber, closedMessage, address, settings],
+  );
+
+  const hasScheduleChanges = useMemo(
+    () => JSON.stringify(schedule) !== JSON.stringify(settings.schedule ?? []),
+    [schedule, settings.schedule],
+  );
+
+  const hasZonesChanges = useMemo(
+    () => JSON.stringify(zones) !== JSON.stringify(settings.deliveryZones),
+    [zones, settings.deliveryZones],
+  );
 
   useEffect(() => {
     setBusinessName(settings.businessName);
@@ -72,7 +109,14 @@ export default function AdminConfiguracionPage() {
     if (!token) return;
     setIsSaving(true);
     try {
-      await updateSettings({ schedule }, token);
+      const cleanSchedule = schedule
+        .filter((s) => s.enabled !== false)
+        .map(({ days, open, close }) => ({
+          days,
+          open: normalizeTo24h(open),
+          close: normalizeTo24h(close),
+        }));
+      await updateSettings({ schedule: cleanSchedule }, token);
       toast.success(ADMIN_SETTINGS.TOAST_SCHEDULE_SAVED);
     } catch {
       toast.error(ADMIN_SETTINGS.TOAST_SCHEDULE_ERROR);
@@ -119,6 +163,7 @@ export default function AdminConfiguracionPage() {
         whatsappNumber={whatsappNumber}
         address={address}
         isSaving={isSaving}
+        hasChanges={hasGeneralChanges}
         onBusinessNameChange={setBusinessName}
         onWhatsappChange={setWhatsappNumber}
         onAddressChange={setAddress}
@@ -128,6 +173,7 @@ export default function AdminConfiguracionPage() {
       <ScheduleSection
         schedule={schedule}
         isSaving={isSaving}
+        hasChanges={hasScheduleChanges}
         onScheduleChange={setSchedule}
         onSave={() => void handleSaveSchedule()}
       />
@@ -135,6 +181,7 @@ export default function AdminConfiguracionPage() {
       <DeliveryZonesSection
         zones={zones}
         isSaving={isSaving}
+        hasChanges={hasZonesChanges}
         onZonesChange={setZones}
         onSave={() => void handleSaveZones()}
       />

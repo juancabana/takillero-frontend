@@ -10,6 +10,7 @@ interface BusinessInfoSectionProps {
   whatsappNumber: string;
   address: string;
   isSaving: boolean;
+  hasChanges: boolean;
   onBusinessNameChange: (value: string) => void;
   onWhatsappChange: (value: string) => void;
   onAddressChange: (value: string) => void;
@@ -21,6 +22,7 @@ export function BusinessInfoSection({
   whatsappNumber,
   address,
   isSaving,
+  hasChanges,
   onBusinessNameChange,
   onWhatsappChange,
   onAddressChange,
@@ -79,7 +81,7 @@ export function BusinessInfoSection({
 
       <button
         onClick={onSave}
-        disabled={isSaving}
+        disabled={isSaving || !hasChanges}
         className="mt-4 flex items-center gap-2 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-300 text-white px-5 py-2.5 rounded-xl transition-all"
         style={{ fontSize: '14px', fontWeight: 600 }}
       >

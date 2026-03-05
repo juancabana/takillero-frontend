@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 interface DeliveryZonesSectionProps {
   zones: DeliveryZone[];
   isSaving: boolean;
+  hasChanges: boolean;
   onZonesChange: (zones: DeliveryZone[]) => void;
   onSave: () => void;
 }
@@ -18,6 +19,7 @@ interface DeliveryZonesSectionProps {
 export function DeliveryZonesSection({
   zones,
   isSaving,
+  hasChanges,
   onZonesChange,
   onSave,
 }: DeliveryZonesSectionProps) {
@@ -139,8 +141,8 @@ export function DeliveryZonesSection({
 
       <button
         onClick={onSave}
-        disabled={isSaving}
-        className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-300 text-white px-5 py-2.5 rounded-xl transition-all"
+        disabled={isSaving || !hasChanges}
+        className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-5 py-2.5 rounded-xl transition-all"
         style={{ fontSize: '14px', fontWeight: 600 }}
       >
         <Save size={16} /> {isSaving ? COMMON_LABELS.SAVING : ADMIN_SETTINGS.SAVE_ZONES}
