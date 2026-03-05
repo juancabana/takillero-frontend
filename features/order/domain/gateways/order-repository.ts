@@ -4,6 +4,7 @@ import type { UpdateOrderStatusRequest } from '../dto/update-order-status-reques
 
 export interface OrderRepository {
   createOrder(data: CreateOrderRequest): Promise<Order>;
+  createPosOrder(data: CreateOrderRequest, token: string): Promise<Order>;
   getOrders(token: string): Promise<Order[]>;
   getOrderByNumber(orderNumber: number): Promise<Order>;
   updateOrderStatus(id: string, data: UpdateOrderStatusRequest, token: string): Promise<Order>;

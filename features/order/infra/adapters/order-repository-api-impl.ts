@@ -12,6 +12,10 @@ export class OrderRepositoryApiImpl implements OrderRepository {
     return this.http.post<Order>(API_ENDPOINTS.ORDERS.CREATE, data);
   }
 
+  createPosOrder(data: CreateOrderRequest, token: string): Promise<Order> {
+    return this.http.post<Order>(API_ENDPOINTS.ORDERS.CREATE_POS, data, token);
+  }
+
   getOrders(token: string): Promise<Order[]> {
     return this.http.get<Order[]>(API_ENDPOINTS.ORDERS.LIST, token);
   }

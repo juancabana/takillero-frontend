@@ -33,6 +33,17 @@ export const useCreateOrder = () => {
   });
 };
 
+export const useCreatePosOrder = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ data, token }: { data: CreateOrderRequest; token: string }) =>
+      repo.createPosOrder(data, token),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: orderKeys.all });
+    },
+  });
+};
+
 export const useUpdateOrderStatus = () => {
   const queryClient = useQueryClient();
   return useMutation({
