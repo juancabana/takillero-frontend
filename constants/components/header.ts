@@ -4,9 +4,9 @@
 export const HEADER = {
   NAV_LINKS: [
     { href: '/', label: 'Inicio' },
-    { href: '/menu', label: 'Menu' },
+    { href: '/menu', label: 'Menú' },
     { href: '/pedido', label: 'Mi Pedido' },
-    { href: '/ubicacion', label: 'Ubicacion' },
+    { href: '/ubicacion', label: 'Ubicación' },
   ],
   CART_LABEL: 'Carrito',
   MOBILE_MENU_ARIA: 'Abrir menú',

@@ -11,7 +11,7 @@ export const CURRENCY_CONFIG = {
 
 // ── Datos bancarios / transferencias ─────────────────────────────────
 export const PAYMENT_DATA = {
-  NEQUI: 'Nequi: 300 123 4567 - Juan Lopez',
+  NEQUI: 'Nequi: 300 123 4567 - Juan López',
   DAVIPLATA: 'Daviplata: 300 123 4567',
   BANCOLOMBIA: 'Bancolombia Ahorros: 123-456789-00',
 } as const;
@@ -29,7 +29,7 @@ export const COMMON_LABELS = {
   SUBTOTAL: 'Subtotal',
   DELIVERY: 'Domicilio',
   TOTAL: 'Total',
-  BACK: 'Atras',
+  BACK: 'Atrás',
   NEXT: 'Siguiente',
   CANCEL: 'Cancelar',
   SAVE: 'Guardar',
@@ -47,9 +47,9 @@ export const COMMON_LABELS = {
 // ── Etiquetas de datos del cliente ───────────────────────────────────
 export const CUSTOMER_LABELS = {
   NAME: 'Nombre:',
-  CEDULA: 'Cedula:',
-  PHONE: 'Telefono:',
-  ADDRESS: 'Direccion:',
+  CEDULA: 'Cédula:',
+  PHONE: 'Teléfono:',
+  ADDRESS: 'Dirección:',
   NEIGHBORHOOD: 'Barrio:',
   NOTES: 'Notas:',
 } as const;

@@ -3,10 +3,10 @@
  */
 export const ADMIN_LOGIN = {
   TITLE: 'Panel Administrativo',
-  SUBTITLE: 'Ingresa tu contrasena para acceder',
-  PASSWORD_LABEL: 'Contrasena',
-  PASSWORD_PLACEHOLDER: 'Ingresa la contrasena',
-  ERROR_WRONG_PASSWORD: 'Contrasena incorrecta',
+  SUBTITLE: 'Ingresa tu contraseña para acceder',
+  PASSWORD_LABEL: 'Contraseña',
+  PASSWORD_PLACEHOLDER: 'Ingresa la contraseña',
+  ERROR_WRONG_PASSWORD: 'Contraseña incorrecta',
   LOGGING_IN: 'Ingresando...',
   LOGIN_BUTTON: 'Ingresar',
 } as const;

@@ -5,7 +5,7 @@ export const HOME_PAGE = {
   BADGE_DELIVERY: 'Domicilios disponibles',
   BADGE_PICKUP: 'Recoge en establecimiento',
   BADGE_TEXT: 'Domicilios disponibles',
-  DELIVERY_DISABLED_BANNER: 'Los domicilios estan temporalmente desactivados. Solo pedidos para recoger en establecimiento.',
+  DELIVERY_DISABLED_BANNER: 'Los domicilios están temporalmente desactivados. Solo pedidos para recoger en establecimiento.',
   HERO_WELCOME_PREFIX: 'Bienvenido a',
   HERO_TITLE_PREFIX: 'El sabor que te',
   HERO_TITLE_HIGHLIGHT: 'enamora',

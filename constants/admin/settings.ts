@@ -2,7 +2,7 @@
  * Constantes de la página de configuración de admin (app/admin/configuracion/page.tsx).
  */
 export const ADMIN_SETTINGS = {
-  TITLE: 'Configuracion',
+  TITLE: 'Configuración',
   SUBTITLE: 'Configura los datos de tu negocio',
 
   // ── Estado del negocio ─────────────────────────────────────────────
@@ -11,8 +11,8 @@ export const ADMIN_SETTINGS = {
   BUSINESS_OPEN: 'Negocio Abierto',
   BUSINESS_CLOSED: 'Negocio Cerrado',
   CLIENTS_CAN_ORDER: 'Los clientes pueden hacer pedidos',
-  CLIENTS_SEE_CLOSED: 'Los clientes veran el mensaje de negocio cerrado',
-  CLOSED_MESSAGE_LABEL: 'Mensaje cuando esta cerrado',
+  CLIENTS_SEE_CLOSED: 'Los clientes verán el mensaje de negocio cerrado',
+  CLOSED_MESSAGE_LABEL: 'Mensaje cuando está cerrado',
   DELIVERY_ACTIVE: 'Domicilios Activos',
   DELIVERY_INACTIVE: 'Domicilios Desactivados',
   DELIVERY_ACTIVE_DESC: 'Los clientes pueden pedir a domicilio',
@@ -20,9 +20,9 @@ export const ADMIN_SETTINGS = {
 
   // ── Datos del negocio ──────────────────────────────────────────────
   BUSINESS_INFO_TITLE: 'Datos del Negocio',
-  BUSINESS_INFO_SUBTITLE: 'Informacion de contacto',
+  BUSINESS_INFO_SUBTITLE: 'Información de contacto',
   BUSINESS_NAME_LABEL: 'Nombre del negocio',
-  WHATSAPP_LABEL: 'Numero de WhatsApp (con codigo de pais, sin +)',
+  WHATSAPP_LABEL: 'Número de WhatsApp (con código de país, sin +)',
   WHATSAPP_PLACEHOLDER: '573001234567',
   ADDRESS_LABEL: 'Dirección del local',
   ADDRESS_PLACEHOLDER: 'Ej: CR 59C #24A–97, Tacarena, Cartagena de Indias',
@@ -30,7 +30,7 @@ export const ADMIN_SETTINGS = {
   // ── Horarios ───────────────────────────────────────────────────────
   SCHEDULE_TITLE: 'Horarios',
   SCHEDULE_SUBTITLE: 'Configura el horario del negocio',
-  SCHEDULE_COL_DAYS: 'DIAS',
+  SCHEDULE_COL_DAYS: 'DÍAS',
   SCHEDULE_COL_OPEN: 'APERTURA',
   SCHEDULE_COL_CLOSE: 'CIERRE',
   SCHEDULE_PLACEHOLDER: 'Ej: Lunes - Viernes',
@@ -54,8 +54,8 @@ export const ADMIN_SETTINGS = {
   SAVE_ZONES: 'Guardar Zonas',
 
   // ── Toasts ─────────────────────────────────────────────────────────
-  TOAST_SAVED: 'Configuracion guardada',
-  TOAST_SAVE_ERROR: 'Error al guardar la configuracion',
+  TOAST_SAVED: 'Configuración guardada',
+  TOAST_SAVE_ERROR: 'Error al guardar la configuración',
   TOAST_BUSINESS_CLOSED: 'Negocio cerrado',
   TOAST_BUSINESS_OPEN: 'Negocio abierto',
   TOAST_DELIVERY_ON: 'Domicilios activados',
