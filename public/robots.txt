@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Allow: /menu/
+Allow: /ubicacion/
+
+Disallow: /admin/
+Disallow: /carrito/
+Disallow: /checkout/
+Disallow: /pedido/
+
+Sitemap: https://takillero.com/sitemap.xml
