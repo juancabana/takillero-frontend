@@ -34,6 +34,7 @@ interface CheckoutStepPaymentProps {
   total: number;
   form: FormSummary;
   isSubmitting: boolean;
+  isStoreClosed?: boolean;
   onBack: () => void;
   onSubmit: () => void;
 }
@@ -47,6 +48,7 @@ export function CheckoutStepPayment({
   total,
   form,
   isSubmitting,
+  isStoreClosed = false,
   onBack,
   onSubmit,
 }: CheckoutStepPaymentProps) {
@@ -191,15 +193,22 @@ export function CheckoutStepPayment({
         >
           <ArrowLeft size={18} /> {COMMON_LABELS.BACK}
         </button>
-        <button
-          onClick={onSubmit}
-          disabled={isSubmitting}
-          className="flex items-center gap-2 bg-green-500 hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-8 py-3 rounded-xl transition-all shadow-md shadow-green-200"
-          style={{ fontWeight: 600 }}
-        >
-          {isSubmitting ? CHECKOUT_PAGE.SUBMITTING : CHECKOUT_PAGE.SUBMIT_ORDER}
-          <ArrowRight size={20} />
-        </button>
+        <div className="flex flex-col items-end gap-1">
+          {isStoreClosed && (
+            <p className="text-red-500" style={{ fontSize: '13px', fontWeight: 500 }}>
+              {CHECKOUT_PAGE.STORE_CLOSED_MESSAGE}
+            </p>
+          )}
+          <button
+            onClick={onSubmit}
+            disabled={isSubmitting || isStoreClosed}
+            className="flex items-center gap-2 bg-green-500 hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-8 py-3 rounded-xl transition-all shadow-md shadow-green-200"
+            style={{ fontWeight: 600 }}
+          >
+            {isSubmitting ? CHECKOUT_PAGE.SUBMITTING : CHECKOUT_PAGE.SUBMIT_ORDER}
+            <ArrowRight size={20} />
+          </button>
+        </div>
       </div>
     </motion.div>
   );

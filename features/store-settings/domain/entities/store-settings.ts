@@ -15,6 +15,7 @@ export interface StoreSettings {
   id: string;
   businessName: string;
   isOpen: boolean;
+  deliveryEnabled: boolean;
   closedMessage: string | null;
   whatsappNumber: string | null;
   address: string | null;

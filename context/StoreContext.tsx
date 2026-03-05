@@ -10,6 +10,7 @@ const DEFAULT_SETTINGS: StoreSettings = {
   id: '',
   businessName: STORE_DEFAULTS.BUSINESS_NAME,
   isOpen: true,
+  deliveryEnabled: true,
   closedMessage: null,
   whatsappNumber: STORE_DEFAULTS.WHATSAPP_NUMBER,
   address: null,

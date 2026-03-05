@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, AlertTriangle } from 'lucide-react';
 import { AnimatePresence } from 'motion/react';
 import { useCart } from '@/context/CartContext';
 import { useStore } from '@/context/StoreContext';
@@ -51,9 +51,11 @@ export default function CheckoutPage() {
     notas: '',
   });
 
+  const isPickupMode = !settings?.deliveryEnabled;
   const activeZones = settings?.deliveryZones?.filter((z) => z.active) ?? [];
-  const deliveryFee =
-    activeZones.find((z) => z.name.toLowerCase() === form.barrio.toLowerCase())?.fee ?? 5000;
+  const deliveryFee = isPickupMode
+    ? 0
+    : (activeZones.find((z) => z.name.toLowerCase() === form.barrio.toLowerCase())?.fee ?? 5000);
   const total = totalPrice + deliveryFee;
   const whatsapp = settings?.whatsappNumber ?? DEFAULT_WHATSAPP_NUMBER;
 
@@ -63,7 +65,7 @@ export default function CheckoutPage() {
 
   const isStep1Valid =
     form.cedula.trim() !== '' && form.nombre.trim() !== '' && form.telefono.trim() !== '';
-  const isStep2Valid = form.direccion.trim() !== '' && form.barrio.trim() !== '';
+  const isStep2Valid = isPickupMode || (form.direccion.trim() !== '' && form.barrio.trim() !== '');
 
   const generateWhatsAppMessage = (orderNumber: number) =>
     buildNewOrderMessage({
@@ -85,11 +87,12 @@ export default function CheckoutPage() {
   const handleSendOrder = async () => {
     try {
       const order = await createOrderMutation.mutateAsync({
+        ...(isPickupMode ? { orderType: 'local' as const } : {}),
         customerName: form.nombre,
         customerCedula: form.cedula,
         customerPhone: form.telefono,
-        customerAddress: form.direccion,
-        customerBarrio: form.barrio,
+        customerAddress: isPickupMode ? 'Recoge en establecimiento' : form.direccion,
+        customerBarrio: isPickupMode ? 'N/A' : form.barrio,
         paymentMethod: form.formaPago,
         notes: form.notas || undefined,
         items: items.map((i) => ({
@@ -141,6 +144,14 @@ export default function CheckoutPage() {
 
   return (
     <div className={layout.page}>
+      {isPickupMode && (
+        <div className="bg-amber-50 border-b border-amber-200 px-4 py-3">
+          <div className="max-w-7xl mx-auto flex items-center justify-center gap-2 text-amber-800" style={{ fontSize: '14px' }}>
+            <AlertTriangle size={18} className="text-amber-500 shrink-0" />
+            {CHECKOUT_PAGE.PICKUP_BANNER_TITLE} — {CHECKOUT_PAGE.PICKUP_BANNER_DESC}
+          </div>
+        </div>
+      )}
       <div className={`${layout.containerNarrow} py-8`}>
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
@@ -181,6 +192,7 @@ export default function CheckoutPage() {
                   barrio={form.barrio}
                   notas={form.notas}
                   activeZones={activeZones}
+                  isPickupMode={isPickupMode}
                   onUpdate={(field, value) => updateForm(field, value)}
                   onNext={() => setStep(3)}
                   onBack={() => setStep(1)}
@@ -198,6 +210,7 @@ export default function CheckoutPage() {
                   total={total}
                   form={form}
                   isSubmitting={isSubmitting}
+                  isStoreClosed={!settings?.isOpen}
                   onBack={() => setStep(2)}
                   onSubmit={() => void handleSendOrder()}
                 />
