@@ -4,6 +4,7 @@
 export const ADMIN_LAYOUT = {
   NAV_ITEMS: {
     DASHBOARD: 'Dashboard',
+    POS: 'POS Cajero',
     ORDERS: 'Pedidos',
     PRODUCTS: 'Productos',
     SETTINGS: 'Configuracion',

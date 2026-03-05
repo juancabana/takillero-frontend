@@ -95,6 +95,21 @@ export function AdminOrderCard({
           <span className="text-gray-900" style={{ fontWeight: 600 }}>
             {formatPrice(order.total)}
           </span>
+          {order.orderType === 'local' ? (
+            <span
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-indigo-100 text-indigo-700"
+              style={{ fontSize: '12px', fontWeight: 600 }}
+            >
+              En establecimiento
+            </span>
+          ) : (
+            <span
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-teal-100 text-teal-700"
+              style={{ fontSize: '12px', fontWeight: 600 }}
+            >
+              Domicilio
+            </span>
+          )}
           <span
             className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full ${sc.bg} ${sc.color}`}
             style={{ fontSize: '12px', fontWeight: 600 }}

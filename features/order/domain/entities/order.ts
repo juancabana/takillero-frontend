@@ -1,4 +1,4 @@
-import type { OrderStatus, PaymentMethod, PaymentStatus } from './order-status';
+import type { OrderStatus, OrderType, PaymentMethod, PaymentStatus } from './order-status';
 
 export interface OrderItem {
   productId: string;
@@ -11,6 +11,7 @@ export interface OrderItem {
 export interface Order {
   id: string;
   orderNumber: number;
+  orderType: OrderType;
   customerName: string;
   customerCedula: string;
   customerPhone: string;

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
+  Monitor,
   ShoppingBag,
   ClipboardList,
   Settings,
@@ -20,6 +21,12 @@ import { ADMIN_LAYOUT } from '@/constants/admin/layout';
 
 const navItems = [
   { href: "/admin", icon: LayoutDashboard, label: ADMIN_LAYOUT.NAV_ITEMS.DASHBOARD, exact: true },
+  {
+    href: "/admin/pos",
+    icon: Monitor,
+    label: ADMIN_LAYOUT.NAV_ITEMS.POS,
+    exact: false,
+  },
   {
     href: "/admin/pedidos",
     icon: ClipboardList,
