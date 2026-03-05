@@ -7,6 +7,7 @@ export const ADMIN_LAYOUT = {
     POS: 'POS Cajero',
     ORDERS: 'Pedidos',
     PRODUCTS: 'Productos',
+    USERS: 'Usuarios',
     SETTINGS: 'Configuración',
   },
   ADMIN_PANEL_LABEL: 'Admin Panel',

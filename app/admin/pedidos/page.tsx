@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Search, Filter } from "lucide-react";
 import {
   useOrders,
@@ -11,12 +11,10 @@ import { toast } from "sonner";
 import type { Order } from "@/features/order/domain/entities/order";
 import type { OrderStatus } from "@/features/order/domain/entities/order-status";
 import { ADMIN_ORDERS } from "@/constants/admin/orders";
-import { PAYMENT_METHODS } from "@/constants/shared";
-import { formatPrice } from "@/lib/format-price";
 import { AdminOrderCard } from "@/components/molecules/AdminOrderCard";
 
 export default function AdminPedidosPage() {
-  const { token } = useAuth();
+  const { token, role } = useAuth();
   const { data: orders = [] } = useOrders(token ?? "", {
     refetchInterval: 30_000,
   });
@@ -28,15 +26,80 @@ export default function AdminPedidosPage() {
   const [rejectReason, setRejectReason] = useState("");
   const [rejectingOrder, setRejectingOrder] = useState<string | null>(null);
 
-  const filteredOrders = orders.filter((o) => {
-    const matchFilter = filter === "todos" || o.status === filter;
-    const matchSearch =
-      search === "" ||
-      o.orderNumber.toString().includes(search) ||
-      o.customerName.toLowerCase().includes(search.toLowerCase()) ||
-      o.customerPhone.includes(search);
-    return matchFilter && matchSearch;
-  });
+  const isCocina = role === "cocina";
+  const isDomiciliario = role === "domiciliario";
+
+  // Role-based page title
+  const pageTitle = useMemo(() => {
+    if (isCocina) return "Pedidos en Cocina";
+    if (isDomiciliario) return "Mis Entregas";
+    return "Gestion de Pedidos";
+  }, [isCocina, isDomiciliario]);
+
+  const pageSubtitle = useMemo(() => {
+    if (isCocina) return "Pedidos confirmados listos para preparar";
+    if (isDomiciliario) return "Pedidos listos para entregar";
+    return "Administra y gestiona los pedidos entrantes";
+  }, [isCocina, isDomiciliario]);
+
+  // Role-based filter buttons
+  const filterButtons: { value: "todos" | OrderStatus; label: string }[] = useMemo(() => {
+    if (isCocina) {
+      return [
+        { value: "todos", label: ADMIN_ORDERS.FILTER_ALL },
+        { value: "confirmado", label: ADMIN_ORDERS.FILTER_CONFIRMED },
+        { value: "pagado", label: ADMIN_ORDERS.FILTER_PAID },
+      ];
+    }
+    if (isDomiciliario) {
+      return [
+        { value: "todos", label: ADMIN_ORDERS.FILTER_ALL },
+        { value: "pagado", label: ADMIN_ORDERS.FILTER_PAID },
+        { value: "entregado", label: ADMIN_ORDERS.FILTER_DELIVERED },
+      ];
+    }
+    return [
+      { value: "todos", label: ADMIN_ORDERS.FILTER_ALL },
+      { value: "pendiente", label: ADMIN_ORDERS.FILTER_PENDING },
+      { value: "confirmado", label: ADMIN_ORDERS.FILTER_CONFIRMED },
+      { value: "pagado", label: ADMIN_ORDERS.FILTER_PAID },
+      { value: "entregado", label: ADMIN_ORDERS.FILTER_DELIVERED },
+      { value: "rechazado", label: ADMIN_ORDERS.FILTER_REJECTED },
+    ];
+  }, [isCocina, isDomiciliario]);
+
+  const filteredOrders = useMemo(() => {
+    let result = orders;
+
+    // Cocina: only show confirmed/paid orders
+    if (isCocina) {
+      result = result.filter((o) => o.status === "confirmado" || o.status === "pagado");
+    }
+
+    // Domiciliario: only show paid/entregado orders
+    if (isDomiciliario) {
+      result = result.filter(
+        (o) => o.status === "pagado" || o.status === "entregado" || o.status === "confirmado",
+      );
+    }
+
+    // Apply user filter
+    if (filter !== "todos") {
+      result = result.filter((o) => o.status === filter);
+    }
+
+    // Apply search
+    if (search) {
+      result = result.filter(
+        (o) =>
+          o.orderNumber.toString().includes(search) ||
+          o.customerName.toLowerCase().includes(search.toLowerCase()) ||
+          o.customerPhone.includes(search),
+      );
+    }
+
+    return result;
+  }, [orders, filter, search, isCocina, isDomiciliario]);
 
   const updateStatus = async (
     id: string,
@@ -81,14 +144,11 @@ export default function AdminPedidosPage() {
     toast.success(`Pedido #${order.orderNumber} entregado`);
   };
 
-  const filterButtons: { value: "todos" | OrderStatus; label: string }[] = [
-    { value: "todos", label: ADMIN_ORDERS.FILTER_ALL },
-    { value: "pendiente", label: ADMIN_ORDERS.FILTER_PENDING },
-    { value: "confirmado", label: ADMIN_ORDERS.FILTER_CONFIRMED },
-    { value: "pagado", label: ADMIN_ORDERS.FILTER_PAID },
-    { value: "entregado", label: ADMIN_ORDERS.FILTER_DELIVERED },
-    { value: "rechazado", label: ADMIN_ORDERS.FILTER_REJECTED },
-  ];
+  const handleMarkReady = async (order: Order) => {
+    // Cocina marks as "entregado" (ready for delivery/pickup)
+    await updateStatus(order.id, "entregado");
+    toast.success(`Pedido #${order.orderNumber} listo`);
+  };
 
   return (
     <div className="space-y-6 max-w-5xl w-full">
@@ -97,10 +157,10 @@ export default function AdminPedidosPage() {
           className="text-gray-900"
           style={{ fontSize: "28px", fontWeight: 700 }}
         >
-          Gestión de Pedidos
+          {pageTitle}
         </h1>
         <p className="text-gray-500" style={{ fontSize: "14px" }}>
-          Administra y gestiona los pedidos entrantes
+          {pageSubtitle}
         </p>
       </div>
 
@@ -149,6 +209,7 @@ export default function AdminPedidosPage() {
             <AdminOrderCard
               key={order.id}
               order={order}
+              role={role}
               isExpanded={expandedOrder === order.id}
               onToggleExpand={() =>
                 setExpandedOrder(expandedOrder === order.id ? null : order.id)
@@ -165,6 +226,7 @@ export default function AdminPedidosPage() {
               onReject={() => void handleReject(order.id)}
               onMarkPaid={() => void handleMarkPaid(order)}
               onMarkDelivered={() => void handleMarkDelivered(order)}
+              onMarkReady={() => void handleMarkReady(order)}
             />
           ))
         )}
