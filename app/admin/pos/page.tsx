@@ -20,6 +20,7 @@ import { useProducts } from '@/features/product/presentation/hooks/use-product-q
 import { useCategories } from '@/features/category/presentation/hooks/use-category-queries';
 import { useCreatePosOrder } from '@/features/order/presentation/hooks/use-order-queries';
 import { formatPrice } from '@/lib/format-price';
+import { DEFAULT_PRODUCT_IMAGE } from '@/constants/shared';
 import { POS } from '@/constants/admin/pos';
 import type { Product } from '@/features/product/domain/entities/product';
 import type { PaymentMethod } from '@/features/order/domain/entities/order-status';
@@ -122,6 +123,8 @@ export default function POSPage() {
           setShowConfirm(false);
           toast.success(POS.TOAST_SUCCESS(order.orderNumber));
         },
+        onError: () => toast.error('Error al crear el pedido. Intenta de nuevo.')
+        ,
       },
     );
   };
@@ -220,13 +223,14 @@ export default function POSPage() {
                 }`}
               >
                 <div className="w-full aspect-[4/3] rounded-lg bg-gray-100 overflow-hidden mb-2">
-                  {product.imageUrl && (
-                    <img
-                      src={product.imageUrl}
-                      alt={product.name}
-                      className="w-full h-full object-cover"
-                    />
-                  )}
+                  <img
+                    src={product.imageUrl ?? DEFAULT_PRODUCT_IMAGE}
+                    alt={product.name}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = DEFAULT_PRODUCT_IMAGE;
+                    }}
+                  />
                 </div>
                 <p
                   className="text-gray-900 truncate"
@@ -321,13 +325,14 @@ export default function POSPage() {
                   className="flex items-center gap-3 bg-gray-50 rounded-xl p-3"
                 >
                   <div className="w-10 h-10 rounded-lg bg-gray-200 overflow-hidden shrink-0">
-                    {item.product.imageUrl && (
-                      <img
-                        src={item.product.imageUrl}
-                        alt={item.product.name}
-                        className="w-full h-full object-cover"
-                      />
-                    )}
+                    <img
+                      src={item.product.imageUrl ?? DEFAULT_PRODUCT_IMAGE}
+                      alt={item.product.name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = DEFAULT_PRODUCT_IMAGE;
+                      }}
+                    />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p

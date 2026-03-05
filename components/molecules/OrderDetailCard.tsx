@@ -24,8 +24,10 @@ export function OrderDetailCard({ order }: OrderDetailCardProps) {
           </p>
           <button
             onClick={() => {
-              void navigator.clipboard.writeText(order.orderNumber.toString());
-              toast.success(ORDER_TRACKING_PAGE.TOAST_NUMBER_COPIED);
+              navigator.clipboard.writeText(order.orderNumber.toString()).then(
+                () => toast.success(ORDER_TRACKING_PAGE.TOAST_NUMBER_COPIED),
+                () => toast.error('No se pudo copiar'),
+              );
             }}
             className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
           >

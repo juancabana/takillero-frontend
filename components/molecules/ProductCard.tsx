@@ -31,6 +31,9 @@ export function ProductCard({ product }: ProductCardProps) {
           src={product.imageUrl ?? DEFAULT_PRODUCT_IMAGE}
           alt={product.name}
           className="w-full h-full object-cover"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = DEFAULT_PRODUCT_IMAGE;
+          }}
         />
         {!product.isAvailable && (
           <div className="absolute inset-0 bg-black/50 flex items-center justify-center">

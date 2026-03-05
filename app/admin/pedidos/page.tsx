@@ -115,12 +115,15 @@ export default function AdminPedidosPage() {
       });
     } catch {
       toast.error(ADMIN_ORDERS.TOAST_UPDATE_ERROR);
+      throw new Error('update failed');
     }
   };
 
   const handleConfirm = async (order: Order) => {
-    await updateStatus(order.id, "confirmado");
-    toast.success(`Pedido #${order.orderNumber} confirmado`);
+    try {
+      await updateStatus(order.id, "confirmado");
+      toast.success(`Pedido #${order.orderNumber} confirmado`);
+    } catch { /* error toast handled in updateStatus */ }
   };
 
   const handleReject = async (orderId: string) => {
@@ -128,26 +131,33 @@ export default function AdminPedidosPage() {
       toast.error(ADMIN_ORDERS.TOAST_REJECTION_REASON_REQUIRED);
       return;
     }
-    await updateStatus(orderId, "rechazado", rejectReason);
-    toast.info(ADMIN_ORDERS.TOAST_REJECTED);
-    setRejectingOrder(null);
-    setRejectReason("");
+    try {
+      await updateStatus(orderId, "rechazado", rejectReason);
+      toast.info(ADMIN_ORDERS.TOAST_REJECTED);
+      setRejectingOrder(null);
+      setRejectReason("");
+    } catch { /* error toast handled in updateStatus */ }
   };
 
   const handleMarkPaid = async (order: Order) => {
-    await updateStatus(order.id, "pagado");
-    toast.success(`Pedido #${order.orderNumber} marcado como pagado`);
+    try {
+      await updateStatus(order.id, "pagado");
+      toast.success(`Pedido #${order.orderNumber} marcado como pagado`);
+    } catch { /* error toast handled in updateStatus */ }
   };
 
   const handleMarkDelivered = async (order: Order) => {
-    await updateStatus(order.id, "entregado");
-    toast.success(`Pedido #${order.orderNumber} entregado`);
+    try {
+      await updateStatus(order.id, "entregado");
+      toast.success(`Pedido #${order.orderNumber} entregado`);
+    } catch { /* error toast handled in updateStatus */ }
   };
 
   const handleMarkReady = async (order: Order) => {
-    // Cocina marks as "entregado" (ready for delivery/pickup)
-    await updateStatus(order.id, "entregado");
-    toast.success(`Pedido #${order.orderNumber} listo`);
+    try {
+      await updateStatus(order.id, "entregado");
+      toast.success(`Pedido #${order.orderNumber} listo`);
+    } catch { /* error toast handled in updateStatus */ }
   };
 
   return (
