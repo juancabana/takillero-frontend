@@ -20,4 +20,6 @@ export const ADMIN_LAYOUT = {
   OPEN: 'Abierto',
   CLOSED: 'Cerrado',
   MOBILE_MENU_TITLE: 'Menu Admin',
+  DELIVERY_ON: 'Domicilios ON',
+  DELIVERY_OFF: 'Domicilios OFF',
 } as const;

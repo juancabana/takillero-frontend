@@ -58,6 +58,16 @@ export default function AdminConfiguracionPage() {
     }
   };
 
+  const handleToggleDelivery = async () => {
+    if (!token) return;
+    try {
+      await updateSettings({ deliveryEnabled: !settings.deliveryEnabled }, token);
+      toast.success(settings.deliveryEnabled ? ADMIN_SETTINGS.TOAST_DELIVERY_OFF : ADMIN_SETTINGS.TOAST_DELIVERY_ON);
+    } catch {
+      toast.error(ADMIN_SETTINGS.TOAST_STATUS_ERROR);
+    }
+  };
+
   const handleSaveSchedule = async () => {
     if (!token) return;
     setIsSaving(true);
@@ -98,8 +108,10 @@ export default function AdminConfiguracionPage() {
       <StoreStatusSection
         isOpen={settings.isOpen}
         closedMessage={closedMessage}
+        deliveryEnabled={settings.deliveryEnabled}
         onToggleOpen={() => void handleToggleOpen()}
         onClosedMessageChange={setClosedMessage}
+        onToggleDelivery={() => void handleToggleDelivery()}
       />
 
       <BusinessInfoSection

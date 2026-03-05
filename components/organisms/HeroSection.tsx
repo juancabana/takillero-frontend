@@ -6,7 +6,11 @@ import { ArrowRight, Truck, MapPin } from 'lucide-react';
 import { motion } from 'motion/react';
 import { HOME_PAGE } from '@/constants/pages/home';
 
-export function HeroSection() {
+interface HeroSectionProps {
+  deliveryEnabled?: boolean;
+}
+
+export function HeroSection({ deliveryEnabled = true }: HeroSectionProps) {
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-orange-50 via-white to-red-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
@@ -21,7 +25,7 @@ export function HeroSection() {
               style={{ fontSize: '14px', fontWeight: 500 }}
             >
               <Truck size={16} />
-              {HOME_PAGE.BADGE_TEXT}
+              {deliveryEnabled ? HOME_PAGE.BADGE_DELIVERY : HOME_PAGE.BADGE_PICKUP}
             </div>
             <h1
               className="text-gray-900 mb-6"

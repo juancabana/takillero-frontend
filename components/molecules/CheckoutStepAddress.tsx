@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { MapPin, ArrowLeft } from 'lucide-react';
+import { MapPin, ArrowLeft, AlertTriangle } from 'lucide-react';
 import { motion } from 'motion/react';
 import { CHECKOUT_PAGE } from '@/constants/pages/checkout';
 import { COMMON_LABELS } from '@/constants/shared';
@@ -13,6 +13,7 @@ interface CheckoutStepAddressProps {
   barrio: string;
   notas: string;
   activeZones: DeliveryZone[];
+  isPickupMode?: boolean;
   onUpdate: (field: 'direccion' | 'barrio' | 'notas', value: string) => void;
   onNext: () => void;
   onBack: () => void;
@@ -24,6 +25,7 @@ export function CheckoutStepAddress({
   barrio,
   notas,
   activeZones,
+  isPickupMode = false,
   onUpdate,
   onNext,
   onBack,
@@ -42,41 +44,63 @@ export function CheckoutStepAddress({
           <MapPin size={20} className="text-orange-600" />
         </div>
         <div>
-          <h3 className="text-gray-900" style={{ fontWeight: 600 }}>{CHECKOUT_PAGE.STEP_2_TITLE}</h3>
-          <p className="text-gray-500" style={{ fontSize: '14px' }}>{CHECKOUT_PAGE.STEP_2_SUBTITLE}</p>
+          <h3 className="text-gray-900" style={{ fontWeight: 600 }}>
+            {isPickupMode ? CHECKOUT_PAGE.PICKUP_TITLE : CHECKOUT_PAGE.STEP_2_TITLE}
+          </h3>
+          <p className="text-gray-500" style={{ fontSize: '14px' }}>
+            {isPickupMode ? CHECKOUT_PAGE.PICKUP_SUBTITLE : CHECKOUT_PAGE.STEP_2_SUBTITLE}
+          </p>
         </div>
       </div>
 
+      {isPickupMode && (
+        <div className="flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl mb-4">
+          <AlertTriangle size={20} className="text-amber-500 shrink-0 mt-0.5" />
+          <div>
+            <p className="text-amber-800" style={{ fontWeight: 500, fontSize: '14px' }}>
+              {CHECKOUT_PAGE.PICKUP_BANNER_TITLE}
+            </p>
+            <p className="text-amber-600" style={{ fontSize: '13px' }}>
+              {CHECKOUT_PAGE.PICKUP_BANNER_DESC}
+            </p>
+          </div>
+        </div>
+      )}
+
       <div className="space-y-4">
-        <div>
-          <label className="block text-gray-700 mb-1.5" style={{ fontSize: '14px' }}>
-            {CHECKOUT_PAGE.LABEL_ADDRESS}
-          </label>
-          <input
-            type="text"
-            value={direccion}
-            onChange={(e) => onUpdate('direccion', e.target.value)}
-            placeholder={CHECKOUT_PAGE.PLACEHOLDER_ADDRESS}
-            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-400 transition-all"
-          />
-        </div>
-        <div>
-          <label className="block text-gray-700 mb-1.5" style={{ fontSize: '14px' }}>
-            {CHECKOUT_PAGE.LABEL_NEIGHBORHOOD}
-          </label>
-          <select
-            value={barrio}
-            onChange={(e) => onUpdate('barrio', e.target.value)}
-            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-400 transition-all"
-          >
-            <option value="">{CHECKOUT_PAGE.SELECT_NEIGHBORHOOD}</option>
-            {activeZones.map((z) => (
-              <option key={z.id} value={z.name}>
-                {z.name} - Domicilio: {formatPrice(z.fee)}
-              </option>
-            ))}
-          </select>
-        </div>
+        {!isPickupMode && (
+          <>
+            <div>
+              <label className="block text-gray-700 mb-1.5" style={{ fontSize: '14px' }}>
+                {CHECKOUT_PAGE.LABEL_ADDRESS}
+              </label>
+              <input
+                type="text"
+                value={direccion}
+                onChange={(e) => onUpdate('direccion', e.target.value)}
+                placeholder={CHECKOUT_PAGE.PLACEHOLDER_ADDRESS}
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-400 transition-all"
+              />
+            </div>
+            <div>
+              <label className="block text-gray-700 mb-1.5" style={{ fontSize: '14px' }}>
+                {CHECKOUT_PAGE.LABEL_NEIGHBORHOOD}
+              </label>
+              <select
+                value={barrio}
+                onChange={(e) => onUpdate('barrio', e.target.value)}
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-400 transition-all"
+              >
+                <option value="">{CHECKOUT_PAGE.SELECT_NEIGHBORHOOD}</option>
+                {activeZones.map((z) => (
+                  <option key={z.id} value={z.name}>
+                    {z.name} - Domicilio: {formatPrice(z.fee)}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </>
+        )}
         <div>
           <label className="block text-gray-700 mb-1.5" style={{ fontSize: '14px' }}>
             {CHECKOUT_PAGE.LABEL_NOTES}

@@ -84,13 +84,30 @@ export default function CartPage() {
               ]}
               sticky
               action={
-                <Link
-                  href="/checkout"
-                  className={`w-full ${btn.base} ${btn.primary} gap-2 py-3.5 justify-center`}
-                  style={{ fontWeight: 600 }}
-                >
-                  {CART_PAGE.PLACE_ORDER} <ArrowRight size={18} />
-                </Link>
+                <div className="space-y-2">
+                  {!settings?.isOpen && (
+                    <p className="text-red-500 text-center" style={{ fontSize: '13px', fontWeight: 500 }}>
+                      {CART_PAGE.STORE_CLOSED}
+                    </p>
+                  )}
+                  {settings?.isOpen ? (
+                    <Link
+                      href="/checkout"
+                      className={`w-full ${btn.base} ${btn.primary} gap-2 py-3.5 justify-center`}
+                      style={{ fontWeight: 600 }}
+                    >
+                      {CART_PAGE.PLACE_ORDER} <ArrowRight size={18} />
+                    </Link>
+                  ) : (
+                    <button
+                      disabled
+                      className={`w-full ${btn.base} bg-gray-300 text-white cursor-not-allowed gap-2 py-3.5 justify-center`}
+                      style={{ fontWeight: 600 }}
+                    >
+                      {CART_PAGE.PLACE_ORDER} <ArrowRight size={18} />
+                    </button>
+                  )}
+                </div>
               }
             />
           </div>

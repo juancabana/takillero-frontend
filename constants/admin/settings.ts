@@ -13,6 +13,10 @@ export const ADMIN_SETTINGS = {
   CLIENTS_CAN_ORDER: 'Los clientes pueden hacer pedidos',
   CLIENTS_SEE_CLOSED: 'Los clientes veran el mensaje de negocio cerrado',
   CLOSED_MESSAGE_LABEL: 'Mensaje cuando esta cerrado',
+  DELIVERY_ACTIVE: 'Domicilios Activos',
+  DELIVERY_INACTIVE: 'Domicilios Desactivados',
+  DELIVERY_ACTIVE_DESC: 'Los clientes pueden pedir a domicilio',
+  DELIVERY_INACTIVE_DESC: 'Solo pedidos en establecimiento / recogida',
 
   // ── Datos del negocio ──────────────────────────────────────────────
   BUSINESS_INFO_TITLE: 'Datos del Negocio',
@@ -45,6 +49,8 @@ export const ADMIN_SETTINGS = {
   TOAST_SAVE_ERROR: 'Error al guardar la configuracion',
   TOAST_BUSINESS_CLOSED: 'Negocio cerrado',
   TOAST_BUSINESS_OPEN: 'Negocio abierto',
+  TOAST_DELIVERY_ON: 'Domicilios activados',
+  TOAST_DELIVERY_OFF: 'Domicilios desactivados',
   TOAST_STATUS_ERROR: 'Error al cambiar el estado',
   TOAST_SCHEDULE_SAVED: 'Horarios guardados',
   TOAST_SCHEDULE_ERROR: 'Error al guardar los horarios',

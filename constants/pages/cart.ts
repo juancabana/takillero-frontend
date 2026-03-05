@@ -10,4 +10,5 @@ export const CART_PAGE = {
   ORDER_SUMMARY: 'Resumen del Pedido',
   DELIVERY_FROM: 'Domicilio (desde)',
   PLACE_ORDER: 'Realizar Pedido',
+  STORE_CLOSED: 'Negocio cerrado',
 } as const;

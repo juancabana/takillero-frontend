@@ -1,21 +1,25 @@
 'use client';
 
 import React from 'react';
-import { Store } from 'lucide-react';
+import { Store, Truck } from 'lucide-react';
 import { ADMIN_SETTINGS } from '@/constants/admin/settings';
 
 interface StoreStatusSectionProps {
   isOpen: boolean;
   closedMessage: string;
+  deliveryEnabled: boolean;
   onToggleOpen: () => void;
   onClosedMessageChange: (value: string) => void;
+  onToggleDelivery: () => void;
 }
 
 export function StoreStatusSection({
   isOpen,
   closedMessage,
+  deliveryEnabled,
   onToggleOpen,
   onClosedMessageChange,
+  onToggleDelivery,
 }: StoreStatusSectionProps) {
   return (
     <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
@@ -49,6 +53,34 @@ export function StoreStatusSection({
           <span
             className={`absolute top-1 w-6 h-6 bg-white rounded-full shadow transition-all ${
               isOpen ? 'left-7' : 'left-1'
+            }`}
+          />
+        </button>
+      </div>
+
+      <div className="flex items-center justify-between p-4 rounded-xl bg-gray-50 mt-3">
+        <div className="flex items-center gap-3">
+          <Truck size={20} className={deliveryEnabled ? 'text-teal-500' : 'text-gray-400'} />
+          <div>
+            <p className="text-gray-900" style={{ fontWeight: 500 }}>
+              {deliveryEnabled ? ADMIN_SETTINGS.DELIVERY_ACTIVE : ADMIN_SETTINGS.DELIVERY_INACTIVE}
+            </p>
+            <p className="text-gray-400" style={{ fontSize: '13px' }}>
+              {deliveryEnabled
+                ? ADMIN_SETTINGS.DELIVERY_ACTIVE_DESC
+                : ADMIN_SETTINGS.DELIVERY_INACTIVE_DESC}
+            </p>
+          </div>
+        </div>
+        <button
+          onClick={onToggleDelivery}
+          className={`relative w-14 h-8 rounded-full transition-all ${
+            deliveryEnabled ? 'bg-teal-500' : 'bg-gray-300'
+          }`}
+        >
+          <span
+            className={`absolute top-1 w-6 h-6 bg-white rounded-full shadow transition-all ${
+              deliveryEnabled ? 'left-7' : 'left-1'
             }`}
           />
         </button>

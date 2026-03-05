@@ -67,6 +67,15 @@ export const CHECKOUT_PAGE = {
   SIDEBAR_WHATSAPP_TITLE: 'WhatsApp del negocio',
   SIDEBAR_MANUAL_CONFIRM: 'Tu pedido sera confirmado manualmente',
 
+  // ── Modo recogida (delivery disabled) ─────────────────────────────
+  PICKUP_TITLE: 'Recogida en Establecimiento',
+  PICKUP_SUBTITLE: 'Tu pedido sera preparado para recoger',
+  PICKUP_BANNER_TITLE: 'Domicilios temporalmente desactivados',
+  PICKUP_BANNER_DESC: 'Solo pedidos para recoger en establecimiento.',
+
+  // ── Negocio cerrado ──────────────────────────────────────────────
+  STORE_CLOSED_MESSAGE: 'El negocio esta cerrado',
+
   // ── Errores ────────────────────────────────────────────────────────
   ERROR_CREATE_ORDER: 'Error al crear el pedido. Intenta nuevamente.',
 } as const;

@@ -1,6 +1,7 @@
 'use client';
 
-import { Clock, XCircle } from 'lucide-react';
+import React, { useState } from 'react';
+import { Clock, XCircle, X } from 'lucide-react';
 import { motion } from 'motion/react';
 import type { StoreSettings } from '@/features/store-settings/domain/entities/store-settings';
 import { BUSINESS_CLOSED } from '@/constants/components/business-closed';
@@ -10,7 +11,9 @@ interface BusinessClosedProps {
 }
 
 export function BusinessClosed({ settings }: BusinessClosedProps) {
-  if (settings.isOpen) return null;
+  const [isDismissed, setIsDismissed] = useState(false);
+
+  if (settings.isOpen || isDismissed) return null;
 
   return (
     <motion.div
@@ -18,7 +21,14 @@ export function BusinessClosed({ settings }: BusinessClosedProps) {
       animate={{ opacity: 1, y: 0 }}
       className="fixed inset-0 z-[100] bg-gray-900/95 flex items-center justify-center px-4"
     >
-      <div className="text-center max-w-md">
+      <div className="relative text-center max-w-md">
+        <button
+          onClick={() => setIsDismissed(true)}
+          className="absolute -top-2 -right-2 p-2 text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/10"
+          aria-label="Cerrar"
+        >
+          <X size={24} />
+        </button>
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
