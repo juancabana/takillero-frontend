@@ -5,6 +5,13 @@ export interface DeliveryZone {
   active: boolean;
 }
 
+export interface BankAccount {
+  bank: string;
+  accountType: string;
+  accountNumber: string;
+  holderName: string;
+}
+
 export interface StoreSchedule {
   days: string;
   open: string;
@@ -22,4 +29,5 @@ export interface StoreSettings {
   address: string | null;
   deliveryZones: DeliveryZone[];
   schedule: StoreSchedule[];
+  bankAccounts: BankAccount[];
 }

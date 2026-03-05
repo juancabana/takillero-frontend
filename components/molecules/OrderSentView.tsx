@@ -6,7 +6,7 @@ import { MessageCircle, Clock, Copy } from 'lucide-react';
 import { motion } from 'motion/react';
 import { toast } from 'sonner';
 import { CHECKOUT_PAGE } from '@/constants/pages/checkout';
-import { PAYMENT_DATA } from '@/constants/shared';
+import type { BankAccount } from '@/features/store-settings/domain/entities/store-settings';
 import { buildWhatsAppUrl, buildReceiptMessage } from '@/lib/whatsapp';
 
 interface OrderSentViewProps {
@@ -16,6 +16,7 @@ interface OrderSentViewProps {
   paymentMethod: 'efectivo' | 'transferencia';
   whatsapp: string;
   whatsappMessage: string;
+  bankAccounts: BankAccount[];
   onNewOrder: () => void;
 }
 
@@ -26,6 +27,7 @@ export function OrderSentView({
   paymentMethod,
   whatsapp,
   whatsappMessage,
+  bankAccounts,
   onNewOrder,
 }: OrderSentViewProps) {
   return (
@@ -71,10 +73,16 @@ export function OrderSentView({
             <p className="text-blue-800 mb-2" style={{ fontWeight: 600, fontSize: '14px' }}>
               {CHECKOUT_PAGE.TRANSFER_DATA_TITLE}
             </p>
-            <div className="space-y-1 text-blue-700" style={{ fontSize: '14px' }}>
-              <p>{PAYMENT_DATA.NEQUI}</p>
-              <p>{PAYMENT_DATA.DAVIPLATA}</p>
-              <p>{PAYMENT_DATA.BANCOLOMBIA}</p>
+            <div className="space-y-2 text-blue-700" style={{ fontSize: '14px' }}>
+              {bankAccounts.map((account, idx) => (
+                <div key={idx}>
+                  <p style={{ fontWeight: 500 }}>{account.holderName}</p>
+                  <p>{account.bank} {account.accountType}: {account.accountNumber}</p>
+                </div>
+              ))}
+              <p className="text-blue-600" style={{ fontSize: '13px' }}>
+                Agradecemos enviar soporte de transferencia al número de WhatsApp.
+              </p>
             </div>
             <a
               href={buildWhatsAppUrl(whatsapp, buildReceiptMessage(customerName, orderNumber, total))}

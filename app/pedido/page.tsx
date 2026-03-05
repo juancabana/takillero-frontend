@@ -121,6 +121,7 @@ function PedidoContent() {
                 customerName={order.customerName}
                 total={order.total}
                 whatsapp={whatsapp}
+                bankAccounts={settings?.bankAccounts ?? []}
               />
             )}
 

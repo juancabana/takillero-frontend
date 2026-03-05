@@ -6,5 +6,6 @@
  * NEXT_PUBLIC_ son incrustadas en el bundle del cliente en build time.
  */
 export const env = {
+  // TODO [PRODUCCIÓN]: Configurar NEXT_PUBLIC_BACKEND_URL con la URL del backend en producción antes de hacer build
   backendUrl: process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:3000/api',
 } as const;
